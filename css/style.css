@@ -530,8 +530,17 @@ h3 { font-size: 1.15rem; font-weight: 700; }
 }
 
 @media (max-width: 768px) {
+  /* backdrop-filter بيخلي العناصر الـ fixed تتحسب بالنسبة للهيدر
+     فلازم نشيله على الموبايل عشان خلفية القائمة تشتغل صح */
+  .site-header {
+    background: var(--cream);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
   .main-nav {
-    position: fixed; inset: 0; top: 70px;
+    position: fixed; top: 70px; right: 0; left: 0;
+    height: calc(100vh - 70px);
+    height: calc(100dvh - 70px);
     background: var(--cream);
     flex-direction: column; justify-content: flex-start; padding-top: 2.5rem;
     gap: 1.8rem; font-size: 1.15rem;
