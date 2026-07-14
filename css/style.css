@@ -28,7 +28,7 @@
 /* ============ Reset ============ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+html { scroll-behavior: smooth; scroll-padding-top: 90px; overflow-x: clip; }
 
 body {
   font-family: var(--font-body);
@@ -537,8 +537,8 @@ h3 { font-size: 1.15rem; font-weight: 700; }
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
-  /* القائمة بتتثبت تحت الهيدر مباشرة (absolute بالنسبة للهيدر الـ sticky)
-     عشان تشتغل صح في كل المتصفحات بغض النظر عن backdrop-filter */
+  /* القائمة بتتثبت تحت الهيدر مباشرة، وبتستخبى في مكانها بتأثير fade
+     (مش بتتركن برّه الشاشة عشان ميحصلش سكرول أفقي) */
   .main-nav {
     position: absolute; top: 100%; right: 0; left: 0;
     height: calc(100vh - 70px);
@@ -548,11 +548,11 @@ h3 { font-size: 1.15rem; font-weight: 700; }
     box-shadow: 0 12px 30px rgba(51, 45, 110, 0.12);
     flex-direction: column; justify-content: flex-start; padding-top: 2.5rem;
     gap: 1.8rem; font-size: 1.15rem;
-    transform: translateX(-110%); visibility: hidden;
-    transition: transform 0.3s ease, visibility 0.3s;
+    opacity: 0; visibility: hidden; transform: translateY(-12px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
     z-index: 99;
   }
-  .main-nav.open { transform: translateX(0); visibility: visible; }
+  .main-nav.open { opacity: 1; visibility: visible; transform: translateY(0); }
   .nav-toggle { display: flex; z-index: 100; }
   .cards-grid, .cards-grid-3, .form-grid { grid-template-columns: 1fr; }
   .register-form { padding: 1.6rem 1.2rem; }
