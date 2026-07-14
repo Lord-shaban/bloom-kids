@@ -537,17 +537,22 @@ h3 { font-size: 1.15rem; font-weight: 700; }
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
+  /* القائمة بتتثبت تحت الهيدر مباشرة (absolute بالنسبة للهيدر الـ sticky)
+     عشان تشتغل صح في كل المتصفحات بغض النظر عن backdrop-filter */
   .main-nav {
-    position: fixed; top: 70px; right: 0; left: 0;
+    position: absolute; top: 100%; right: 0; left: 0;
     height: calc(100vh - 70px);
     height: calc(100dvh - 70px);
-    background: var(--cream);
+    background: #fdf6ec;
+    overflow-y: auto;
+    box-shadow: 0 12px 30px rgba(51, 45, 110, 0.12);
     flex-direction: column; justify-content: flex-start; padding-top: 2.5rem;
     gap: 1.8rem; font-size: 1.15rem;
-    transform: translateX(100%); transition: transform 0.3s ease;
+    transform: translateX(-110%); visibility: hidden;
+    transition: transform 0.3s ease, visibility 0.3s;
     z-index: 99;
   }
-  .main-nav.open { transform: translateX(0); }
+  .main-nav.open { transform: translateX(0); visibility: visible; }
   .nav-toggle { display: flex; z-index: 100; }
   .cards-grid, .cards-grid-3, .form-grid { grid-template-columns: 1fr; }
   .register-form { padding: 1.6rem 1.2rem; }
