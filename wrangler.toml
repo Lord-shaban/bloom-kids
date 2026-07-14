@@ -11,4 +11,4 @@ pages_build_output_dir = "."
 [[d1_databases]]
 binding = "DB"
 database_name = "bloom-kids-db"
-database_id = "ضع-الـID-هنا"
+database_id = "df4dc748-5db1-43fe-9b92-14a829aef1a5"
