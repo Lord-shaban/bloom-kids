@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# بعد ربط الدومين، حدّثوا اللينك ده لو ضفتوا sitemap
+# Sitemap: https://bloomkids.pages.dev/sitemap.xml
