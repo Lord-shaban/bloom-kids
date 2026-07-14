@@ -13,5 +13,9 @@ desktop.ini
 node_modules/
 dist/
 
+# Cloudflare — ملفات محلية ماينفعش تترفع
+.dev.vars
+.wrangler/
+
 # Misc
 *.log
