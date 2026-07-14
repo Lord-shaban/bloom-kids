@@ -9,116 +9,164 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@600;700;800&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/admin.css?v=1">
+  <link rel="stylesheet" href="css/admin.css?v=2">
 </head>
 <body>
 
-  <!-- ===== شاشة تسجيل الدخول ===== -->
+  <!-- ═══════════ شاشة تسجيل الدخول ═══════════ -->
   <div class="login-screen" id="loginScreen">
-    <div class="login-card">
+    <div class="login-card" id="loginCard">
       <img src="assets/images/logo.jpeg" alt="شعار بلوم كيدز" class="login-logo">
       <h1>لوحة تحكم بلوم كيدز</h1>
-      <p>ادخل كلمة السر عشان تشوف التسجيلات</p>
+      <p class="login-sub">مساحة الفريق لمتابعة الحجوزات</p>
       <form id="loginForm">
-        <input type="password" id="passwordInput" placeholder="كلمة السر" autocomplete="current-password" required>
+        <div class="pass-wrap">
+          <input type="password" id="passwordInput" placeholder="كلمة السر" autocomplete="current-password" required>
+          <button type="button" class="pass-toggle" id="passToggle" aria-label="إظهار كلمة السر">👁️</button>
+        </div>
         <button type="submit" class="btn-main" id="loginBtn">دخول</button>
       </form>
-      <p class="login-error" id="loginError" hidden>كلمة السر غلط، جرّب تاني 🙈</p>
+      <p class="login-error" id="loginError" hidden></p>
     </div>
   </div>
 
-  <!-- ===== الداشبورد ===== -->
+  <!-- ═══════════ الداشبورد ═══════════ -->
   <div class="dashboard" id="dashboard" hidden>
-    <header class="dash-header">
-      <div class="dash-brand">
+
+    <header class="topbar">
+      <div class="topbar-brand">
         <img src="assets/images/logo.jpeg" alt="بلوم كيدز">
         <div>
-          <strong>لوحة تحكم بلوم كيدز</strong>
-          <small>متابعة تسجيلات السيشنز</small>
+          <strong>بلوم كيدز</strong>
+          <small>لوحة التحكم</small>
         </div>
       </div>
-      <div class="dash-actions">
-        <button class="btn-icon" id="refreshBtn" title="تحديث البيانات">🔄 <span>تحديث</span></button>
-        <button class="btn-icon" id="exportBtn" title="تنزيل ملف Excel/CSV">📥 <span>تصدير CSV</span></button>
-        <button class="btn-icon btn-logout" id="logoutBtn" title="تسجيل خروج">🚪 <span>خروج</span></button>
+      <div class="topbar-actions">
+        <span class="last-update" id="lastUpdate" title="بيتحدث تلقائيًا كل دقيقة"></span>
+        <button class="top-btn" id="refreshBtn" title="تحديث يدوي">
+          <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.95 7.95 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4z"/></svg>
+          <span>تحديث</span>
+        </button>
+        <button class="top-btn" id="exportBtn" title="تنزيل Excel/CSV">
+          <svg viewBox="0 0 24 24"><path d="M5 20h14v-2H5zM19 9h-4V3H9v6H5l7 7z"/></svg>
+          <span>تصدير</span>
+        </button>
+        <button class="top-btn top-btn-logout" id="logoutBtn" title="تسجيل خروج">
+          <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8v-2H4z"/></svg>
+          <span>خروج</span>
+        </button>
       </div>
     </header>
 
     <main class="dash-main">
+
       <!-- إحصائيات -->
-      <section class="stats-grid" id="statsGrid">
-        <div class="stat-card stat-total">
-          <span class="stat-icon">🌱</span>
-          <div><strong id="statTotal">0</strong><small>إجمالي التسجيلات</small></div>
+      <section class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-icon si-teal">🌱</span>
+          <div><strong id="statTotal">—</strong><small>إجمالي التسجيلات</small></div>
         </div>
-        <div class="stat-card stat-today">
-          <span class="stat-icon">📅</span>
-          <div><strong id="statToday">0</strong><small>النهارده</small></div>
+        <div class="stat-card">
+          <span class="stat-icon si-pink">📅</span>
+          <div><strong id="statToday">—</strong><small>النهارده</small></div>
         </div>
-        <div class="stat-card stat-week">
-          <span class="stat-icon">📈</span>
-          <div><strong id="statWeek">0</strong><small>آخر 7 أيام</small></div>
+        <div class="stat-card">
+          <span class="stat-icon si-yellow">📈</span>
+          <div><strong id="statWeek">—</strong><small>آخر 7 أيام</small></div>
         </div>
-        <div class="stat-card stat-new">
-          <span class="stat-icon">⏳</span>
-          <div><strong id="statNew">0</strong><small>في انتظار التواصل</small></div>
-        </div>
-      </section>
-
-      <!-- فلاتر -->
-      <section class="filters">
-        <input type="search" id="searchInput" placeholder="🔍 ابحث بالاسم أو رقم الهاتف..." class="search-box">
-        <div class="status-filters" id="statusFilters">
-          <button class="filter-chip active" data-status="all">الكل</button>
-          <button class="filter-chip" data-status="new">🌸 جديد</button>
-          <button class="filter-chip" data-status="contacted">💬 تم التواصل</button>
-          <button class="filter-chip" data-status="confirmed">✅ مؤكد</button>
+        <div class="stat-card stat-card-alert" id="statNewCard">
+          <span class="stat-icon si-purple">⏳</span>
+          <div><strong id="statNew">—</strong><small>مستنيين تواصل</small></div>
         </div>
       </section>
 
-      <!-- الجدول -->
-      <section class="table-card">
-        <div class="table-scroll">
-          <table id="regTable">
-            <thead>
-              <tr>
-                <th>ولي الأمر</th>
-                <th>الهاتف</th>
-                <th>الطفل</th>
-                <th>السن</th>
-                <th>ملاحظات</th>
-                <th>الحالة</th>
-                <th>التاريخ</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="regTbody"></tbody>
-          </table>
+      <!-- شريط الأدوات -->
+      <section class="toolbar">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+          <input type="search" id="searchInput" placeholder="ابحث بالاسم أو رقم الهاتف...">
+        </div>
+        <div class="filter-chips" id="statusFilters">
+          <button class="chip active" data-status="all">الكل <b id="cAll">0</b></button>
+          <button class="chip chip-new" data-status="new">جديد <b id="cNew">0</b></button>
+          <button class="chip chip-contacted" data-status="contacted">تم التواصل <b id="cContacted">0</b></button>
+          <button class="chip chip-confirmed" data-status="confirmed">مؤكد <b id="cConfirmed">0</b></button>
+        </div>
+        <select id="sortSelect" class="sort-select" title="الترتيب">
+          <option value="newest">الأحدث الأول</option>
+          <option value="oldest">الأقدم الأول</option>
+        </select>
+      </section>
+
+      <!-- قائمة التسجيلات -->
+      <section class="list-card">
+        <header class="list-head" id="listHead">
+          <span>ولي الأمر</span>
+          <span>التواصل</span>
+          <span>الطفل</span>
+          <span>الحالة</span>
+          <span>الوقت</span>
+          <span></span>
+        </header>
+
+        <div id="listBody"></div>
+
+        <div class="skeletons" id="skeletons">
+          <div class="skeleton-row"></div>
+          <div class="skeleton-row"></div>
+          <div class="skeleton-row"></div>
         </div>
 
-        <div class="empty-state" id="emptyState" hidden>
+        <div class="state-box" id="emptyState" hidden>
           <span>🌱</span>
           <h3>لسه مفيش تسجيلات</h3>
-          <p>أول ما حد يسجل من الموقع هيظهر هنا فورًا</p>
+          <p>أول ما ولي أمر يحجز من الموقع، هيظهر هنا فورًا</p>
         </div>
 
-        <div class="loading-state" id="loadingState">
-          <span class="spinner"></span> جاري تحميل التسجيلات...
+        <div class="state-box" id="noResults" hidden>
+          <span>🔍</span>
+          <h3>مفيش نتائج</h3>
+          <p>جرّب كلمة بحث تانية أو غيّر الفلتر</p>
         </div>
 
-        <div class="error-state" id="errorState" hidden>
+        <div class="state-box state-error" id="errorState" hidden>
           <span>⚠️</span>
-          <p id="errorMessage">حصلت مشكلة في تحميل البيانات</p>
-          <button class="btn-main" id="retryBtn">حاول تاني</button>
+          <h3>حصلت مشكلة</h3>
+          <p id="errorMessage"></p>
+          <button class="btn-main btn-slim" id="retryBtn">حاول تاني</button>
         </div>
       </section>
     </main>
 
-    <footer class="dash-footer">بلوم كيدز © <span id="year"></span> — لوحة التحكم</footer>
+    <footer class="dash-footer">بلوم كيدز © <span id="year"></span></footer>
+  </div>
+
+  <!-- ═══════════ بانل التفاصيل ═══════════ -->
+  <div class="drawer-overlay" id="drawerOverlay" hidden>
+    <aside class="drawer" id="drawer" role="dialog" aria-label="تفاصيل التسجيل">
+      <header class="drawer-head">
+        <h2>تفاصيل التسجيل</h2>
+        <button class="drawer-close" id="drawerClose" aria-label="إغلاق">✕</button>
+      </header>
+      <div class="drawer-body" id="drawerBody"><!-- بيتبني بالجافاسكريبت --></div>
+    </aside>
+  </div>
+
+  <!-- ═══════════ تأكيد الحذف ═══════════ -->
+  <div class="modal-overlay" id="confirmModal" hidden>
+    <div class="modal" role="alertdialog" aria-label="تأكيد الحذف">
+      <span class="modal-icon">🗑️</span>
+      <h3>حذف التسجيل؟</h3>
+      <p id="confirmText"></p>
+      <div class="modal-actions">
+        <button class="btn-ghost" id="confirmCancel">إلغاء</button>
+        <button class="btn-danger" id="confirmDelete">آه، احذف</button>
+      </div>
+    </div>
   </div>
 
   <div class="toast" id="toast" hidden></div>
 
-  <script src="js/admin.js?v=1"></script>
+  <script src="js/admin.js?v=2"></script>
 </body>
 </html>
