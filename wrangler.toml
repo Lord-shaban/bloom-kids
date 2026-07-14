@@ -1,0 +1,14 @@
+# إعدادات مشروع بلوم كيدز على Cloudflare Pages
+# ⚠️ غيّروا اسم المشروع لو مشروعكم على Cloudflare اسمه مختلف
+name = "bloom-kids"
+compatibility_date = "2026-07-01"
+pages_build_output_dir = "."
+
+# ربط قاعدة بيانات D1 بالموقع
+# بعد ما تعملوا الداتابيز بالأمر:
+#   npx wrangler d1 create bloom-kids-db
+# حطوا الـ database_id اللي هيظهرلكم هنا:
+[[d1_databases]]
+binding = "DB"
+database_name = "bloom-kids-db"
+database_id = "ضع-الـID-هنا"

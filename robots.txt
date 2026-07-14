@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin.html
+Disallow: /api/
 
 # بعد ربط الدومين، حدّثوا اللينك ده لو ضفتوا sitemap
 # Sitemap: https://bloomkids.pages.dev/sitemap.xml

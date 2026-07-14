@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم | بلوم كيدز</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@600;700;800&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css?v=1">
+</head>
+<body>
+
+  <!-- ===== شاشة تسجيل الدخول ===== -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <img src="assets/images/logo.jpeg" alt="شعار بلوم كيدز" class="login-logo">
+      <h1>لوحة تحكم بلوم كيدز</h1>
+      <p>ادخل كلمة السر عشان تشوف التسجيلات</p>
+      <form id="loginForm">
+        <input type="password" id="passwordInput" placeholder="كلمة السر" autocomplete="current-password" required>
+        <button type="submit" class="btn-main" id="loginBtn">دخول</button>
+      </form>
+      <p class="login-error" id="loginError" hidden>كلمة السر غلط، جرّب تاني 🙈</p>
+    </div>
+  </div>
+
+  <!-- ===== الداشبورد ===== -->
+  <div class="dashboard" id="dashboard" hidden>
+    <header class="dash-header">
+      <div class="dash-brand">
+        <img src="assets/images/logo.jpeg" alt="بلوم كيدز">
+        <div>
+          <strong>لوحة تحكم بلوم كيدز</strong>
+          <small>متابعة تسجيلات السيشنز</small>
+        </div>
+      </div>
+      <div class="dash-actions">
+        <button class="btn-icon" id="refreshBtn" title="تحديث البيانات">🔄 <span>تحديث</span></button>
+        <button class="btn-icon" id="exportBtn" title="تنزيل ملف Excel/CSV">📥 <span>تصدير CSV</span></button>
+        <button class="btn-icon btn-logout" id="logoutBtn" title="تسجيل خروج">🚪 <span>خروج</span></button>
+      </div>
+    </header>
+
+    <main class="dash-main">
+      <!-- إحصائيات -->
+      <section class="stats-grid" id="statsGrid">
+        <div class="stat-card stat-total">
+          <span class="stat-icon">🌱</span>
+          <div><strong id="statTotal">0</strong><small>إجمالي التسجيلات</small></div>
+        </div>
+        <div class="stat-card stat-today">
+          <span class="stat-icon">📅</span>
+          <div><strong id="statToday">0</strong><small>النهارده</small></div>
+        </div>
+        <div class="stat-card stat-week">
+          <span class="stat-icon">📈</span>
+          <div><strong id="statWeek">0</strong><small>آخر 7 أيام</small></div>
+        </div>
+        <div class="stat-card stat-new">
+          <span class="stat-icon">⏳</span>
+          <div><strong id="statNew">0</strong><small>في انتظار التواصل</small></div>
+        </div>
+      </section>
+
+      <!-- فلاتر -->
+      <section class="filters">
+        <input type="search" id="searchInput" placeholder="🔍 ابحث بالاسم أو رقم الهاتف..." class="search-box">
+        <div class="status-filters" id="statusFilters">
+          <button class="filter-chip active" data-status="all">الكل</button>
+          <button class="filter-chip" data-status="new">🌸 جديد</button>
+          <button class="filter-chip" data-status="contacted">💬 تم التواصل</button>
+          <button class="filter-chip" data-status="confirmed">✅ مؤكد</button>
+        </div>
+      </section>
+
+      <!-- الجدول -->
+      <section class="table-card">
+        <div class="table-scroll">
+          <table id="regTable">
+            <thead>
+              <tr>
+                <th>ولي الأمر</th>
+                <th>الهاتف</th>
+                <th>الطفل</th>
+                <th>السن</th>
+                <th>ملاحظات</th>
+                <th>الحالة</th>
+                <th>التاريخ</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="regTbody"></tbody>
+          </table>
+        </div>
+
+        <div class="empty-state" id="emptyState" hidden>
+          <span>🌱</span>
+          <h3>لسه مفيش تسجيلات</h3>
+          <p>أول ما حد يسجل من الموقع هيظهر هنا فورًا</p>
+        </div>
+
+        <div class="loading-state" id="loadingState">
+          <span class="spinner"></span> جاري تحميل التسجيلات...
+        </div>
+
+        <div class="error-state" id="errorState" hidden>
+          <span>⚠️</span>
+          <p id="errorMessage">حصلت مشكلة في تحميل البيانات</p>
+          <button class="btn-main" id="retryBtn">حاول تاني</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="dash-footer">بلوم كيدز © <span id="year"></span> — لوحة التحكم</footer>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="js/admin.js?v=1"></script>
+</body>
+</html>

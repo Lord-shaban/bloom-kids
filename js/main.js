@@ -72,10 +72,12 @@ document.querySelectorAll(".js-whatsapp-link").forEach((el) => {
   });
 });
 
-/* ---------- نموذج الحجز → رسالة واتساب جاهزة ---------- */
+/* ---------- نموذج الحجز → يتسجل في قاعدة البيانات (الداشبورد) ---------- */
 const form = document.getElementById("registerForm");
+const submitBtn = document.getElementById("submitBtn");
+const formFeedback = document.getElementById("formFeedback");
 
-form.addEventListener("submit", (e) => {
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   // فاليديشن بسيط
@@ -90,24 +92,48 @@ form.addEventListener("submit", (e) => {
     return;
   }
 
-  const parentName = form.parentName.value.trim();
-  const phone = form.phone.value.trim();
-  const childName = form.childName.value.trim();
-  const childAge = form.childAge.value;
-  const notes = form.notes.value.trim();
+  const payload = {
+    parentName: form.parentName.value.trim(),
+    phone: form.phone.value.trim(),
+    childName: form.childName.value.trim(),
+    childAge: form.childAge.value,
+    notes: form.notes.value.trim(),
+    website: form.website.value, // honeypot
+  };
 
-  const lines = [
-    "أهلًا بلوم كيدز 👋",
-    "حابب/ة أحجز مكان لطفلي في السيشنز:",
-    "",
-    `👤 ولي الأمر: ${parentName}`,
-    `📱 رقم التواصل: ${phone}`,
-    `🧒 اسم الطفل: ${childName}`,
-    `🎂 السن: ${childAge}`,
-  ];
-  if (notes) lines.push(`📝 ملاحظات: ${notes}`);
+  submitBtn.disabled = true;
+  const originalText = submitBtn.textContent;
+  submitBtn.textContent = "⏳ ثانية واحدة...";
+  formFeedback.hidden = true;
 
-  window.open(whatsappUrl(lines.join("\n")), "_blank", "noopener");
+  try {
+    const res = await fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+
+    if (!data.ok) throw new Error(data.error || "حصلت مشكلة، حاول تاني");
+
+    // نجاح 🎉 — نستبدل النموذج برسالة تأكيد
+    form.innerHTML = `
+      <div class="form-success">
+        <span class="success-icon">🎉</span>
+        <h3>تم استلام طلبك بنجاح!</h3>
+        <p>أهلًا بيكم في عيلة بلوم كيدز 💜<br>
+        هنتواصل معاك على واتساب في أقرب وقت لتأكيد الحجز وتحديد المواعيد المناسبة.</p>
+      </div>`;
+  } catch (err) {
+    // فشل — نعرض رسالة الخطأ مع بديل الواتساب
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalText;
+    formFeedback.innerHTML = `⚠️ ${err.message}<br>
+      أو ابعتلنا مباشرة على
+      <a href="${whatsappUrl("أهلًا بلوم كيدز 👋 حاولت أسجل من الموقع وحصلت مشكلة — حابب أحجز لطفلي.")}"
+         target="_blank" rel="noopener"><strong>واتساب من هنا</strong></a>`;
+    formFeedback.hidden = false;
+  }
 });
 
 // شيل تحديد الخطأ أول ما المستخدم يكتب
