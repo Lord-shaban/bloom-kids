@@ -14,10 +14,21 @@
 /js/*
   Cache-Control: public, max-age=86400
 
+# ملحوظة مهمة: Cloudflare Pages بيشيل .html من الروابط
+# يعني /admin.html بيعمل redirect لـ /admin — فلازم نكتب الاتنين،
+# وإلا الهيدرز تتطبّق على الـ redirect بس والصفحة الحقيقية تفضل من غير حماية.
+
 /admin.html
+  Cache-Control: no-store
+  X-Robots-Tag: noindex, nofollow
+
+/admin
   Cache-Control: no-store
   X-Robots-Tag: noindex, nofollow
 
 # اللعبة: صفحة مخفية — مفيش لينك ليها من الموقع ومش بتظهر في جوجل
 /game.html
+  X-Robots-Tag: noindex, nofollow
+
+/game
   X-Robots-Tag: noindex, nofollow
