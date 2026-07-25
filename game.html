@@ -19,7 +19,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css?v=7">
-  <link rel="stylesheet" href="css/game.css?v=2">
+  <link rel="stylesheet" href="css/game.css?v=3">
 
   <!-- صور المرحلة الأخيرة — بنحمّلهم بدري عشان ميحصلش تقطيع وقت اللعب -->
   <link rel="preload" as="image" href="assets/images/game/krusty-krab-a.jpg">
@@ -76,6 +76,7 @@
           <button class="btn btn-yellow btn-sm" id="hintBtn" type="button">
             💡 تلميح (<span id="hintCount">٣</span>)
           </button>
+          <button class="btn btn-ghost btn-sm" id="levelsBtn" type="button">🗂️ المراحل</button>
           <button class="btn btn-ghost btn-sm" id="restartBtn" type="button">🔄 من الأول</button>
           <button class="btn-icon" id="soundBtn" type="button" aria-pressed="true" title="اقفل الصوت">🔊</button>
         </div>
@@ -98,18 +99,24 @@
     </p>
   </main>
 
-  <!-- ===== شاشة البداية ===== -->
+  <!-- ===== شاشة البداية / اختيار المرحلة ===== -->
   <div class="overlay" id="startOverlay">
-    <div class="overlay-card">
+    <div class="overlay-card overlay-card-wide">
       <h2>يلا نلعب! 🎯</h2>
       <p>دوّر على الفروق بين الصورتين واضغط عليها.</p>
-      <ul class="how-list">
+      <ul class="how-list" id="howList">
         <li><span class="bg-teal">👀</span> قارن الصورتين كويس</li>
         <li><span class="bg-pink">👆</span> اضغط على مكان الفرق في أي صورة</li>
         <li><span class="bg-yellow">💡</span> معاك ٣ تلميحات في كل مرحلة</li>
-        <li><span class="bg-purple">🏆</span> ٤ مراحل… حاول تخلّصهم بأسرع وقت</li>
+        <li><span class="bg-purple">🏆</span> كل المراحل مفتوحة… اختار اللي يعجبك</li>
       </ul>
-      <button class="btn btn-primary btn-lg" id="startBtn" type="button">يلا نبدأ 🚀</button>
+
+      <h3 class="levels-title" id="levelsTitle">اختار المرحلة 👇</h3>
+      <div class="level-grid" id="levelGrid"></div>
+
+      <button class="btn btn-ghost" id="closeLevelsBtn" type="button" hidden>
+        ↩ رجوع للمرحلة الحالية
+      </button>
     </div>
   </div>
 
@@ -122,6 +129,7 @@
       <div class="overlay-actions">
         <button class="btn btn-primary" id="nextBtn" type="button">المرحلة الجاية ▶</button>
         <button class="btn btn-ghost" id="replayBtn" type="button">إعادة المرحلة</button>
+        <button class="btn btn-ghost" id="winLevelsBtn" type="button">🗂️ المراحل</button>
       </div>
     </div>
   </div>
@@ -130,6 +138,6 @@
   <div class="confetti" id="confetti" aria-hidden="true"></div>
 
   <script src="js/game-scenes.js?v=2"></script>
-  <script src="js/game.js?v=2"></script>
+  <script src="js/game.js?v=3"></script>
 </body>
 </html>

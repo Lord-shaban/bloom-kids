@@ -26,7 +26,12 @@
     progressBar: document.getElementById("progressBar"),
     toast: document.getElementById("toast"),
     startOverlay: document.getElementById("startOverlay"),
-    startBtn: document.getElementById("startBtn"),
+    levelGrid: document.getElementById("levelGrid"),
+    levelsTitle: document.getElementById("levelsTitle"),
+    howList: document.getElementById("howList"),
+    levelsBtn: document.getElementById("levelsBtn"),
+    closeLevelsBtn: document.getElementById("closeLevelsBtn"),
+    winLevelsBtn: document.getElementById("winLevelsBtn"),
     winOverlay: document.getElementById("winOverlay"),
     winTitle: document.getElementById("winTitle"),
     winStats: document.getElementById("winStats"),
@@ -62,6 +67,7 @@
     timerId: null,
     running: false,
     soundOn: true,
+    started: false, // في مرحلة شغّالة ولا لسه محدش بدأ؟
   };
 
   /* ============================================================
@@ -127,6 +133,7 @@
   function loadLevel(index) {
     const scene = SCENES[index];
     state.level = index;
+    state.started = true;
     state.found = new Set();
     state.misses = 0;
     state.hints = HINTS_PER_LEVEL;
@@ -328,13 +335,24 @@
     }, 1600);
   }
 
-  function startTimer() {
+  /* runTimer بتكمّل من الوقت الحالي — بنستخدمها لما اللاعب يرجع
+     من شاشة المراحل، عشان الوقت ميتصفّرش عليه */
+  function runTimer() {
     window.clearInterval(state.timerId);
-    el.timer.textContent = fmtTime(0);
     state.timerId = window.setInterval(() => {
       state.seconds += 1;
       el.timer.textContent = fmtTime(state.seconds);
     }, 1000);
+  }
+
+  function startTimer() {
+    state.seconds = 0;
+    el.timer.textContent = fmtTime(0);
+    runTimer();
+  }
+
+  function pauseTimer() {
+    window.clearInterval(state.timerId);
   }
 
   /* ============================================================
@@ -369,7 +387,10 @@
       }
     }
 
-    el.winTitle.textContent = isLast ? "🎉 برافو! خلّصت كل المراحل" : "🎉 برافو! لقيت كل الفروق";
+    // "خلّصت كل المراحل" تتقال لما يكون فعلاً خلّص كل المراحل —
+    // مش لما يوصل لآخر واحدة، لأنه ممكن يكون نطّ عليها من شاشة الاختيار
+    const allDone = SCENES.every((s) => typeof best[s.id] === "number");
+    el.winTitle.textContent = allDone ? "🎉 برافو! خلّصت كل المراحل" : "🎉 برافو! لقيت كل الفروق";
     el.winStats.innerHTML = `
       <span class="stat-chip"><b>${fmtTime(state.seconds)}</b> الوقت</span>
       <span class="stat-chip"><b>${toArabic(state.misses)}</b> محاولة غلط</span>
@@ -379,7 +400,6 @@
       : `أحسن وقت ليك: ${fmtTime(best[scene.id])}`;
 
     el.nextBtn.hidden = isLast;
-    el.replayBtn.textContent = isLast ? "إلعب من الأول" : "إعادة المرحلة";
     showOverlay(el.winOverlay);
     if (!reduceMotion) fireConfetti();
   }
@@ -401,39 +421,88 @@
     }, 3600);
   }
 
-  function closeWin() {
-    hideOverlay(el.winOverlay);
+  /* ============================================================
+     اختيار المرحلة — كل المراحل مفتوحة من الأول
+     ============================================================ */
+  function renderLevelGrid() {
+    const best = bestTimes();
+
+    el.levelGrid.innerHTML = SCENES.map((scene, i) => {
+      const done = typeof best[scene.id] === "number";
+      const isCurrent = state.started && i === state.level;
+      const meta = done
+        ? `أحسن وقت <b dir="ltr">${fmtTime(best[scene.id])}</b>`
+        : `${toArabic(scene.diffs.length)} فروق`;
+
+      return `
+        <button type="button" class="level-card ${isCurrent ? "is-current" : ""}"
+                data-level="${i}">
+          <span class="level-card-emoji" aria-hidden="true">${scene.emoji}</span>
+          <span class="level-card-body">
+            <span class="level-card-title">${toArabic(i + 1)}. ${scene.title}</span>
+            <span class="level-card-meta">${meta}</span>
+          </span>
+          ${done ? `<span class="level-card-done" title="خلّصتها">✓</span>` : ""}
+        </button>`;
+    }).join("");
   }
+
+  function openLevels() {
+    pauseTimer();
+    state.running = false;
+    renderLevelGrid();
+
+    // أول مرة بس بنوريه شرح اللعبة؛ بعد كده الشاشة تبقى قايمة مراحل بس
+    el.howList.hidden = state.started;
+    el.levelsTitle.textContent = state.started ? "اختار مرحلة تانية 👇" : "اختار المرحلة 👇";
+    el.closeLevelsBtn.hidden = !state.started;
+
+    hideOverlay(el.winOverlay);
+    showOverlay(el.startOverlay);
+  }
+
+  function startLevel(index) {
+    hideOverlay(el.startOverlay);
+    hideOverlay(el.winOverlay);
+    state.running = true;
+    loadLevel(index);
+  }
+
+  el.levelGrid.addEventListener("click", (evt) => {
+    const card = evt.target.closest(".level-card");
+    if (!card) return;
+    startLevel(Number(card.dataset.level));
+  });
+
+  el.levelsBtn.addEventListener("click", openLevels);
+  el.winLevelsBtn.addEventListener("click", openLevels);
+
+  /* رجوع للمرحلة اللي كان بيلعبها — من غير ما الوقت يتصفّر */
+  el.closeLevelsBtn.addEventListener("click", () => {
+    hideOverlay(el.startOverlay);
+
+    // لو كان خلّص المرحلة خلاص، نرجّعله شاشة الفوز مش اللعب
+    if (state.found.size === SCENES[state.level].diffs.length) {
+      showOverlay(el.winOverlay);
+      return;
+    }
+    state.running = true;
+    runTimer();
+  });
 
   /* ============================================================
      الأزرار
      ============================================================ */
-  el.startBtn.addEventListener("click", () => {
-    hideOverlay(el.startOverlay);
-    state.running = true;
-    loadLevel(0);
-  });
 
   el.hintBtn.addEventListener("click", useHint);
 
-  el.restartBtn.addEventListener("click", () => {
-    closeWin();
-    state.running = true;
-    loadLevel(state.level);
-  });
+  el.restartBtn.addEventListener("click", () => startLevel(state.level));
 
   el.nextBtn.addEventListener("click", () => {
-    closeWin();
-    state.running = true;
-    loadLevel(Math.min(state.level + 1, SCENES.length - 1));
+    startLevel(Math.min(state.level + 1, SCENES.length - 1));
   });
 
-  el.replayBtn.addEventListener("click", () => {
-    closeWin();
-    const isLast = state.level === SCENES.length - 1;
-    state.running = true;
-    loadLevel(isLast ? 0 : state.level);
-  });
+  el.replayBtn.addEventListener("click", () => startLevel(state.level));
 
   el.soundBtn.addEventListener("click", () => {
     state.soundOn = !state.soundOn;
@@ -442,6 +511,6 @@
     el.soundBtn.title = state.soundOn ? "اقفل الصوت" : "شغّل الصوت";
   });
 
-  /* شاشة البداية ظاهرة من الأول */
-  showOverlay(el.startOverlay);
+  /* شاشة اختيار المرحلة ظاهرة من الأول */
+  openLevels();
 })();
