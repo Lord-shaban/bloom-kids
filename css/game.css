@@ -107,6 +107,10 @@
 }
 .board svg.scene { width: 100%; height: auto; display: block; touch-action: manipulation; }
 
+/* مراحل الصور: منع سحب الصورة أو ظهور قائمة "حفظ الصورة" وسط اللعب */
+.board { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+.scene image { -webkit-user-drag: none; }
+
 .board-tag {
   position: absolute; top: 8px; inset-inline-start: 8px; z-index: 3;
   background: var(--navy); color: var(--white);

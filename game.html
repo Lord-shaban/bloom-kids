@@ -19,7 +19,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css?v=7">
-  <link rel="stylesheet" href="css/game.css?v=1">
+  <link rel="stylesheet" href="css/game.css?v=2">
+
+  <!-- صور المرحلة الأخيرة — بنحمّلهم بدري عشان ميحصلش تقطيع وقت اللعب -->
+  <link rel="preload" as="image" href="assets/images/game/krusty-krab-a.jpg">
+  <link rel="preload" as="image" href="assets/images/game/krusty-krab-b.jpg">
 </head>
 <body class="game-page">
 
@@ -103,7 +107,7 @@
         <li><span class="bg-teal">👀</span> قارن الصورتين كويس</li>
         <li><span class="bg-pink">👆</span> اضغط على مكان الفرق في أي صورة</li>
         <li><span class="bg-yellow">💡</span> معاك ٣ تلميحات في كل مرحلة</li>
-        <li><span class="bg-purple">🏆</span> ٣ مراحل… حاول تخلّصهم بأسرع وقت</li>
+        <li><span class="bg-purple">🏆</span> ٤ مراحل… حاول تخلّصهم بأسرع وقت</li>
       </ul>
       <button class="btn btn-primary btn-lg" id="startBtn" type="button">يلا نبدأ 🚀</button>
     </div>
@@ -125,7 +129,7 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="confetti" id="confetti" aria-hidden="true"></div>
 
-  <script src="js/game-scenes.js?v=1"></script>
-  <script src="js/game.js?v=1"></script>
+  <script src="js/game-scenes.js?v=2"></script>
+  <script src="js/game.js?v=2"></script>
 </body>
 </html>

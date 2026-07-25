@@ -101,13 +101,24 @@
      رسم المرحلة
      ============================================================ */
   function buildSvg(scene, variant) {
-    const diffs = scene.diffs.map((d) => d[variant] || "").join("\n");
+    const box = scene.viewBox || VIEWBOX;
+    let art;
+
+    if (scene.photo) {
+      // مرحلة بالصور: الفروق جوه الصورة نفسها، فمفيش أشكال بنرسمها فوقها
+      const [, , w, h] = box.split(/\s+/).map(Number);
+      const src = variant === "a" ? scene.imgA : scene.imgB;
+      art = `<image href="${src}" x="0" y="0" width="${w}" height="${h}"
+               preserveAspectRatio="none"/>`;
+    } else {
+      art = `${scene.base}\n${scene.diffs.map((d) => d[variant] || "").join("\n")}`;
+    }
+
     return `
-      <svg viewBox="${VIEWBOX}" class="scene" role="img"
+      <svg viewBox="${box}" class="scene" role="img"
            aria-label="صورة ${variant === "a" ? "أولى" : "تانية"} — دوّر على الفروق">
         <g class="scene-art">
-          ${scene.base}
-          ${diffs}
+          ${art}
         </g>
         <g class="scene-fx"></g>
       </svg>`;

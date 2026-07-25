@@ -421,7 +421,36 @@ const SCENE_BEACH = {
   ],
 };
 
-const SCENES = [SCENE_ROOM, SCENE_PARK, SCENE_BEACH];
+/* ============================================================
+   المرحلة ٤ — مرحلة بالصور (مش رسم SVG)
+
+   المرحلة دي شغّالة بصورتين جاهزين بدل الرسم، عشان كده:
+     photo   = true  → المحرّك يرسم <image> بدل الـ base
+     imgA    = الصورة الأولى، imgB = الصورة التانية
+     viewBox = بمقاس ٦٠٠ عرض زي باقي المراحل عشان سماكة
+               الدوايرة والعلامات تطلع بنفس الشكل
+     الفروق هنا فيها x, y, r بس (مفيش a و b) لأن الفرق
+     نفسه موجود جوه الصورة.
+   ============================================================ */
+const SCENE_KRAB = {
+  id: "krab",
+  emoji: "🍔",
+  title: "المطعم المقلوب",
+  hint: "المرحلة الأخيرة بصور حقيقية… بصّ على الصينية والقارب واللوحة 🍔",
+  photo: true,
+  viewBox: "0 0 600 360",
+  imgA: "assets/images/game/krusty-krab-a.jpg",
+  imgB: "assets/images/game/krusty-krab-b.jpg",
+  diffs: [
+    { id: "burger-stack", label: "كومة البرجر على الصينية", x: 176, y: 83, r: 38 },
+    { id: "pineapple",    label: "البرجر الطاير بقى أناناس", x: 45,  y: 57, r: 38 },
+    { id: "boat",         label: "لون القارب",              x: 320, y: 185, r: 40 },
+    { id: "menu-sign",    label: "لوحة المنيو",             x: 285, y: 92, r: 28 },
+    { id: "sandy-flower", label: "الزهرة على خوذة ساندي",   x: 38,  y: 171, r: 26 },
+  ],
+};
+
+const SCENES = [SCENE_ROOM, SCENE_PARK, SCENE_BEACH, SCENE_KRAB];
 
 /* عشان نقدر نتأكد من البيانات في node وقت التطوير */
 if (typeof module !== "undefined" && module.exports) {
