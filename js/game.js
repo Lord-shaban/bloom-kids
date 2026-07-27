@@ -120,24 +120,18 @@
      رسم المرحلة
      ============================================================ */
   function buildSvg(scene, variant) {
-    const box = scene.viewBox || VIEWBOX;
-    let art;
+    const box = scene.viewBox;
+    const [, , w, h] = box.split(/\s+/).map(Number);
+    const src = variant === "a" ? scene.imgA : scene.imgB;
 
-    if (scene.photo) {
-      // مرحلة بالصور: الفروق جوه الصورة نفسها، فمفيش أشكال بنرسمها فوقها
-      const [, , w, h] = box.split(/\s+/).map(Number);
-      const src = variant === "a" ? scene.imgA : scene.imgB;
-      art = `<image href="${src}" x="0" y="0" width="${w}" height="${h}"
-               preserveAspectRatio="none"/>`;
-    } else {
-      art = `${scene.base}\n${scene.diffs.map((d) => d[variant] || "").join("\n")}`;
-    }
-
+    /* الصورة جوه الـ SVG مش <img> عادية، عشان علامات الفروق
+       تتحط بنفس إحداثيات الـ viewBox من غير أي حسابات زيادة */
     return `
       <svg viewBox="${box}" class="scene" role="img"
            aria-label="صورة ${variant === "a" ? "أولى" : "تانية"} — دوّر على الفروق">
         <g class="scene-art">
-          ${art}
+          <image href="${src}" x="0" y="0" width="${w}" height="${h}"
+                 preserveAspectRatio="none"/>
         </g>
         <g class="scene-fx"></g>
       </svg>`;
@@ -532,7 +526,6 @@
      ميستناش لما يفتح مرحلة بصور */
   function warmPhotoAssets() {
     SCENES.forEach((scene) => {
-      if (!scene.photo) return;
       [scene.imgA, scene.imgB].forEach((src) => {
         const img = new Image();
         img.src = src;
