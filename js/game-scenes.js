@@ -450,7 +450,81 @@ const SCENE_KRAB = {
   ],
 };
 
-const SCENES = [SCENE_ROOM, SCENE_PARK, SCENE_BEACH, SCENE_KRAB];
+/* ============================================================
+   مراحل الصور — كل صورة ١٠٠٠×٥٤٥، والـ viewBox بعرض ٦٠٠
+   عشان سماكة الدواير والعلامات تطلع زي باقي المراحل.
+
+   الإحداثيات اتحسبت من مقارنة البكسلات بين الصورتين
+   (مش بالنظر)، وكل فرق مركزه في نص الشكل اللي اتغيّر.
+   ============================================================ */
+const PHOTO_BOX = "0 0 600 327";
+
+/* ---------- المرحلة ٥ — بيت الدببة (٥ فروق) ---------- */
+const SCENE_BEARS = {
+  id: "bears",
+  emoji: "🐻",
+  title: "بيت الدببة",
+  hint: "أوضة مليانة تفاصيل… بصّ على الحيطة والتليفزيون والكنبة 🐼",
+  photo: true,
+  viewBox: PHOTO_BOX,
+  imgA: "assets/images/game/bears-a.jpg",
+  imgB: "assets/images/game/bears-b.jpg",
+  diffs: [
+    { id: "frame",   label: "الصورة اللي في البرواز",   x: 68,  y: 46,  r: 33 },
+    { id: "poster",  label: "البوستر على الحيطة",       x: 38,  y: 121, r: 28 },
+    { id: "tv",      label: "اللي على شاشة التليفزيون", x: 46,  y: 228, r: 30 },
+    { id: "mug",     label: "كوباية الدب البني",        x: 173, y: 174, r: 20 },
+    { id: "backpack", label: "شنطة الضفدع على الكنبة",  x: 367, y: 184, r: 28 },
+  ],
+};
+
+/* ---------- المرحلة ٦ — ملاهي الأحلام (٦ فروق) ---------- */
+const SCENE_FAIR = {
+  id: "fair",
+  emoji: "🎠",
+  title: "ملاهي الأحلام",
+  hint: "٦ فروق المرة دي! بصّ على توم وجيري وكشك غزل البنات 🎡",
+  photo: true,
+  viewBox: PHOTO_BOX,
+  imgA: "assets/images/game/fair-a.jpg",
+  imgB: "assets/images/game/fair-b.jpg",
+  diffs: [
+    { id: "hat",     label: "طاقية جيري",              x: 299, y: 68,  r: 20 },
+    { id: "scarf",   label: "لون كوفية توم",           x: 291, y: 188, r: 45 },
+    { id: "balloons", label: "بالونات جديدة في الخلفية", x: 239, y: 214, r: 21 },
+    { id: "candy",   label: "لون غزل البنات",          x: 33,  y: 218, r: 13 },
+    { id: "lolly",   label: "المصاصة في إيد البنت",    x: 60,  y: 210, r: 11 },
+    { id: "gem",     label: "الجوهرة على سرج الحصان",  x: 316, y: 303, r: 20 },
+  ],
+};
+
+/* ---------- المرحلة ٧ — قاع البحر (٩ فروق) ---------- */
+const SCENE_REEF = {
+  id: "reef",
+  emoji: "🐬",
+  title: "قاع البحر",
+  hint: "أصعب مرحلة… ٩ فروق! بصّ في المياه وعلى باترك والرملة 🌊",
+  photo: true,
+  viewBox: PHOTO_BOX,
+  imgA: "assets/images/game/reef-a.jpg",
+  imgB: "assets/images/game/reef-b.jpg",
+  diffs: [
+    { id: "dolphin-top",   label: "دولفين فوق في النص",        x: 352, y: 58,  r: 30 },
+    { id: "dolphin-mid",   label: "دولفين تحت في النص",        x: 299, y: 94,  r: 30 },
+    { id: "dolphin-right", label: "دولفين ناحية اليمين",       x: 560, y: 89,  r: 34 },
+    { id: "propeller",     label: "الطاقية بالمروحة فوق البيت", x: 445, y: 55,  r: 25 },
+    { id: "clam",          label: "الصدفة ورا باترك",          x: 401, y: 195, r: 28 },
+    { id: "patrick2",      label: "باترك تاني على الممشى",     x: 88,  y: 179, r: 23 },
+    { id: "sign",          label: "لافتة تشام باكيت",          x: 107, y: 143, r: 16 },
+    { id: "pebbles",       label: "الأحجار الزرقا على الرملة", x: 262, y: 283, r: 23 },
+    { id: "star",          label: "النجمة على شورت باترك",     x: 373, y: 234, r: 12 },
+  ],
+};
+
+const SCENES = [
+  SCENE_ROOM, SCENE_PARK, SCENE_BEACH,
+  SCENE_KRAB, SCENE_BEARS, SCENE_FAIR, SCENE_REEF,
+];
 
 /* عشان نقدر نتأكد من البيانات في node وقت التطوير */
 if (typeof module !== "undefined" && module.exports) {

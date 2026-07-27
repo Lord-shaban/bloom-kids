@@ -6,7 +6,19 @@
   "use strict";
 
   const BEST_KEY = "bloomkids_diff_best_v1";
-  const HINTS_PER_LEVEL = 3;
+
+  /* أقل مساحة ضغط لأي فرق (بوحدات الـ viewBox). في مراحل الصور فيه
+     فروق صغيرة زي المصاصة والنجمة، ودايرتها الحقيقية أصغر من إن
+     صباع على الموبايل يصيبها — فبنوسّع منطقة الضغط من غير ما
+     نكبّر الدايرة اللي بتترسم. لو اتنين قريبين، الأقرب بيكسب. */
+  const MIN_HIT = 22;
+
+  /* عدد التلميحات بيزيد مع عدد الفروق — مرحلة فيها ٩ فروق
+     مش زي واحدة فيها ٥ */
+  function hintsFor(scene) {
+    if (typeof scene.hints === "number") return scene.hints;
+    return Math.min(5, Math.max(3, Math.ceil(scene.diffs.length / 2)));
+  }
 
   /* ---------- عناصر الصفحة ---------- */
   const el = {
@@ -62,7 +74,8 @@
     level: 0,
     found: new Set(),
     misses: 0,
-    hints: HINTS_PER_LEVEL,
+    hints: 3,
+    hintsMax: 3,
     seconds: 0,
     timerId: null,
     running: false,
@@ -136,7 +149,8 @@
     state.started = true;
     state.found = new Set();
     state.misses = 0;
-    state.hints = HINTS_PER_LEVEL;
+    state.hintsMax = hintsFor(scene);
+    state.hints = state.hintsMax;
     state.seconds = 0;
     el.confetti.innerHTML = ""; // منظّفش كونفيتي المرحلة اللي فاتت فوق المرحلة الجديدة
 
@@ -184,13 +198,16 @@
     const p = svgPoint(svg, evt);
     const scene = SCENES[state.level];
 
-    // ندوّر على أقرب فرق لسه متلقاش
+    /* ندوّر على أقرب فرق لسه متلقاش.
+       منطقة الضغط = الأكبر بين دايرة الفرق و MIN_HIT، عشان الفروق
+       الصغيرة تفضل قابلة للضغط بالصباع. ولأننا بنختار الأقرب،
+       فرقين متلاصقين مش هيتلخبطوا في بعض. */
     let hit = null;
     let bestDist = Infinity;
     scene.diffs.forEach((d) => {
       if (state.found.has(d.id)) return;
       const dist = Math.hypot(p.x - d.x, p.y - d.y);
-      if (dist <= d.r && dist < bestDist) {
+      if (dist <= Math.max(d.r, MIN_HIT) && dist < bestDist) {
         bestDist = dist;
         hit = d;
       }
@@ -394,7 +411,7 @@
     el.winStats.innerHTML = `
       <span class="stat-chip"><b>${fmtTime(state.seconds)}</b> الوقت</span>
       <span class="stat-chip"><b>${toArabic(state.misses)}</b> محاولة غلط</span>
-      <span class="stat-chip"><b>${toArabic(HINTS_PER_LEVEL - state.hints)}</b> تلميح</span>`;
+      <span class="stat-chip"><b>${toArabic(state.hintsMax - state.hints)}</b> تلميح</span>`;
     el.winBest.textContent = isRecord
       ? "🏆 رقم قياسي جديد!"
       : `أحسن وقت ليك: ${fmtTime(best[scene.id])}`;
@@ -510,6 +527,20 @@
     el.soundBtn.textContent = state.soundOn ? "🔊" : "🔇";
     el.soundBtn.title = state.soundOn ? "اقفل الصوت" : "شغّل الصوت";
   });
+
+  /* تحميل صور المراحل في الخلفية بعد ما الصفحة تخلص، عشان اللاعب
+     ميستناش لما يفتح مرحلة بصور */
+  function warmPhotoAssets() {
+    SCENES.forEach((scene) => {
+      if (!scene.photo) return;
+      [scene.imgA, scene.imgB].forEach((src) => {
+        const img = new Image();
+        img.src = src;
+      });
+    });
+  }
+  if (document.readyState === "complete") warmPhotoAssets();
+  else window.addEventListener("load", warmPhotoAssets);
 
   /* شاشة اختيار المرحلة ظاهرة من الأول */
   openLevels();
