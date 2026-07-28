@@ -18,7 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css?v=8">
-  <link rel="stylesheet" href="css/meeting.css?v=1">
+  <link rel="stylesheet" href="css/meeting.css?v=2">
 </head>
 <body class="meet-page">
 
@@ -77,12 +77,37 @@
 
     <!-- ===== الأوضة ===== -->
     <section class="meet-stage" id="stage" hidden>
-      <div class="meet-bar">
+      <div class="meet-top">
         <span class="meet-room">🎧 <b id="roomLabel">…</b></span>
-        <span class="meet-note">صوت وشير سكرين — من غير كاميرا</span>
-        <button class="btn btn-ghost btn-sm" id="leaveBtn" type="button">↩ اخرج</button>
+        <span class="meet-count" id="peopleCount" hidden></span>
+        <span class="meet-status" id="meetStatus" hidden></span>
       </div>
+
       <div class="meet-frame" id="meet"></div>
+
+      <!-- شريط التحكم بتاعنا — شريط جيتسي متخفي بالكامل، عشان
+           الأطفال يلاقوا أزرار كبيرة وواضحة وبالعربي -->
+      <div class="meet-controls" role="group" aria-label="أزرار السيشن">
+        <button class="ctl ctl-mic" id="micBtn" type="button" aria-pressed="false">
+          <span class="ctl-icon" id="micIcon">🔇</span>
+          <span class="ctl-text" id="micText">افتح الميك</span>
+        </button>
+
+        <button class="ctl ctl-hand" id="handBtn" type="button" aria-pressed="false">
+          <span class="ctl-icon">🙋</span>
+          <span class="ctl-text" id="handText">ارفع إيدك</span>
+        </button>
+
+        <button class="ctl ctl-share" id="shareBtn" type="button" aria-pressed="false">
+          <span class="ctl-icon">🖥️</span>
+          <span class="ctl-text" id="shareText">شارك شاشتك</span>
+        </button>
+
+        <button class="ctl ctl-leave" id="hangupBtn" type="button">
+          <span class="ctl-icon">👋</span>
+          <span class="ctl-text">اخرج</span>
+        </button>
+      </div>
     </section>
 
     <!-- ===== لو حصلت مشكلة ===== -->
@@ -102,6 +127,6 @@
     </section>
   </main>
 
-  <script src="js/meeting.js?v=2"></script>
+  <script src="js/meeting.js?v=3"></script>
 </body>
 </html>

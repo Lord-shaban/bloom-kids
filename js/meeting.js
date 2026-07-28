@@ -2,11 +2,10 @@
    Bloom Kids — سيشن مباشرة
 
    الاجتماع نفسه شغّال بـ Jitsi Meet (مفتوح المصدر ومجاني) جوه
-   الصفحة، بس بإعدادات مخصوصة:
-     • مفيش كاميرا خالص — زرار الكاميرا مشال من الشريط
-       والفيديو بيبدأ مقفول، فمحدش يقدر يفتحها أصلاً.
-     • شير سكرين ورفع الإيد والشات شغّالين.
-     • الشريط فيه اللي محتاجينه بس، عشان يبقى بسيط على الأطفال.
+   الصفحة، بس شريط جيتسي متخفي بالكامل وإحنا بنرسم أزرارنا:
+     • ٤ أزرار كبيرة بالعربي بدل شريط فيه أيقونات كتير إنجليزي
+     • مفيش كاميرا خالص، ومفيش شات
+     • ألوان واضحة للطفل: الميك أحمر يعني مقفول وأخضر يعني مفتوح
 
    ملحوظة: أول واحد يفتح الأوضة (المُدرّس) لازم يسجّل دخول عند
    جيتسي مرة واحدة. الأطفال بيدخلوا باللينك على طول من غير أي
@@ -31,10 +30,22 @@
     room: document.getElementById("roomCode"),
     error: document.getElementById("gateError"),
     joinBtn: document.getElementById("joinBtn"),
+
     stage: document.getElementById("stage"),
     roomLabel: document.getElementById("roomLabel"),
-    leaveBtn: document.getElementById("leaveBtn"),
+    peopleCount: document.getElementById("peopleCount"),
+    status: document.getElementById("meetStatus"),
     frame: document.getElementById("meet"),
+
+    micBtn: document.getElementById("micBtn"),
+    micIcon: document.getElementById("micIcon"),
+    micText: document.getElementById("micText"),
+    handBtn: document.getElementById("handBtn"),
+    handText: document.getElementById("handText"),
+    shareBtn: document.getElementById("shareBtn"),
+    shareText: document.getElementById("shareText"),
+    hangupBtn: document.getElementById("hangupBtn"),
+
     fallback: document.getElementById("fallback"),
     fallbackMsg: document.getElementById("fallbackMsg"),
     fallbackLink: document.getElementById("fallbackLink"),
@@ -42,6 +53,7 @@
   };
 
   var api = null;
+  var handUp = false;
 
   /* ---------- مساعدات ---------- */
 
@@ -62,14 +74,26 @@
     el.error.hidden = false;
   }
 
-  function clearError() {
-    el.error.hidden = true;
-  }
-
   function show(section) {
     el.gate.hidden = section !== "gate";
     el.stage.hidden = section !== "stage";
     el.fallback.hidden = section !== "fallback";
+  }
+
+  var statusTimer = null;
+  function say(msg, keep) {
+    window.clearTimeout(statusTimer);
+    if (!msg) {
+      el.status.hidden = true;
+      return;
+    }
+    el.status.textContent = msg;
+    el.status.hidden = false;
+    if (!keep) {
+      statusTimer = window.setTimeout(function () {
+        el.status.hidden = true;
+      }, 3500);
+    }
   }
 
   /* ---------- تحميل مكتبة جيتسي عند الحاجة ---------- */
@@ -94,6 +118,41 @@
     return apiLoader;
   }
 
+  /* ---------- تحديث شكل الأزرار ---------- */
+  function setMic(muted) {
+    el.micBtn.setAttribute("aria-pressed", muted ? "false" : "true");
+    el.micIcon.textContent = muted ? "🔇" : "🎤";
+    el.micText.textContent = muted ? "افتح الميك" : "اقفل الميك";
+  }
+
+  function setHand(up) {
+    handUp = up;
+    el.handBtn.setAttribute("aria-pressed", up ? "true" : "false");
+    el.handText.textContent = up ? "نزّل إيدك" : "ارفع إيدك";
+  }
+
+  function setShare(on) {
+    el.shareBtn.setAttribute("aria-pressed", on ? "true" : "false");
+    el.shareText.textContent = on ? "وقّف المشاركة" : "شارك شاشتك";
+  }
+
+  function setCount(n) {
+    if (!n || n < 1) {
+      el.peopleCount.hidden = true;
+      return;
+    }
+    el.peopleCount.textContent = n === 1 ? "👤 لوحدك دلوقتي" : "👥 " + n + " في السيشن";
+    el.peopleCount.hidden = false;
+  }
+
+  function refreshCount() {
+    try {
+      setCount(api.getNumberOfParticipants());
+    } catch (_) {
+      /* لو المكتبة لسه بتجهّز، الرقم هيتحدّث في أول حدث جاي */
+    }
+  }
+
   /* ---------- فتح الأوضة ---------- */
   function join(room, name) {
     var fullRoom = ROOM_PREFIX + room;
@@ -101,6 +160,11 @@
     el.roomLabel.textContent = room;
     el.fallbackLink.href = "https://" + JITSI_DOMAIN + "/" + encodeURIComponent(fullRoom);
     show("stage");
+    setMic(true);
+    setHand(false);
+    setShare(false);
+    setCount(0);
+    say("بنوصّلك بالسيشن…", true);
 
     api = new window.JitsiMeetExternalAPI(JITSI_DOMAIN, {
       roomName: fullRoom,
@@ -115,39 +179,73 @@
 
         // ===== الصوت =====
         startWithAudioMuted: true,   // بيدخل ساكت، يفتح الميك لما يحب
-        disableAP: false,
 
-        // ===== الشريط: اللي محتاجينه بس =====
-        // مفيش "camera" ولا "toggle-camera" هنا، يعني الزرار
-        // نفسه مش موجود ومحدش يقدر يفتح كاميرا
-        toolbarButtons: [
-          "microphone",
-          "desktop",
-          "raisehand",
-          "chat",
-          "participants-pane",
-          "security",   // للمُدرّس: يقدر يحط باسورد أو يفعّل قاعة انتظار
-          "settings",
-          "hangup"
-        ],
+        // ===== شريط جيتسي متخفي بالكامل =====
+        // إحنا بنرسم أزرارنا في الصفحة، فمفيش داعي لشريطه
+        toolbarButtons: [],
 
-        prejoinConfig: { enabled: false },
-        disableDeepLinking: true,     // ميحاولش يفتح تطبيق الموبايل
+        // ===== تنضيف الواجهة للأطفال =====
+        disableReactions: true,        // مفيش إيموجي طايرة تشتت
+        disableChat: true,             // مفيش شات
+        disablePolls: true,
+        hideConferenceSubject: true,
+        hideConferenceTimer: true,
+        disableProfile: true,
         disableInviteFunctions: true,
         disableThirdPartyRequests: true,
         enableWelcomePage: false,
-        readOnlyName: false
+        prejoinConfig: { enabled: false },
+        disableDeepLinking: true,      // ميحاولش يفتح تطبيق الموبايل
+        notifications: []              // مفيش إشعارات إنجليزي فوق
       },
 
       interfaceConfigOverwrite: {
+        TOOLBAR_BUTTONS: [],           // نفس الحاجة للنسخ الأقدم
         SHOW_JITSI_WATERMARK: false,
         SHOW_BRAND_WATERMARK: false,
         SHOW_POWERED_BY: false,
         MOBILE_APP_PROMO: false,
         HIDE_INVITE_MORE_HEADER: true,
-        DISABLE_JOIN_LEAVE_NOTIFICATIONS: false,
-        TOOLBAR_ALWAYS_VISIBLE: true
+        DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
+        SHOW_CHROME_EXTENSION_BANNER: false
       }
+    });
+
+    /* ---- ربط الأزرار بحالة الاجتماع الحقيقية ----
+       بنسمع للأحداث بدل ما نفترض، عشان لو الحالة اتغيرت من برّه
+       (المُدرّس كتّم الكل مثلاً) الأزرار تفضل صح */
+    api.addListener("videoConferenceJoined", function () {
+      say("");
+      refreshCount();
+      try {
+        api.isAudioMuted().then(setMic);
+      } catch (_) {
+        setMic(true);
+      }
+    });
+
+    api.addListener("audioMuteStatusChanged", function (e) {
+      setMic(!!e.muted);
+    });
+
+    api.addListener("screenSharingStatusChanged", function (e) {
+      setShare(!!e.on);
+    });
+
+    api.addListener("raiseHandUpdated", function () {
+      // الحدث بيجي لكل المشاركين، فبنحدّث العدّاد بس
+      refreshCount();
+    });
+
+    api.addListener("participantJoined", refreshCount);
+    api.addListener("participantLeft", refreshCount);
+
+    api.addListener("micError", function () {
+      say("مش لاقيين الميك — اسمح للموقع باستخدام المايك من المتصفح 🎤", true);
+    });
+
+    api.addListener("errorOccurred", function (e) {
+      if (e && e.isFatal) say("حصلت مشكلة في الاتصال… جرّب تخرج وتدخل تاني.", true);
     });
 
     // اللاعب قفل المكالمة أو اتقفلت — نرجّعه لشاشة الدخول
@@ -164,15 +262,48 @@
       api = null;
     }
     el.frame.innerHTML = "";
+    say("");
     show("gate");
     el.joinBtn.disabled = false;
     el.joinBtn.textContent = "🎤 ادخل السيشن";
   }
 
+  /* ---------- الأزرار ---------- */
+  function command(name) {
+    if (!api) return;
+    try {
+      api.executeCommand(name);
+    } catch (_) {
+      say("الزرار ده مش شغال دلوقتي، جرّب تاني بعد ثانية.");
+    }
+  }
+
+  el.micBtn.addEventListener("click", function () {
+    command("toggleAudio");
+  });
+
+  el.handBtn.addEventListener("click", function () {
+    command("toggleRaiseHand");
+    setHand(!handUp);
+    say(handUp ? "إيدك مرفوعة ✋ استنى المدرّس ينده عليك" : "نزّلت إيدك");
+  });
+
+  el.shareBtn.addEventListener("click", function () {
+    command("toggleShareScreen");
+  });
+
+  el.hangupBtn.addEventListener("click", function () {
+    command("hangup");
+    // لو جيتسي مردش لأي سبب، نخرج بنفسنا بعد لحظة
+    window.setTimeout(function () {
+      if (api) leave();
+    }, 1200);
+  });
+
   /* ---------- الدخول ---------- */
   el.form.addEventListener("submit", function (evt) {
     evt.preventDefault();
-    clearError();
+    el.error.hidden = true;
 
     var name = el.name.value.trim();
     var room = cleanRoom(el.room.value);
@@ -213,7 +344,6 @@
       });
   });
 
-  el.leaveBtn.addEventListener("click", leave);
   el.fallbackBack.addEventListener("click", function () {
     show("gate");
   });

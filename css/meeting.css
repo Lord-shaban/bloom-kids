@@ -48,8 +48,6 @@
 }
 .field-error[hidden] { display: none; }
 
-.btn-block { width: 100%; }
-
 .gate-tips {
   display: grid; gap: 0.6rem; text-align: start;
   margin: 0 auto; max-width: 340px;
@@ -63,39 +61,94 @@
   display: grid; place-items: center; font-size: 1.05rem;
 }
 
-/* ============ الأوضة ============ */
-/* الاجتماع بياخد الشاشة كلها تحت الهيدر — نفس فكرة صفحة اللعبة */
+/* ============================================================
+   الأوضة — الصفحة كلها مساحة سيشن
+
+   شريط جيتسي نفسه متخفي بالكامل (toolbarButtons فاضية)، وإحنا
+   بنرسم أزرارنا تحت. كده الأطفال بيشوفوا ٤ أزرار كبيرة بالعربي
+   بدل شريط فيه ١٢ أيقونة إنجليزي.
+   ============================================================ */
+/* ٧٥px = ارتفاع الهيدر (مقاس في المتصفح) */
 .meet-stage {
-  display: flex; flex-direction: column;
-  height: calc(100vh - 78px);
-  height: calc(100dvh - 78px);
-  padding: 0.5rem;
+  display: flex; flex-direction: column; gap: 0.6rem;
+  height: calc(100vh - 75px);
+  height: calc(100dvh - 75px);
+  padding: 0.6rem 0.7rem 0.9rem;
 }
 .meet-stage[hidden] { display: none; }
 
-.meet-bar {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem;
-  justify-content: space-between;
-  padding: 0 0.3rem 0.5rem;
+/* ---- السطر اللي فوق ---- */
+.meet-top {
+  display: flex; flex-wrap: wrap; align-items: center;
+  justify-content: center; gap: 0.5rem;
+  min-height: 30px;
 }
 .meet-room {
   font-family: var(--font-head); font-weight: 800; color: var(--navy);
-  font-size: 1rem;
+  font-size: 0.98rem;
 }
-.meet-note {
+.meet-count {
   background: rgba(35, 168, 159, 0.14); color: var(--teal-dark);
-  border-radius: 99px; padding: 0.3rem 0.9rem;
-  font-weight: 700; font-size: 0.82rem;
+  border-radius: 99px; padding: 0.2rem 0.8rem;
+  font-weight: 800; font-size: 0.85rem;
 }
+.meet-count[hidden] { display: none; }
 
+.meet-status {
+  background: rgba(246, 169, 44, 0.18); color: #8a5a00;
+  border-radius: 99px; padding: 0.2rem 0.9rem;
+  font-weight: 800; font-size: 0.85rem;
+}
+.meet-status[hidden] { display: none; }
+
+/* ---- الاجتماع ---- */
 .meet-frame {
   flex: 1; min-height: 0;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   overflow: hidden;
-  background: var(--navy-deep, #272253);
+  background: var(--navy-deep);
   box-shadow: var(--shadow-lg);
 }
 .meet-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+/* ---- شريط التحكم بتاعنا ---- */
+.meet-controls {
+  display: flex; justify-content: center; flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.ctl {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.15rem;
+  min-width: 104px; padding: 0.55rem 1.1rem;
+  border: 3px solid transparent; border-radius: 20px;
+  font-family: var(--font-head); font-weight: 800;
+  cursor: pointer;
+  background: var(--white); color: var(--navy);
+  box-shadow: var(--shadow);
+  transition: transform 0.18s ease, background 0.18s ease,
+              color 0.18s ease, box-shadow 0.18s ease;
+}
+.ctl:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.ctl:active { transform: translateY(-1px); }
+.ctl:focus-visible { outline: 3px solid var(--purple); outline-offset: 3px; }
+.ctl:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+.ctl-icon { font-size: 1.55rem; line-height: 1; }
+.ctl-text { font-size: 0.82rem; }
+
+/* الميك: أحمر معناها مقفول، أخضر معناها مفتوح — لون واضح للطفل */
+.ctl-mic { background: rgba(239, 95, 124, 0.14); color: var(--pink-dark); border-color: rgba(239, 95, 124, 0.35); }
+.ctl-mic[aria-pressed="true"] { background: var(--green); color: var(--white); border-color: #6aa832; }
+
+/* الإيد المرفوعة: أصفر واضح */
+.ctl-hand[aria-pressed="true"] { background: var(--yellow); color: var(--navy-deep); border-color: #d98f14; }
+
+/* المشاركة شغالة: فيروزي */
+.ctl-share[aria-pressed="true"] { background: var(--teal); color: var(--white); border-color: var(--teal-dark); }
+
+.ctl-leave { background: var(--navy); color: var(--white); }
+.ctl-leave:hover { background: var(--pink-dark); }
 
 /* ============ شاشة الخطأ ============ */
 .meet-fallback { padding: 3rem 0; }
@@ -106,6 +159,17 @@
 @media (max-width: 700px) {
   .meet-gate { padding: 1.5rem 0 2.5rem; }
   .gate-card { padding: 1.5rem 1.1rem; }
-  .meet-bar { justify-content: center; }
-  .meet-note { display: none; }
+
+  /* مشاركة الشاشة مش شغالة على متصفحات الموبايل أصلاً */
+  .ctl-share { display: none; }
+
+  .ctl { min-width: 78px; padding: 0.45rem 0.7rem; }
+  .ctl-icon { font-size: 1.35rem; }
+  .ctl-text { font-size: 0.74rem; }
+}
+
+/* ============ تقليل الحركة ============ */
+@media (prefers-reduced-motion: reduce) {
+  .ctl { transition: none; }
+  .ctl:hover, .ctl:active { transform: none; }
 }
