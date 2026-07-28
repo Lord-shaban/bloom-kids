@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سيشن مباشرة | بلوم كيدز</title>
+  <meta name="description" content="ادخل سيشن بلوم كيدز المباشرة — صوت وشير سكرين، من غير كاميرا.">
+
+  <!-- مش عايزين الأوضة تتفهرس في جوجل -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#332d6e">
+
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
+  <link rel="apple-touch-icon" href="assets/images/logo.jpeg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css?v=8">
+  <link rel="stylesheet" href="css/meeting.css?v=1">
+</head>
+<body class="meet-page">
+
+  <!-- ===== الترويسة ===== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand" aria-label="بلوم كيدز — الرئيسية">
+        <img src="assets/images/logo.jpeg" alt="شعار بلوم كيدز" class="brand-logo">
+        <span class="brand-text">
+          <strong>Bloom Kids</strong>
+          <small>حكايات · لعب · نمو</small>
+        </span>
+      </a>
+      <a href="index.html" class="btn btn-ghost btn-sm">الموقع الرئيسي</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== شاشة الدخول ===== -->
+    <section class="meet-gate" id="gate">
+      <div class="container">
+        <div class="gate-card">
+          <span class="eyebrow">🎧 سيشن مباشرة</span>
+          <h1>ادخل <span class="hl hl-teal">السيشن</span></h1>
+          <p class="gate-sub">صوت بس — مفيش كاميرا خالص. تقدر تشارك شاشتك وترفع إيدك.</p>
+
+          <form class="gate-form" id="gateForm" novalidate>
+            <label class="field">
+              <span>اسمك</span>
+              <input type="text" id="displayName" placeholder="اسم الطفل" required
+                     autocomplete="name" maxlength="40">
+            </label>
+
+            <label class="field">
+              <span>كود السيشن</span>
+              <input type="text" id="roomCode" placeholder="مثال: bloom-1" required
+                     dir="ltr" autocomplete="off" maxlength="40">
+            </label>
+
+            <p class="field-error" id="gateError" hidden></p>
+
+            <button type="submit" class="btn btn-primary btn-lg btn-block" id="joinBtn">
+              🎤 ادخل السيشن
+            </button>
+          </form>
+
+          <ul class="gate-tips">
+            <li><span class="bg-teal">🎧</span> استخدم سماعة عشان الصوت يطلع أنضف</li>
+            <li><span class="bg-pink">🙋</span> ارفع إيدك لما تحب تتكلم</li>
+            <li><span class="bg-yellow">🖥️</span> زرار مشاركة الشاشة تحت في الشريط</li>
+            <li><span class="bg-purple">🔇</span> مفيش كاميرا — صوت بس</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== الأوضة ===== -->
+    <section class="meet-stage" id="stage" hidden>
+      <div class="meet-bar">
+        <span class="meet-room">🎧 <b id="roomLabel">…</b></span>
+        <span class="meet-note">صوت وشير سكرين — من غير كاميرا</span>
+        <button class="btn btn-ghost btn-sm" id="leaveBtn" type="button">↩ اخرج</button>
+      </div>
+      <div class="meet-frame" id="meet"></div>
+    </section>
+
+    <!-- ===== لو حصلت مشكلة ===== -->
+    <section class="meet-fallback" id="fallback" hidden>
+      <div class="container">
+        <div class="gate-card">
+          <h2 id="fallbackTitle">مش قادرين نفتح السيشن 😕</h2>
+          <p class="gate-sub" id="fallbackMsg">
+            يمكن النت عندك بيمنع الخدمة. جرّب تفتح الأوضة في تاب لوحدها.
+          </p>
+          <a class="btn btn-primary btn-lg" id="fallbackLink" href="#" target="_blank" rel="noopener">
+            افتح السيشن في تاب جديدة ↗
+          </a>
+          <button class="btn btn-ghost" id="fallbackBack" type="button">رجوع</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/meeting.js?v=2"></script>
+</body>
+</html>

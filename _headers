@@ -32,3 +32,10 @@
 
 /game
   X-Robots-Tag: noindex, nofollow
+
+# صفحة السيشن المباشرة: ملهاش لازمة في نتايج البحث
+/meeting.html
+  X-Robots-Tag: noindex, nofollow
+
+/meeting
+  X-Robots-Tag: noindex, nofollow

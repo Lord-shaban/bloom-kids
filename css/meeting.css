@@ -1,0 +1,111 @@
+/* ============================================================
+   Bloom Kids — صفحة السيشن المباشرة
+   بتكمّل على css/style.css (نفس المتغيرات والهوية)
+   ============================================================ */
+
+.meet-page { background: var(--cream); }
+
+/* ============ شاشة الدخول ============ */
+.meet-gate { padding: 2.5rem 0 3.5rem; }
+
+.gate-card {
+  width: min(520px, 100%);
+  margin: 0 auto;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 2rem 1.8rem;
+  text-align: center;
+}
+
+.gate-card h1 { font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 0.5rem; }
+.gate-card h2 { margin-bottom: 0.6rem; }
+.gate-sub { color: var(--ink-soft); font-weight: 600; margin-bottom: 1.5rem; }
+
+.gate-form { display: grid; gap: 0.9rem; margin-bottom: 1.4rem; text-align: start; }
+
+.field { display: grid; gap: 0.35rem; }
+.field > span {
+  font-family: var(--font-head); font-weight: 700;
+  font-size: 0.92rem; color: var(--navy);
+}
+.field input {
+  width: 100%; font-family: inherit; font-size: 1rem; font-weight: 600;
+  padding: 0.75rem 1rem; border-radius: var(--radius-sm);
+  border: 2.5px solid rgba(51, 45, 110, 0.15);
+  background: var(--cream); color: var(--navy);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.field input:focus {
+  outline: none; border-color: var(--teal); background: var(--white);
+}
+.field input::placeholder { color: rgba(51, 45, 110, 0.4); font-weight: 500; }
+
+.field-error {
+  color: var(--pink-dark); font-weight: 700; font-size: 0.9rem;
+  background: rgba(239, 95, 124, 0.1); border-radius: var(--radius-sm);
+  padding: 0.6rem 0.9rem; margin: 0;
+}
+.field-error[hidden] { display: none; }
+
+.btn-block { width: 100%; }
+
+.gate-tips {
+  display: grid; gap: 0.6rem; text-align: start;
+  margin: 0 auto; max-width: 340px;
+}
+.gate-tips li {
+  display: flex; align-items: center; gap: 0.7rem;
+  font-weight: 700; font-size: 0.92rem; color: var(--ink-soft);
+}
+.gate-tips span {
+  flex-shrink: 0; width: 34px; height: 34px; border-radius: 11px;
+  display: grid; place-items: center; font-size: 1.05rem;
+}
+
+/* ============ الأوضة ============ */
+/* الاجتماع بياخد الشاشة كلها تحت الهيدر — نفس فكرة صفحة اللعبة */
+.meet-stage {
+  display: flex; flex-direction: column;
+  height: calc(100vh - 78px);
+  height: calc(100dvh - 78px);
+  padding: 0.5rem;
+}
+.meet-stage[hidden] { display: none; }
+
+.meet-bar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem;
+  justify-content: space-between;
+  padding: 0 0.3rem 0.5rem;
+}
+.meet-room {
+  font-family: var(--font-head); font-weight: 800; color: var(--navy);
+  font-size: 1rem;
+}
+.meet-note {
+  background: rgba(35, 168, 159, 0.14); color: var(--teal-dark);
+  border-radius: 99px; padding: 0.3rem 0.9rem;
+  font-weight: 700; font-size: 0.82rem;
+}
+
+.meet-frame {
+  flex: 1; min-height: 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--navy-deep, #272253);
+  box-shadow: var(--shadow-lg);
+}
+.meet-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+/* ============ شاشة الخطأ ============ */
+.meet-fallback { padding: 3rem 0; }
+.meet-fallback[hidden] { display: none; }
+.meet-fallback .btn { margin: 0.3rem; }
+
+/* ============ الموبايل ============ */
+@media (max-width: 700px) {
+  .meet-gate { padding: 1.5rem 0 2.5rem; }
+  .gate-card { padding: 1.5rem 1.1rem; }
+  .meet-bar { justify-content: center; }
+  .meet-note { display: none; }
+}

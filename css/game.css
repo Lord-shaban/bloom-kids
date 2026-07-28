@@ -30,10 +30,6 @@
   --chrome: 172px;
 }
 
-/* زرار التكبير */
-.btn-teal { background: var(--teal); color: var(--white); box-shadow: 0 8px 20px rgba(35, 168, 159, 0.32); }
-.btn-teal:hover { background: var(--teal-dark); }
-
 /* ============ الهيكل ============ */
 .game-shell {
   width: 100%;
