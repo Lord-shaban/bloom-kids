@@ -6,6 +6,7 @@
   "use strict";
 
   const BEST_KEY = "bloomkids_diff_best_v1";
+  const SOLO_KEY = "bloomkids_diff_solo_v1";
 
   /* أقل مساحة ضغط لأي فرق (بوحدات الـ viewBox). في مراحل الصور فيه
      فروق صغيرة زي المصاصة والنجمة، ودايرتها الحقيقية أصغر من إن
@@ -42,6 +43,10 @@
     levelsTitle: document.getElementById("levelsTitle"),
     howList: document.getElementById("howList"),
     levelsBtn: document.getElementById("levelsBtn"),
+    zoomBtn: document.getElementById("zoomBtn"),
+    zoomLabel: document.getElementById("zoomLabel"),
+    flipBtn: document.getElementById("flipBtn"),
+    flipLabel: document.getElementById("flipLabel"),
     closeLevelsBtn: document.getElementById("closeLevelsBtn"),
     winLevelsBtn: document.getElementById("winLevelsBtn"),
     winOverlay: document.getElementById("winOverlay"),
@@ -81,7 +86,17 @@
     running: false,
     soundOn: true,
     started: false, // في مرحلة شغّالة ولا لسه محدش بدأ؟
+    solo: readSolo(), // وضع التكبير: صورة واحدة على الشاشة كلها
+    soloSide: "a",    // مين الظاهرة دلوقتي في وضع التكبير
   };
+
+  function readSolo() {
+    try {
+      return localStorage.getItem(SOLO_KEY) === "1";
+    } catch (_) {
+      return false;
+    }
+  }
 
   /* ============================================================
      الصوت — نغمات بسيطة من غير أي ملفات
@@ -162,6 +177,7 @@
     el.svgA = svgs[0];
     el.svgB = svgs[1];
     svgs.forEach((svg) => svg.addEventListener("click", onBoardClick));
+    applyView();
 
     el.levelName.textContent = `${scene.emoji} ${scene.title}`;
     el.sceneHint.textContent = scene.hint;
@@ -431,6 +447,56 @@
       el.confetti.innerHTML = "";
     }, 3600);
   }
+
+  /* ============================================================
+     وضع التكبير — صورة واحدة على الشاشة كلها
+
+     جنب بعض الصورتين بيوصلوا لأقصى حجم ممكن (عرض الشاشة هو اللي
+     بيحدّهم)، فاللي عايز يركّز أكتر بيشوف واحدة في المرة ويبدّل
+     بينهم — والفرق بيبان لوحده وهو بيرفرف بين الصورتين.
+     ============================================================ */
+  function applyView() {
+    document.body.classList.toggle("is-solo", state.solo);
+
+    const boards = el.boards.querySelectorAll(".board");
+    boards.forEach((b, i) => {
+      const isThisOne = state.soloSide === "a" ? i === 0 : i === 1;
+      b.classList.toggle("is-shown", !state.solo || isThisOne);
+    });
+
+    el.zoomLabel.textContent = state.solo ? "الصورتين" : "تكبير";
+    el.zoomBtn.title = state.solo ? "رجّع الصورتين جنب بعض" : "كبّر — صورة واحدة على الشاشة";
+    el.flipBtn.hidden = !state.solo;
+    el.flipLabel.textContent = state.soloSide === "a" ? "شوف التانية" : "شوف الأولى";
+  }
+
+  function flipSide() {
+    if (!state.solo) return;
+    state.soloSide = state.soloSide === "a" ? "b" : "a";
+    applyView();
+  }
+
+  el.zoomBtn.addEventListener("click", () => {
+    state.solo = !state.solo;
+    try {
+      localStorage.setItem(SOLO_KEY, state.solo ? "1" : "0");
+    } catch (_) {
+      /* لو الستوريدج مقفول، الوضع يشتغل عادي بس مش هيتفتكر */
+    }
+    applyView();
+    showToast(state.solo ? "🔍 صورة واحدة — بدّل بينهم بالزرار أو بالمسافة" : "🔍 رجعنا للصورتين", "hint");
+  });
+
+  el.flipBtn.addEventListener("click", flipSide);
+
+  /* المسافة والأسهم بيبدّلوا بين الصورتين في وضع التكبير */
+  document.addEventListener("keydown", (evt) => {
+    if (!state.solo || !state.running) return;
+    if (evt.key === " " || evt.key === "ArrowLeft" || evt.key === "ArrowRight") {
+      evt.preventDefault();
+      flipSide();
+    }
+  });
 
   /* ============================================================
      اختيار المرحلة — كل المراحل مفتوحة من الأول

@@ -22,12 +22,17 @@
    ============================================================ */
 .game-page {
   --board-ratio: 600 / 327;   /* نسبة الصور — لازم تتغير لو الصور اتغيرت */
-  --board-gap: 10px;
-  --page-pad: 10px;
+  --board-gap: 6px;
+  --page-pad: 6px;
+  --board-border: 3px;
   --header-h: 54px;
   /* الهيدر + شريط المعلومات + التقدّم + التلميح + الحشو (مقاسة في المتصفح) */
   --chrome: 172px;
 }
+
+/* زرار التكبير */
+.btn-teal { background: var(--teal); color: var(--white); box-shadow: 0 8px 20px rgba(35, 168, 159, 0.32); }
+.btn-teal:hover { background: var(--teal-dark); }
 
 /* ============ الهيكل ============ */
 .game-shell {
@@ -126,22 +131,45 @@
   gap: var(--board-gap);
 
   /* أكبر ارتفاع ممكن للصورة: الأصغر بين "اللي الشاشة بتسمح بيه بالطول"
-     و"اللي بيخلي الاتنين يدخلوا في العرض" (٢٠px = برواز الصورتين) */
+     و"اللي بيخلي الاتنين يدخلوا في العرض" (٤ × البرواز = بروازين) */
+  --frames: calc(4 * var(--board-border));
   --board-h: min(
     calc(100vh - var(--chrome)),
-    calc((100vw - var(--board-gap) - (2 * var(--page-pad)) - 20px) / 2 / (var(--board-ratio)))
+    calc((100vw - var(--board-gap) - (2 * var(--page-pad)) - var(--frames)) / 2 / (var(--board-ratio)))
   );
   --board-h: min(
     calc(100dvh - var(--chrome)),
-    calc((100vw - var(--board-gap) - (2 * var(--page-pad)) - 20px) / 2 / (var(--board-ratio)))
+    calc((100vw - var(--board-gap) - (2 * var(--page-pad)) - var(--frames)) / 2 / (var(--board-ratio)))
   );
 }
+
+/* ---- وضع التكبير: صورة واحدة بس، بتاخد الشاشة كلها ----
+   جنب بعض الصورتين وصلوا أقصى حجم ممكن (العرض هو اللي بيحدّهم)،
+   فالطريقة الوحيدة لتكبير أكتر إن اللاعب يشوف واحدة في المرة
+   ويبدّل بينهم — ودي كمان بتسهّل المقارنة لأن الفرق بيـ"يرفرف". */
+.is-solo .board { display: none; }
+.is-solo .board.is-shown { display: block; }
+.is-solo .scene-hint { display: none; }
+.is-solo .game-boards {
+  --board-h: min(
+    calc(100vh - var(--chrome-solo)),
+    calc((100vw - (2 * var(--page-pad)) - (2 * var(--board-border))) / (var(--board-ratio)))
+  );
+  --board-h: min(
+    calc(100dvh - var(--chrome-solo)),
+    calc((100vw - (2 * var(--page-pad)) - (2 * var(--board-border))) / (var(--board-ratio)))
+  );
+}
+.game-page { --chrome-solo: 156px; }   /* من غير سطر التلميح — مقاسة في المتصفح */
+
+/* اسم الصورة بيبقى أوضح في وضع التكبير عشان اللاعب يعرف هو فين */
+.is-solo .board-tag { font-size: 0.95rem; padding: 0.3rem 1rem; }
 
 .board {
   position: relative; margin: 0;
   flex: 0 0 auto;                     /* الحجم بييجي من الصورة اللي جوه */
   border-radius: var(--radius-sm);
-  border: 5px solid var(--white);
+  border: var(--board-border) solid var(--white);
   box-shadow: var(--shadow);
   background: var(--white);
   overflow: hidden;
