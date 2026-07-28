@@ -19,7 +19,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css?v=7">
-  <link rel="stylesheet" href="css/game.css?v=4">
+  <link rel="stylesheet" href="css/game.css?v=5">
 
   <!-- صور مراحل الصور بتتحمّل في الخلفية من js/game.js بعد ما الصفحة
        تخلص، مش بـ preload، عشان مايتأخرش ظهور الصفحة نفسها -->
@@ -41,19 +41,9 @@
   </header>
 
   <main>
-    <!-- ===== العنوان ===== -->
-    <section class="game-hero">
-      <div class="hero-doodles" aria-hidden="true">
-        <svg class="doodle doodle-g1" viewBox="0 0 24 24"><path d="M12 2l2.4 6.9L21 11l-6.6 2.1L12 20l-2.4-6.9L3 11l6.6-2.1z"/></svg>
-        <svg class="doodle doodle-g2" viewBox="0 0 24 24"><path d="M4 20C4 10 12 4 20 4c0 8-6 16-16 16z"/></svg>
-        <svg class="doodle doodle-g3" viewBox="0 0 24 24"><path d="M12 21s-8-5.3-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.7-8 11-8 11z"/></svg>
-      </div>
-      <div class="container">
-        <span class="eyebrow">🎮 لعبة بلوم كيدز</span>
-        <h1>اكتشف <span class="hl hl-teal">الفروق</span></h1>
-        <p>الصورتين شبه بعض… بس فيه فروق مخبّية! تقدر تلاقيهم كلهم؟</p>
-      </div>
-    </section>
+    <!-- العنوان مخفي بصرياً بس موجود للقارئ الصوتي — الصفحة كلها
+         مساحة لعب، والصورتين لازم ياخدوا الشاشة كلها -->
+    <h1 class="sr-only">اكتشف الفروق — لعبة بلوم كيدز</h1>
 
     <!-- ===== اللعبة ===== -->
     <div class="game-shell">
@@ -72,11 +62,17 @@
         </div>
 
         <div class="hud-group">
+          <!-- الكلام جوه .btn-label بيختفي على الموبايل وتفضل الأيقونة بس،
+               عشان الشريط ياخد أقل مساحة ممكنة وتفضل الشاشة للصور -->
           <button class="btn btn-yellow btn-sm" id="hintBtn" type="button">
-            💡 تلميح (<span id="hintCount">٣</span>)
+            💡 <span class="btn-label">تلميح</span> (<span id="hintCount">٣</span>)
           </button>
-          <button class="btn btn-ghost btn-sm" id="levelsBtn" type="button">🗂️ المراحل</button>
-          <button class="btn btn-ghost btn-sm" id="restartBtn" type="button">🔄 من الأول</button>
+          <button class="btn btn-ghost btn-sm" id="levelsBtn" type="button">
+            🗂️ <span class="btn-label">المراحل</span>
+          </button>
+          <button class="btn btn-ghost btn-sm" id="restartBtn" type="button">
+            🔄 <span class="btn-label">من الأول</span>
+          </button>
           <button class="btn-icon" id="soundBtn" type="button" aria-pressed="true" title="اقفل الصوت">🔊</button>
         </div>
       </div>
@@ -91,11 +87,6 @@
       <!-- الصورتين -->
       <div class="game-boards" id="boards"></div>
     </div>
-
-    <p class="game-foot">
-      عجبتك اللعبة؟ اعرف أكتر عن سيشنز بلوم كيدز من
-      <a href="index.html">الموقع الرئيسي</a> 🌱
-    </p>
   </main>
 
   <!-- ===== شاشة البداية / اختيار المرحلة ===== -->
@@ -136,7 +127,7 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="confetti" id="confetti" aria-hidden="true"></div>
 
-  <script src="js/game-scenes.js?v=4"></script>
-  <script src="js/game.js?v=5"></script>
+  <script src="js/game-scenes.js?v=5"></script>
+  <script src="js/game.js?v=6"></script>
 </body>
 </html>

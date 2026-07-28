@@ -5,31 +5,52 @@
 
 .game-page { background: var(--cream); }
 
-/* ============ الترويسة الصغيرة ============ */
-.game-hero {
-  position: relative;
-  text-align: center;
-  padding: 2.4rem 0 1.4rem;
-  overflow: hidden;
+/* عنوان للقارئ الصوتي بس — مش بيبان على الشاشة */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
-.game-hero h1 { font-size: clamp(1.6rem, 3.6vw, 2.5rem); margin-bottom: 0.4rem; }
-.game-hero p { color: var(--ink-soft); font-weight: 600; }
 
-.game-hero .doodle { opacity: 0.45; }
-.doodle-g1 { width: 30px; color: var(--yellow); top: 14%; right: 8%; }
-.doodle-g2 { width: 26px; color: var(--teal); top: 30%; left: 9%; animation-delay: 1.1s; }
-.doodle-g3 { width: 22px; color: var(--pink); bottom: 12%; left: 22%; animation-delay: 2s; }
+/* ============================================================
+   وضع التركيز — الصفحة كلها مساحة لعب
+
+   الفكرة: نحسب أكبر ارتفاع ممكن للصورة بحيث تحقق شرطين مع بعض:
+     ١) الاتنين مع بعض ميعدّوش عرض الشاشة
+     ٢) الصورة ميعدّش الارتفاع الفاضي بعد الهيدر والشريط
+   وبنسيب aspect-ratio يحسب العرض من الارتفاع، عشان الصورتين
+   يطلعوا أكبر حاجة ممكنة من غير ما حد منهم يتقص أو يحصل سكرول.
+   ============================================================ */
+.game-page {
+  --board-ratio: 600 / 327;   /* نسبة الصور — لازم تتغير لو الصور اتغيرت */
+  --board-gap: 10px;
+  --page-pad: 10px;
+  --header-h: 54px;
+  /* الهيدر + شريط المعلومات + التقدّم + التلميح + الحشو (مقاسة في المتصفح) */
+  --chrome: 172px;
+}
 
 /* ============ الهيكل ============ */
 .game-shell {
-  width: min(1180px, 94%);
-  margin: 0 auto 3.5rem;
+  width: 100%;
+  margin: 0;
+  /* بتملا باقي الشاشة تحت الهيدر عشان الصورتين يتظبطوا في النص
+     ومايفضلش فراغ أبيض تحتيهم */
+  min-height: calc(100vh - var(--header-h));
+  min-height: calc(100dvh - var(--header-h));
+  display: flex;
+  flex-direction: column;
   background: var(--white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
-  padding: 1.2rem 1.2rem 1.6rem;
+  padding: 0.55rem var(--page-pad) 0.7rem;
   position: relative;
 }
+
+/* هيدر أنحف وبعرض الشاشة كلها على صفحة اللعبة، عشان يمشي مع
+   الصور اللي بقت full-bleed ويفضل مساحة أكبر ليها */
+.game-page .site-header .container { width: 100%; padding-inline: var(--page-pad); }
+.game-page .header-inner { padding-block: 0.3rem; }
+.game-page .brand-logo { width: 38px; height: 38px; border-width: 2px; }
+.game-page .brand-text strong { font-size: 1rem; }
+.game-page .brand-text small { font-size: 0.72rem; }
 
 /* ============ شريط المعلومات ============ */
 .game-hud {
@@ -82,8 +103,8 @@
 
 /* شريط التقدّم */
 .progress-track {
-  height: 9px; background: rgba(51, 45, 110, 0.1);
-  border-radius: 99px; overflow: hidden; margin-bottom: 1rem;
+  height: 8px; background: rgba(51, 45, 110, 0.1);
+  border-radius: 99px; overflow: hidden; margin-bottom: 0.45rem;
 }
 .progress-bar {
   height: 100%; width: 0%; border-radius: 99px;
@@ -93,14 +114,32 @@
 
 .scene-hint {
   text-align: center; color: var(--ink-soft); font-weight: 700;
-  font-size: 0.94rem; margin-bottom: 1rem;
+  font-size: 0.9rem; margin-bottom: 0.5rem;
 }
 
 /* ============ الصورتين ============ */
-.game-boards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+.game-boards {
+  display: flex;
+  flex: 1;                    /* تاخد باقي المساحة وتتظبط في نصها */
+  justify-content: center;
+  align-items: center;
+  gap: var(--board-gap);
+
+  /* أكبر ارتفاع ممكن للصورة: الأصغر بين "اللي الشاشة بتسمح بيه بالطول"
+     و"اللي بيخلي الاتنين يدخلوا في العرض" (٢٠px = برواز الصورتين) */
+  --board-h: min(
+    calc(100vh - var(--chrome)),
+    calc((100vw - var(--board-gap) - (2 * var(--page-pad)) - 20px) / 2 / (var(--board-ratio)))
+  );
+  --board-h: min(
+    calc(100dvh - var(--chrome)),
+    calc((100vw - var(--board-gap) - (2 * var(--page-pad)) - 20px) / 2 / (var(--board-ratio)))
+  );
+}
 
 .board {
   position: relative; margin: 0;
+  flex: 0 0 auto;                     /* الحجم بييجي من الصورة اللي جوه */
   border-radius: var(--radius-sm);
   border: 5px solid var(--white);
   box-shadow: var(--shadow);
@@ -109,7 +148,15 @@
   cursor: crosshair;
   outline: 3px solid rgba(51, 45, 110, 0.08);
 }
-.board svg.scene { width: 100%; height: auto; display: block; touch-action: manipulation; }
+
+/* الصورة هي اللي بتحدد المقاس: ارتفاع محسوب + النسبة تجيب العرض */
+.board svg.scene {
+  display: block;
+  height: var(--board-h);
+  width: auto;
+  aspect-ratio: var(--board-ratio);
+  touch-action: manipulation;
+}
 
 /* مراحل الصور: منع سحب الصورة أو ظهور قائمة "حفظ الصورة" وسط اللعب */
 .board { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
@@ -348,25 +395,46 @@
   100% { transform: translateY(105vh) rotate(680deg); opacity: 0.9; }
 }
 
-/* ============ الفوتر ============ */
-.game-foot {
-  text-align: center; padding: 0 0 2.5rem;
-  color: var(--ink-soft); font-weight: 600; font-size: 0.9rem;
-}
-.game-foot a { color: var(--teal-dark); font-weight: 800; }
-.game-foot a:hover { text-decoration: underline; }
-
 /* ============ الموبايل ============ */
 @media (max-width: 900px) {
-  .game-boards { grid-template-columns: 1fr; gap: 0.9rem; }
-  .game-shell { padding: 1rem 0.8rem 1.3rem; }
-  .game-hud { justify-content: center; }
-  .hud-level { width: 100%; justify-content: center; }
+  /* شريط معلومات مضغوط: الأيقونات من غير كلام، وكل حاجة أصغر —
+     كل بكسل بنوفّره هنا بيروح للصور */
+  .btn-label { display: none; }
+
+  .game-page { --board-gap: 8px; --page-pad: 8px; }
+
+  .game-hud { justify-content: center; gap: 0.4rem; margin-bottom: 0.5rem; }
+  .hud-level { font-size: 0.92rem; gap: 0.4rem; }
+  .hud-pill { font-size: 0.82rem; padding: 0.32rem 0.7rem; }
+  .hud-pill b { font-size: 0.92rem; }
+  .btn-sm { padding: 0.4rem 0.7rem; }
+  .btn-icon { width: 32px; height: 32px; }
+  .scene-hint { font-size: 0.8rem; margin-bottom: 0.4rem; }
+  .toast { font-size: 0.88rem; bottom: 14px; }
 }
 
-@media (max-width: 480px) {
-  .hud-pill { font-size: 0.82rem; padding: 0.35rem 0.75rem; }
-  .toast { font-size: 0.88rem; bottom: 14px; }
+/* على الشاشات القصيرة سطر التلميح بياخد سطرين ويزحم الصور — نشيله،
+   والتلميح الأساسي موجود أصلاً في زرار 💡 */
+@media (max-height: 720px) {
+  .scene-hint { display: none; }
+}
+
+/* الصورتين فوق بعض في الوضع الطولي بس — في الوضع العرضي
+   يفضلوا جنب بعض عشان الشاشة تبقى واطية */
+@media (max-width: 900px) and (orientation: portrait) {
+  .game-page { --chrome: 200px; }
+
+  .game-boards { flex-direction: column; }
+  .game-boards {
+    --board-h: min(
+      calc((100vh - var(--chrome) - var(--board-gap)) / 2 - 10px),
+      calc((100vw - (2 * var(--page-pad)) - 10px) / (var(--board-ratio)))
+    );
+    --board-h: min(
+      calc((100dvh - var(--chrome) - var(--board-gap)) / 2 - 10px),
+      calc((100vw - (2 * var(--page-pad)) - 10px) / (var(--board-ratio)))
+    );
+  }
 }
 
 /* ============ تقليل الحركة ============ */
