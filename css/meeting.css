@@ -61,6 +61,38 @@
   display: grid; place-items: center; font-size: 1.05rem;
 }
 
+/* ---- ركن المدرّس ---- */
+.host-box {
+  margin-top: 1.3rem; text-align: start;
+  background: var(--cream); border-radius: var(--radius-sm);
+  border: 2px dashed rgba(51, 45, 110, 0.18);
+  padding: 0.9rem 1.1rem;
+}
+.host-box > summary {
+  cursor: pointer; list-style: none;
+  font-family: var(--font-head); font-weight: 800; color: var(--navy);
+  font-size: 0.98rem; text-align: center;
+}
+.host-box > summary::-webkit-details-marker { display: none; }
+.host-box[open] > summary { margin-bottom: 0.9rem; }
+
+.host-steps {
+  list-style: decimal; padding-inline-start: 1.3rem;
+  display: grid; gap: 0.4rem; margin-bottom: 1rem;
+  color: var(--ink-soft); font-weight: 600; font-size: 0.9rem;
+}
+.host-steps b { color: var(--navy); }
+
+.share-field { margin: 0.9rem 0 0.5rem; }
+.share-field input { font-size: 0.85rem; background: var(--white); }
+
+.host-note {
+  color: var(--ink-soft); font-weight: 600;
+  font-size: 0.82rem; margin-top: 0.7rem; text-align: center;
+}
+
+.host-box .btn { margin-bottom: 0.4rem; }
+
 /* ============================================================
    الأوضة — الصفحة كلها مساحة سيشن
 

@@ -46,6 +46,11 @@
     shareText: document.getElementById("shareText"),
     hangupBtn: document.getElementById("hangupBtn"),
 
+    hostBox: document.getElementById("hostBox"),
+    hostBtn: document.getElementById("hostBtn"),
+    shareLink: document.getElementById("shareLink"),
+    copyBtn: document.getElementById("copyBtn"),
+
     fallback: document.getElementById("fallback"),
     fallbackMsg: document.getElementById("fallbackMsg"),
     fallbackLink: document.getElementById("fallbackLink"),
@@ -166,6 +171,11 @@
     setCount(0);
     say("بنوصّلك بالسيشن…", true);
 
+    /* لو عدّت ١٢ ثانية ومدخلناش، غالبًا المدرّس لسه مفتحش الأوضة */
+    var waitTimer = window.setTimeout(function () {
+      say("مستني المدرّس يفتح السيشن… سيب الصفحة مفتوحة 🙂", true);
+    }, 12000);
+
     api = new window.JitsiMeetExternalAPI(JITSI_DOMAIN, {
       roomName: fullRoom,
       parentNode: el.frame,
@@ -215,6 +225,7 @@
        بنسمع للأحداث بدل ما نفترض، عشان لو الحالة اتغيرت من برّه
        (المُدرّس كتّم الكل مثلاً) الأزرار تفضل صح */
     api.addListener("videoConferenceJoined", function () {
+      window.clearTimeout(waitTimer);
       say("");
       refreshCount();
       try {
@@ -348,6 +359,61 @@
     show("gate");
   });
 
+  /* ============================================================
+     ركن المدرّس
+
+     جيتسي بيطلب تسجيل دخول من أول واحد يفتح الأوضة، وتسجيل
+     الدخول ده مش بيشتغل جوه iframe (المتصفح بيمنع نافذة جوجل).
+     عشان كده المدرّس بيفتح الأوضة في تاب لوحدها عند جيتسي —
+     هناك بيسجّل دخول عادي ويبقى هو الهوست. الأطفال بيدخلوا من
+     صفحتنا على طول من غير أي تسجيل.
+     ============================================================ */
+  function roomUrls() {
+    var code = cleanRoom(el.room.value) || DEFAULT_ROOM;
+    return {
+      code: code,
+      host: "https://" + JITSI_DOMAIN + "/" + encodeURIComponent(ROOM_PREFIX + code),
+      kids: location.origin + location.pathname + "?room=" + encodeURIComponent(code),
+    };
+  }
+
+  function refreshShareLink() {
+    el.shareLink.value = roomUrls().kids;
+  }
+
+  el.room.addEventListener("input", refreshShareLink);
+
+  el.hostBtn.addEventListener("click", function () {
+    window.open(roomUrls().host, "_blank", "noopener");
+  });
+
+  function copyLabel(text, ms) {
+    el.copyBtn.textContent = text;
+    window.setTimeout(function () {
+      el.copyBtn.textContent = "📋 انسخ اللينك";
+    }, ms);
+  }
+
+  el.copyBtn.addEventListener("click", function () {
+    /* بنحدّد اللينك في كل الأحوال — كده حتى لو النسخ التلقائي
+       اتمنع (مفيش https أو المتصفح رافض)، اللينك جاهز لـ Ctrl+C */
+    el.shareLink.focus();
+    el.shareLink.select();
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(roomUrls().kids).then(
+        function () {
+          copyLabel("✅ اتنسخ!", 1800);
+        },
+        function () {
+          copyLabel("انسخه بإيدك (Ctrl+C)", 2600);
+        }
+      );
+    } else {
+      copyLabel("انسخه بإيدك (Ctrl+C)", 2600);
+    }
+  });
+
   /* ---------- التجهيز الأولي ---------- */
   (function init() {
     var params = new URLSearchParams(location.search);
@@ -359,6 +425,12 @@
     } catch (_) {
       /* عادي */
     }
+
+    refreshShareLink();
+
+    /* لو اللينك جاي بكود جاهز، يبقى ده طفل داخل السيشن —
+       نقفل ركن المدرّس عشان الشاشة تفضل بسيطة قدامه */
+    if (params.get("room")) el.hostBox.open = false;
 
     (el.name.value ? el.room : el.name).focus();
   })();

@@ -18,7 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css?v=8">
-  <link rel="stylesheet" href="css/meeting.css?v=2">
+  <link rel="stylesheet" href="css/meeting.css?v=3">
 </head>
 <body class="meet-page">
 
@@ -68,9 +68,36 @@
           <ul class="gate-tips">
             <li><span class="bg-teal">🎧</span> استخدم سماعة عشان الصوت يطلع أنضف</li>
             <li><span class="bg-pink">🙋</span> ارفع إيدك لما تحب تتكلم</li>
-            <li><span class="bg-yellow">🖥️</span> زرار مشاركة الشاشة تحت في الشريط</li>
             <li><span class="bg-purple">🔇</span> مفيش كاميرا — صوت بس</li>
           </ul>
+
+          <!-- ركن المدرّس: لازم يفتح الأوضة من عند جيتسي مباشرةً،
+               لأن تسجيل الدخول بجوجل مش بيشتغل جوه iframe -->
+          <details class="host-box" id="hostBox">
+            <summary>👩‍🏫 أنا المدرّس</summary>
+
+            <ol class="host-steps">
+              <li>اضغط <b>افتح السيشن كمدرّس</b> — هتتفتح تاب جديدة عند جيتسي.</li>
+              <li>سجّل دخول بجوجل (مرة واحدة بس، المتصفح بيفتكرها).</li>
+              <li>سيب التاب دي مفتوحة — دي السيشن، وانت الهوست فيها.</li>
+              <li>ابعت اللينك اللي تحت للأطفال على واتساب.</li>
+            </ol>
+
+            <button class="btn btn-teal btn-block" id="hostBtn" type="button">
+              👩‍🏫 افتح السيشن كمدرّس ↗
+            </button>
+
+            <label class="field share-field">
+              <span>لينك الأطفال</span>
+              <input type="text" id="shareLink" dir="ltr" readonly>
+            </label>
+            <button class="btn btn-ghost btn-block" id="copyBtn" type="button">
+              📋 انسخ اللينك
+            </button>
+            <p class="host-note">
+              الأطفال مش محتاجين أي تسجيل — بيفتحوا اللينك ويكتبوا اسمهم وبس.
+            </p>
+          </details>
         </div>
       </div>
     </section>
@@ -127,6 +154,6 @@
     </section>
   </main>
 
-  <script src="js/meeting.js?v=3"></script>
+  <script src="js/meeting.js?v=5"></script>
 </body>
 </html>
