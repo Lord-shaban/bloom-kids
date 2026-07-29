@@ -271,7 +271,23 @@
 
 /* الميك: أحمر معناها مقفول، أخضر معناها مفتوح — لون واضح للطفل */
 .ctl-mic { background: rgba(239, 95, 124, 0.14); color: var(--pink-dark); border-color: rgba(239, 95, 124, 0.35); }
-.ctl-mic[aria-pressed="true"] { background: var(--green); color: var(--white); border-color: #6aa832; }
+.ctl-mic[aria-pressed="true"],
+.ctl-mic.is-live { background: var(--green); color: var(--white); border-color: #6aa832; }
+
+/* الميك مفتوح — حلقة بتنبض حواليه.
+   الأطفال بيتلخبطوا في فرق الإيموچي لوحده، فالحركة دي بتقول
+   "صوتك طالع دلوقتي" من غير ما حد يبص على الأيقونة */
+.ctl-mic.is-live { animation: mic-live 1.6s ease-in-out infinite; }
+@keyframes mic-live {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(125, 194, 66, 0.55), var(--shadow); }
+  50%      { box-shadow: 0 0 0 9px rgba(125, 194, 66, 0), var(--shadow); }
+}
+.ctl-hand.is-live { background: var(--yellow); color: var(--navy-deep); border-color: #d98f14; }
+.ctl-share.is-live { background: var(--teal); color: var(--white); border-color: var(--teal-dark); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ctl-mic.is-live { animation: none; }
+}
 
 /* الإيد المرفوعة: أصفر واضح */
 .ctl-hand[aria-pressed="true"] { background: var(--yellow); color: var(--navy-deep); border-color: #d98f14; }

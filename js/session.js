@@ -205,7 +205,12 @@
   }
 
   function micLiveFor(p) {
-    if (room && p === room.localParticipant) return !!p.isMicrophoneEnabled;
+    /* بنسأل نفس المصدر اللي الزرار بيسأله، عشان الكارت والزرار
+       ما يقولوش كلامين مختلفين */
+    if (room && p === room.localParticipant) {
+      var mine = micPub();
+      return !!mine && !mine.isMuted;
+    }
     var pubs = p.audioTrackPublications;
     if (!pubs || !pubs.size) return false;
     var live = false;
@@ -323,6 +328,7 @@
       }
     });
 
+    syncButtons();
     if (IS_HOST) renderPanel();
   }
 
@@ -338,30 +344,93 @@
     });
   }
 
+  /* نبضة أمان كل ثانية: بتراجع الشكل على الحقيقة.
+     الرسم بقى تحديث جزئي، يعني لو مفيش حاجة اتغيّرت النبضة دي
+     ما بتلمسش الصفحة أصلاً — تقريباً ببلاش. وفايدتها إن أي حدث
+     يضيع من الشبكة ما يسيبناش بزرار غلط على طول. */
+  var beat = null;
+  function startHeartbeat() {
+    if (beat) return;
+    beat = window.setInterval(function () {
+      if (room) renderPeople();
+    }, 1000);
+  }
+  function stopHeartbeat() {
+    if (!beat) return;
+    window.clearInterval(beat);
+    beat = null;
+  }
+
   function setCount(n) {
     if (!n) { el.peopleCount.hidden = true; return; }
     el.peopleCount.textContent = n === 1 ? "👤 لوحدك دلوقتي" : "👥 " + n + " في السيشن";
     el.peopleCount.hidden = false;
   }
 
-  /* ---------- حالة الأزرار ---------- */
+  /* ============================================================
+     حالة الأزرار
+
+     كل زرار بيفتكر آخر شكل اتعرض عليه. كده نقدر نناديه في كل
+     إطار من غير ما نلمس الصفحة من غير لزوم، والأهم إنه بيتصلّح
+     لوحده لو أي حدث ضاع أو جه بالمقلوب.
+     ============================================================ */
+  var micShown = null;
+  var handShown = null;
+  var shareShown = null;
+
   function setMic(on) {
+    on = !!on;
+    if (micShown === on) return;
+    micShown = on;
     el.micBtn.setAttribute("aria-pressed", on ? "true" : "false");
+    el.micBtn.classList.toggle("is-live", on);
     el.micIcon.textContent = on ? "🎤" : "🔇";
     el.micText.textContent = on ? "اقفل الميك" : "افتح الميك";
   }
 
   function setHand(up) {
+    up = !!up;
     handUp = up;
-    if (!el.handBtn) return;
+    if (!el.handBtn || handShown === up) return;
+    handShown = up;
     el.handBtn.setAttribute("aria-pressed", up ? "true" : "false");
+    el.handBtn.classList.toggle("is-live", up);
     el.handText.textContent = up ? "نزّل إيدك" : "ارفع إيدك";
   }
 
   function setShare(on) {
-    if (!el.shareBtn) return;
+    on = !!on;
+    if (!el.shareBtn || shareShown === on) return;
+    shareShown = on;
     el.shareBtn.setAttribute("aria-pressed", on ? "true" : "false");
+    el.shareBtn.classList.toggle("is-live", on);
     el.shareText.textContent = on ? "وقّف المشاركة" : "شارك شاشتك";
+  }
+
+  /* ============================================================
+     مزامنة الأزرار مع الحقيقة
+
+     ده المصدر الوحيد لشكل الأزرار. بنسأل التراك المنشور نفسه:
+     إنت مكتوم ولا لأ؟ وبنرسم على أساس رده — مش على أساس إن
+     حدث معيّن وصلنا.
+
+     الاستثناء الوحيد: وإحنا لسه بننفّذ أمر المستخدم، بنعرض
+     اللي هو طالبه عشان الضغطة تبان لحظية.
+     ============================================================ */
+  function syncButtons() {
+    if (!room) return;
+
+    if (micBusy) {
+      setMic(micWanted);
+    } else {
+      var pub = micPub();
+      micWanted = !!pub && !pub.isMuted;
+      setMic(micWanted);
+    }
+
+    if (el.shareBtn && !shareBusy) {
+      setShare(!!room.localParticipant.isScreenShareEnabled);
+    }
   }
 
   /* ============================================================
@@ -531,8 +600,8 @@
     room
       .on(E.Connected, function () {
         say("");
-        setMic(false);
         renderPeople();
+        startHeartbeat();
       })
       .on(E.ParticipantConnected, scheduleRender)
       .on(E.ParticipantDisconnected, function (p) {
@@ -598,14 +667,10 @@
         scheduleRender();
       })
 
-      .on(E.TrackMuted, function (pub, participant) {
-        if (isMyMic(pub, participant)) { micWanted = false; setMic(false); }
-        scheduleRender();
-      })
-      .on(E.TrackUnmuted, function (pub, participant) {
-        if (isMyMic(pub, participant)) { micWanted = true; setMic(true); }
-        scheduleRender();
-      })
+      /* مش بنغيّر شكل الزرار من هنا — بنطلب رسمة، والرسمة
+         بتقرا الحقيقة من التراك نفسه */
+      .on(E.TrackMuted, scheduleRender)
+      .on(E.TrackUnmuted, scheduleRender)
       .on(E.ParticipantPermissionsChanged, scheduleRender)
 
       .on(E.Reconnecting, function () { say("النت اتهزهز… بنرجّعك 🔄", true); })
@@ -619,7 +684,6 @@
 
       .on(E.LocalTrackPublished, function (pub) {
         if (isScreenPub(pub) && pub.kind === "video") {
-          setShare(true);
           showShare(null);
           if (pub.track) {
             /* contentHint = motion بيقول للترميز: الأهم إن الحركة
@@ -629,9 +693,6 @@
             if (mst) try { mst.contentHint = "motion"; } catch (_) {}
             pub.track.attach(el.shareVideo);
           }
-        } else if (pub.kind === "audio" && pub.source === "microphone") {
-          micWanted = !pub.isMuted;
-          setMic(micWanted);
         }
         scheduleRender();
       })
@@ -639,12 +700,8 @@
         if (isScreenPub(pub)) {
           if (pub.kind === "video") {
             if (pub.track) try { pub.track.detach(el.shareVideo); } catch (_) {}
-            setShare(false);
             hideShare();
           }
-        } else if (pub.kind === "audio" && pub.source === "microphone") {
-          micWanted = false;
-          setMic(false);
         }
         scheduleRender();
       })
@@ -700,13 +757,6 @@
     }
   }
 
-  function isMyMic(pub, participant) {
-    return !!room &&
-      participant === room.localParticipant &&
-      pub.kind === "audio" &&
-      pub.source === "microphone";
-  }
-
   /* لو المتصفح رفض تشغيل الصوت لوحده، أول لمسة في الصفحة
      بتفكّه — بدل ما الطفل يفضل قاعد من غير صوت */
   function armAudioUnlock() {
@@ -751,15 +801,13 @@
         });
       })
       .then(function () {
-        micWanted = false;
-        setMic(false);
+        scheduleRender();
       })
       .catch(function (err) {
         /* مفيش ميك أو الإذن مرفوض — السيشن بتكمل سماع عادي،
            وبنقوله المشكلة بدل ما يضغط ومحصلش حاجة */
         var info = readError(err);
-        micWanted = false;
-        setMic(false);
+        scheduleRender();
         say(info.text || "مش لاقيين الميك — اسمح للموقع باستخدامه 🎤", true);
       });
   }
@@ -783,12 +831,23 @@
     return found;
   }
 
+  var micTries = 0;
+
   function applyMic() {
     if (micBusy || !room) return;
 
     var pub = micPub();
-    var live = pub ? !pub.isMuted : false;
-    if (live === micWanted) return;
+    var live = !!pub && !pub.isMuted;
+    if (live === micWanted) { micTries = 0; scheduleRender(); return; }
+
+    /* لو الأمر مشي والحالة ما اتغيّرتش، مش هنفضل نعيد للأبد —
+       بنسيب المزامنة ترجّع الزرار على الحقيقة */
+    if (++micTries > 3) {
+      micTries = 0;
+      say("الميك مش راضي يستجيب. جرّب اخرج وادخل تاني.", true);
+      scheduleRender();
+      return;
+    }
 
     micBusy = true;
     var op = pub
@@ -797,13 +856,15 @@
 
     Promise.resolve(op)
       .catch(function (err) {
+        /* الأمر فشل — بنقول السبب وبس. الشكل مش بنلمسه هنا،
+           المزامنة هي اللي هتقرا الحقيقة وترسمها */
         var info = readError(err);
-        micWanted = false;
-        setMic(false);
+        micTries = 99;
         say(info.text || "مش قادرين نفتح الميك.", true);
       })
       .then(function () {
         micBusy = false;
+        if (micTries === 99) { micTries = 0; scheduleRender(); return; }
         applyMic();   // لو المستخدم غيّر رأيه وإحنا شغالين
       });
   }
@@ -833,16 +894,22 @@
     handUp = false;
     micWanted = false;
     micBusy = false;
+    micTries = 0;
     shareBusy = false;
     peopleNodes = {};
     peopleKey = "";
     panelKey = "";
+    micShown = null;
+    handShown = null;
+    shareShown = null;
+    stopHeartbeat();
     el.people.textContent = "";
     if (el.panelList) el.panelList.innerHTML = "";
     hideShare();
     setCount(0);
     setHand(false);
     setShare(false);
+    setMic(false);
     say("");
 
     if (room) {
@@ -857,6 +924,7 @@
      ============================================================ */
   el.micBtn.addEventListener("click", function () {
     if (!room) return;
+    micTries = 0;
     micWanted = !micWanted;
     setMic(micWanted);   // الشكل بيتغيّر دلوقتي حالاً
     applyMic();
@@ -912,7 +980,6 @@
       )
         .then(function () { say(""); })
         .catch(function (err) {
-          setShare(lp.isScreenShareEnabled);
           var raw = String((err && (err.message || err.name)) || "");
           /* المدرّس قفل نافذة الاختيار — ده مش خطأ، نسكت */
           if (/NotAllowed|Permission denied|AbortError|dismissed|cancel/i.test(raw)) {
@@ -922,7 +989,7 @@
           var info = readError(err);
           say(info.text || "مشاركة الشاشة مش شغالة على الجهاز ده.", true);
         })
-        .then(function () { shareBusy = false; });
+        .then(function () { shareBusy = false; scheduleRender(); });
     });
 
     el.muteAllBtn.addEventListener("click", function () {
