@@ -18,6 +18,42 @@
   var DEFAULT_ROOM = "bloom-1";
   var NAME_KEY = "bloomkids_meet_name";
 
+  /* ============================================================
+     إعدادات الصوت والصورة — كلها في مكان واحد عشان تتظبط بسهولة
+     ============================================================ */
+
+  /* الميك: شيلنا voiceIsolation. هو بيشتغل معالجة تقيلة جوه
+     المتصفح، بيزوّد تأخير محسوس وبيخلي صوت الأطفال أحياناً
+     مقطّع أو "روبوت". كتم الضوضاء العادي كفاية. */
+  var MIC_CONSTRAINTS = {
+    echoCancellation: true,
+    noiseSuppression: true,
+    autoGainControl: true,
+    channelCount: 1,
+    sampleRate: 48000,
+    latency: 0.01,
+  };
+
+  /* ٣٢ كيلوبت بدل ٢٤ — الصوت بيطلع أوضح والفرق في الاستهلاك
+     مش محسوس على أي شبكة. */
+  var VOICE_PRESET = { maxBitrate: 32000 };
+
+  /* مشاركة الشاشة:
+     - بنطلب ٧٢٠p/٣٠ إطار من الأول، عشان المتصفح ما يصوّرش
+       ٤K ويفضل يصغّرها كل إطار (ده كان بياكل المعالج ويأخّر).
+     - contentHint: motion + maintain-framerate = الأولوية
+       للحركة اللحظية، والوضوح هو اللي بينزل وقت الزحمة. */
+  var SCREEN_RES = { width: 1280, height: 720, frameRate: 30 };
+  var SCREEN_ENCODING = { maxBitrate: 3000000, maxFramerate: 30, priority: "high" };
+  var SCREEN_CAPTURE = {
+    audio: true,
+    contentHint: "motion",
+    resolution: SCREEN_RES,
+    selfBrowserSurface: "exclude",
+    surfaceSwitching: "include",
+    systemAudio: "include",
+  };
+
   var ROLE = document.body.dataset.role === "host" ? "host" : "kid";
   var IS_HOST = ROLE === "host";
 
@@ -39,9 +75,14 @@
   var handUp = false;
   var hands = {};       // identity -> true
   var speaking = {};    // identity -> true
-  var audioEls = {};    // identity -> <audio>
+  var audioEls = {};    // trackSid -> { node, id }
   var hostKey = "";     // بيتحفظ في الذاكرة بس بعد نجاح الدخول
   var currentCode = "";
+
+  var micWanted = false;   // اللي المستخدم طالبه دلوقتي
+  var micBusy = false;     // فيه أمر ميك شغال لسه
+  var shareBusy = false;
+  var audioUnlockArmed = false;
 
   /* ---------- مساعدات ---------- */
 
@@ -178,32 +219,123 @@
     return perm.canPublish !== false;
   }
 
+  /* ============================================================
+     الرسم بالتحديث الجزئي — مش إعادة بناء
+
+     الأول كنا بنعيد بناء كل كروت المشاركين (innerHTML) في كل
+     حدث، و ActiveSpeakersChanged بيضرب كذا مرة في الثانية.
+     يعني كل ما حد يتكلم، المتصفح يهد ويبني الصفحة من أول
+     وجديد — ده كان بيوقف الـ main thread، وساعتها الصورة
+     المشاركة بتلخبط والصوت بيتقطّع.
+
+     دلوقتي بنبني الكروت مرة واحدة بس لما العدد يتغيّر،
+     وبعد كده بنغيّر الكلاس أو النص المتغيّر بس.
+     ============================================================ */
+  var peopleNodes = {};   // identity -> { card, hand, state, ... }
+  var peopleKey = "";     // بصمة الحاضرين — لو اتغيّرت يبقى نعيد البناء
+
+  function stateText(p) {
+    if (!canSpeak(p)) return "🚫 ممنوع الكلام";
+    return micLiveFor(p) ? "🎤 الميك مفتوح" : "🔇 ساكت";
+  }
+
+  function buildPeople(list) {
+    var frag = document.createDocumentFragment();
+    peopleNodes = {};
+
+    list.forEach(function (p) {
+      var id = p.identity;
+      var name = p.name || id || "ضيف";
+      var isMe = p === room.localParticipant;
+
+      var card = document.createElement("div");
+      card.className = "person";
+
+      var hand = document.createElement("span");
+      hand.className = "person-hand";
+      hand.title = "رافع إيده";
+      hand.textContent = "✋";
+      hand.hidden = true;
+
+      var face = document.createElement("div");
+      face.className = "person-face";
+      face.style.background = faceColor(name + id);
+      face.textContent = initial(name);
+
+      var nameEl = document.createElement("div");
+      nameEl.className = "person-name";
+      nameEl.textContent = name + (isMe ? " (أنت)" : "");
+
+      var state = document.createElement("div");
+      state.className = "person-state";
+
+      card.appendChild(hand);
+      card.appendChild(face);
+      card.appendChild(nameEl);
+      card.appendChild(state);
+
+      if (isHostIdentity(id)) {
+        var badge = document.createElement("span");
+        badge.className = "person-badge";
+        badge.textContent = "المدرّس";
+        card.appendChild(badge);
+      }
+
+      frag.appendChild(card);
+      peopleNodes[id] = { card: card, hand: hand, state: state };
+    });
+
+    el.people.textContent = "";
+    el.people.appendChild(frag);
+  }
+
   function renderPeople() {
     if (!room) return;
     var list = everyone();
 
-    el.people.innerHTML = list.map(function (p) {
-      var id = p.identity;
-      var isMe = p === room.localParticipant;
-      var name = p.name || id || "ضيف";
-      var teacher = isHostIdentity(id);
+    var key = list.map(function (p) { return p.identity; }).join("|");
+    if (key !== peopleKey) {
+      peopleKey = key;
+      buildPeople(list);
+      setCount(list.length);
+    }
 
-      return (
-        '<div class="person' + (speaking[id] ? " is-talking" : "") + '">' +
-        (hands[id] ? '<span class="person-hand" title="رافع إيده">✋</span>' : "") +
-        '<div class="person-face" style="background:' + faceColor(name + id) + '">' +
-        esc(initial(name)) + "</div>" +
-        '<div class="person-name">' + esc(name) + (isMe ? " (أنت)" : "") + "</div>" +
-        '<div class="person-state">' +
-        (!canSpeak(p) ? "🚫 ممنوع الكلام" : micLiveFor(p) ? "🎤 الميك مفتوح" : "🔇 ساكت") +
-        "</div>" +
-        (teacher ? '<span class="person-badge">المدرّس</span>' : "") +
-        "</div>"
-      );
-    }).join("");
+    list.forEach(function (p) {
+      var node = peopleNodes[p.identity];
+      if (!node) return;
 
-    setCount(list.length);
+      var talking = !!speaking[p.identity];
+      if (node.talking !== talking) {
+        node.talking = talking;
+        node.card.classList.toggle("is-talking", talking);
+      }
+
+      var raised = !!hands[p.identity];
+      if (node.raised !== raised) {
+        node.raised = raised;
+        node.hand.hidden = !raised;
+      }
+
+      var txt = stateText(p);
+      if (node.txt !== txt) {
+        node.txt = txt;
+        node.state.textContent = txt;
+      }
+    });
+
     if (IS_HOST) renderPanel();
+  }
+
+  /* الأحداث بتيجي ورا بعض بسرعة — بنجمّعها في رسمة واحدة
+     مع إطار الشاشة بدل ما نرسم عشر مرات في الثانية */
+  var renderQueued = false;
+  function scheduleRender() {
+    if (renderQueued) return;
+    renderQueued = true;
+    window.requestAnimationFrame(function () {
+      renderQueued = false;
+      renderPeople();
+    });
   }
 
   function setCount(n) {
@@ -235,8 +367,14 @@
   /* ============================================================
      لوحة تحكم المدرّس
      ============================================================ */
+  var panelKey = "";
+
   function renderPanel() {
     if (!el.panelList || !room) return;
+
+    /* اللوحة مقفولة؟ مفيش داعي نتعب المتصفح. وبنصفّر البصمة
+       عشان تتبني من جديد أول ما تتفتح */
+    if (el.panel && el.panel.hidden) { panelKey = ""; return; }
 
     var kids = [];
     room.remoteParticipants.forEach(function (p) {
@@ -247,6 +385,18 @@
     kids.sort(function (a, b) {
       return (hands[b.identity] ? 1 : 0) - (hands[a.identity] ? 1 : 0);
     });
+
+    /* بنعيد بناء صفوف اللوحة بس لما حاجة فيها تتغيّر فعلاً،
+       مش كل ما حد يتكلم — كده الأزرار ما بتختفيش تحت إيد
+       المدرّس وهو بيضغط */
+    var key = kids.map(function (p) {
+      return p.identity +
+        (hands[p.identity] ? "1" : "0") +
+        (micLiveFor(p) ? "1" : "0") +
+        (canSpeak(p) ? "1" : "0");
+    }).join("|");
+    if (key === panelKey) return;
+    panelKey = key;
 
     el.panelHint.textContent = kids.length
       ? kids.length + " طفل في السيشن"
@@ -321,7 +471,62 @@
     var LK = window.LivekitClient;
     var E = LK.RoomEvent;
 
-    room = new LK.Room({ adaptiveStream: true, dynacast: true });
+    /* ============================================================
+       إعدادات الأداء — الافتراضيات مضبوطة لمكالمات فيديو عامة،
+       وإحنا سيشن صوت لأطفال على نت مصري، فمحتاجين حاجة أخف وأسرع:
+
+       adaptiveStream: false
+         بيقيس حجم عنصر الفيديو ويطلب جودة على أساسه. عنصر
+         المشاركة عندنا دايماً بملء الشاشة، والقياس ده كان
+         بيأخّر ظهور الصورة. قفلناه = الصورة بتيجي كاملة فوراً.
+
+       dynacast: false
+         بيوقف الطبقات اللي محدش مشترك فيها. مالناش طبقات
+         أصلاً، فهو مجرد رسايل زيادة على الشبكة.
+
+       audioPreset: ٣٢ كيلوبت
+         أوضح من الـ speech الجاهز (٢٤)، ولسه أخف بكتير من
+         إعداد الموسيقى. الفرق مش محسوس على أي شبكة.
+
+       dtx: false
+         الـ DTX بيوقف الإرسال في السكوت، فبيقص أول حرف لما
+         الطفل يبدأ يتكلم. قفلناه عشان الكلام يوصل كامل.
+
+       red: true
+         بيبعت الصوت مكرر، فلو ضاعت باكتة الصوت ميتقطعش.
+
+       degradationPreference: maintain-framerate
+         الأهم هنا. كان maintain-resolution — يعني وقت الزحمة
+         المتصفح كان بيتمسك بالوضوح ويرمي الإطارات، فالشاشة
+         بتبقى شرايح واقفة ومتأخرة. دلوقتي الحركة هي الأولوية
+         والوضوح هو اللي بينزل شوية وقت الحاجة.
+
+       videoCodec: vp8
+         أخف كوديك في الترميز اللحظي ومدعوم على كل جهاز. VP9
+         و AV1 بيضغطوا أحسن بس بياكلوا معالج المدرّس ويأخّروا.
+       ============================================================ */
+    if (LK.setLogLevel) { try { LK.setLogLevel("error"); } catch (_) {} }
+
+    room = new LK.Room({
+      adaptiveStream: false,
+      dynacast: false,
+      stopLocalTrackOnUnpublish: false,
+      webAudioMix: false,
+
+      audioCaptureDefaults: MIC_CONSTRAINTS,
+
+      publishDefaults: {
+        audioPreset: VOICE_PRESET,
+        dtx: false,
+        red: true,
+        simulcast: false,
+        stopMicTrackOnMute: false,
+        videoCodec: "vp8",
+        backupCodec: false,
+        screenShareEncoding: SCREEN_ENCODING,
+        degradationPreference: "maintain-framerate",
+      },
+    });
 
     room
       .on(E.Connected, function () {
@@ -329,12 +534,16 @@
         setMic(false);
         renderPeople();
       })
-      .on(E.ParticipantConnected, renderPeople)
+      .on(E.ParticipantConnected, scheduleRender)
       .on(E.ParticipantDisconnected, function (p) {
         delete hands[p.identity];
         delete speaking[p.identity];
-        var node = audioEls[p.identity];
-        if (node) { node.remove(); delete audioEls[p.identity]; }
+        Object.keys(audioEls).forEach(function (sid) {
+          if (audioEls[sid].id === p.identity) {
+            audioEls[sid].node.remove();
+            delete audioEls[sid];
+          }
+        });
         renderPeople();
       })
 
@@ -343,56 +552,101 @@
           var node = track.attach();
           node.autoplay = true;
           node.playsInline = true;
-          audioEls[participant.identity] = node;
+          node.setAttribute("playsinline", "");
+          audioEls[pub.trackSid] = { node: node, id: participant.identity };
           el.audioSink.appendChild(node);
           var playing = node.play && node.play();
           if (playing && playing.catch) {
             playing.catch(function () {
               say("اضغط على أي حتة في الصفحة عشان الصوت يشتغل 🔊", true);
+              armAudioUnlock();
             });
           }
         } else if (isScreenPub(pub)) {
+          /* مهم: نظهر المكان الأول وبعدين نربط الفيديو.
+             لو ربطنا وهو متخفي، العنصر مقاسه صفر والمتصفح
+             بيأجّل الرسم — وده كان سبب تأخير المشاركة */
+          showShare(participant.name || participant.identity);
+          /* المتصفح بيحب يخزّن كام إطار قبل ما يعرض عشان
+             النعومة — وده كان بيزوّد التأخير. بنقوله اعرض
+             أول ما يوصل */
+          zeroDelay(track);
           track.attach(el.shareVideo);
-          el.shareStage.hidden = false;
-          el.stage.classList.add("is-sharing");
-          el.shareTag.textContent =
-            "🖥️ " + (participant.name || participant.identity) + " بيشارك شاشته";
+          var vp = el.shareVideo.play && el.shareVideo.play();
+          if (vp && vp.catch) vp.catch(function () {});
         }
-        renderPeople();
+        scheduleRender();
       })
-      .on(E.TrackUnsubscribed, function (track, pub, participant) {
-        track.detach().forEach(function (n) { n.remove(); });
-        if (track.kind === "audio") delete audioEls[participant.identity];
-        else if (isScreenPub(pub)) hideShare();
-        renderPeople();
+      .on(E.TrackUnsubscribed, function (track, pub) {
+        if (track.kind === "audio") {
+          track.detach().forEach(function (n) { n.remove(); });
+          delete audioEls[pub.trackSid];
+        } else if (isScreenPub(pub)) {
+          /* بنفصل التراك عن عنصر الفيديو بس — العنصر نفسه لازم
+             يفضل مكانه في الصفحة. قبل كده كان بيتشال من الصفحة
+             خالص، فأول مشاركة كانت بتشتغل والمشاركة اللي بعدها
+             ما بتظهرش أبداً */
+          track.detach(el.shareVideo);
+          hideShare();
+        }
+        scheduleRender();
       })
 
       .on(E.ActiveSpeakersChanged, function (speakers) {
         speaking = {};
         (speakers || []).forEach(function (p) { speaking[p.identity] = true; });
-        renderPeople();
+        scheduleRender();
       })
 
-      .on(E.TrackMuted, renderPeople)
-      .on(E.TrackUnmuted, renderPeople)
-      .on(E.ParticipantPermissionsChanged, renderPeople)
+      .on(E.TrackMuted, function (pub, participant) {
+        if (isMyMic(pub, participant)) { micWanted = false; setMic(false); }
+        scheduleRender();
+      })
+      .on(E.TrackUnmuted, function (pub, participant) {
+        if (isMyMic(pub, participant)) { micWanted = true; setMic(true); }
+        scheduleRender();
+      })
+      .on(E.ParticipantPermissionsChanged, scheduleRender)
+
+      .on(E.Reconnecting, function () { say("النت اتهزهز… بنرجّعك 🔄", true); })
+      .on(E.Reconnected, function () { say("رجعنا ✅"); })
+      .on(E.AudioPlaybackStatusChanged, function () {
+        if (room && !room.canPlaybackAudio) {
+          say("اضغط على أي حتة في الصفحة عشان الصوت يشتغل 🔊", true);
+          armAudioUnlock();
+        }
+      })
 
       .on(E.LocalTrackPublished, function (pub) {
-        if (isScreenPub(pub)) {
+        if (isScreenPub(pub) && pub.kind === "video") {
           setShare(true);
-          el.shareTag.textContent = "🖥️ انت بتشارك شاشتك";
-          el.shareStage.hidden = false;
-          el.stage.classList.add("is-sharing");
-          if (pub.track) pub.track.attach(el.shareVideo);
-        } else {
-          setMic(true);
+          showShare(null);
+          if (pub.track) {
+            /* contentHint = motion بيقول للترميز: الأهم إن الحركة
+               تبقى ناعمة ولحظية. كان detail، وده كان بيخلي المتصفح
+               يتمسك بالوضوح ويأخّر الإطارات */
+            var mst = pub.track.mediaStreamTrack;
+            if (mst) try { mst.contentHint = "motion"; } catch (_) {}
+            pub.track.attach(el.shareVideo);
+          }
+        } else if (pub.kind === "audio" && pub.source === "microphone") {
+          micWanted = !pub.isMuted;
+          setMic(micWanted);
         }
-        renderPeople();
+        scheduleRender();
       })
       .on(E.LocalTrackUnpublished, function (pub) {
-        if (isScreenPub(pub)) { setShare(false); hideShare(); }
-        else setMic(false);
-        renderPeople();
+        if (isScreenPub(pub)) {
+          if (pub.kind === "video") {
+            if (pub.track) try { pub.track.detach(el.shareVideo); } catch (_) {}
+            setShare(false);
+            hideShare();
+          }
+        } else if (pub.kind === "audio" && pub.source === "microphone") {
+          micWanted = false;
+          setMic(false);
+        }
+        scheduleRender();
       })
 
       .on(E.DataReceived, function (payload, participant) {
@@ -424,14 +678,145 @@
     show("stage");
     say("بنوصّلك بالسيشن…", true);
 
-    return room.connect(info.url, info.token).then(function () {
-      return room.localParticipant.setMicrophoneEnabled(false);
+    /* بنسخّن الاتصال بالسيرفر (DNS + TLS) قبل ما نطلب الدخول
+       بثانية — من غير ما نستنى رده */
+    if (room.prepareConnection) {
+      try { room.prepareConnection(info.url, info.token); } catch (_) {}
+    }
+
+    return room
+      .connect(info.url, info.token, { autoSubscribe: true, maxRetries: 3 })
+      .then(function () {
+        return primeMic(LK);
+      });
+  }
+
+  /* playoutDelayHint = 0 — اعرض الإطار أول ما يوصل من غير
+     تخزين احتياطي. (متطبقش على الصوت: هناك المخزون بيتظبط
+     لوحده حسب الشبكة وأحسن نسيبه) */
+  function zeroDelay(track) {
+    if (track && typeof track.setPlayoutDelay === "function") {
+      try { track.setPlayoutDelay(0); } catch (_) {}
+    }
+  }
+
+  function isMyMic(pub, participant) {
+    return !!room &&
+      participant === room.localParticipant &&
+      pub.kind === "audio" &&
+      pub.source === "microphone";
+  }
+
+  /* لو المتصفح رفض تشغيل الصوت لوحده، أول لمسة في الصفحة
+     بتفكّه — بدل ما الطفل يفضل قاعد من غير صوت */
+  function armAudioUnlock() {
+    if (audioUnlockArmed) return;
+    audioUnlockArmed = true;
+
+    function unlock() {
+      document.removeEventListener("click", unlock, true);
+      document.removeEventListener("touchend", unlock, true);
+      audioUnlockArmed = false;
+      if (!room) return;
+      var p = room.startAudio();
+      if (p && p.then) p.then(function () { say(""); }, function () {});
+    }
+    document.addEventListener("click", unlock, true);
+    document.addEventListener("touchend", unlock, true);
+  }
+
+  /* ============================================================
+     تجهيز الميك من أول لحظة
+
+     لو استنينا لحد ما اللاعب يضغط "افتح الميك"، الضغطة دي
+     بتعمل ٣ حاجات تقيلة مع بعض: تطلب إذن المتصفح، تفتح الجهاز،
+     وتتفاوض مع السيرفر عشان تنشر التراك — وده اللي كان بياخد
+     ثواني.
+
+     بدل كده بننشر التراك **مكتوم** من ساعة الدخول، فالضغطة
+     بعد كده بتبقى مجرد unmute — لحظية.
+     ============================================================ */
+  function primeMic(LK) {
+    return LK.createLocalAudioTrack(MIC_CONSTRAINTS)
+      .then(function (track) {
+        // بنكتمه قبل النشر عشان محدش يسمع حاجة بالغلط
+        return track.mute().then(function () {
+          return room.localParticipant.publishTrack(track, {
+            source: LK.Track.Source.Microphone,
+            audioPreset: VOICE_PRESET,
+            dtx: false,
+            red: true,
+            stopMicTrackOnMute: false,
+          });
+        });
+      })
+      .then(function () {
+        micWanted = false;
+        setMic(false);
+      })
+      .catch(function (err) {
+        /* مفيش ميك أو الإذن مرفوض — السيشن بتكمل سماع عادي،
+           وبنقوله المشكلة بدل ما يضغط ومحصلش حاجة */
+        var info = readError(err);
+        micWanted = false;
+        setMic(false);
+        say(info.text || "مش لاقيين الميك — اسمح للموقع باستخدامه 🎤", true);
+      });
+  }
+
+  /* ============================================================
+     فتح وقفل الميك — لحظي
+
+     الضغطة بقت بتغيّر شكل الزرار في نفس اللحظة (من غير ما
+     تستنى السيرفر)، وبعدين بننفّذ الأمر على التراك المنشور
+     نفسه بـ mute/unmute المباشرة.
+
+     كمان لو الطفل ضغط كذا مرة ورا بعض، مش هنبعت كذا أمر —
+     بنستنى اللي شغال يخلص وننفّذ آخر حاجة طلبها بس.
+     ============================================================ */
+  function micPub() {
+    if (!room) return null;
+    var found = null;
+    room.localParticipant.audioTrackPublications.forEach(function (pub) {
+      if (!found && pub.source === "microphone") found = pub;
     });
+    return found;
+  }
+
+  function applyMic() {
+    if (micBusy || !room) return;
+
+    var pub = micPub();
+    var live = pub ? !pub.isMuted : false;
+    if (live === micWanted) return;
+
+    micBusy = true;
+    var op = pub
+      ? (micWanted ? pub.unmute() : pub.mute())
+      : room.localParticipant.setMicrophoneEnabled(micWanted, MIC_CONSTRAINTS);
+
+    Promise.resolve(op)
+      .catch(function (err) {
+        var info = readError(err);
+        micWanted = false;
+        setMic(false);
+        say(info.text || "مش قادرين نفتح الميك.", true);
+      })
+      .then(function () {
+        micBusy = false;
+        applyMic();   // لو المستخدم غيّر رأيه وإحنا شغالين
+      });
   }
 
   function isScreenPub(pub) {
     if (!pub) return false;
     return pub.source === "screen_share" || pub.source === "screen_share_audio";
+  }
+
+  function showShare(who) {
+    el.shareStage.hidden = false;
+    el.stage.classList.add("is-sharing");
+    el.shareTag.textContent = who ? "🖥️ " + who + " بيشارك شاشته" : "🖥️ انت بتشارك شاشتك";
   }
 
   function hideShare() {
@@ -441,12 +826,18 @@
   }
 
   function cleanup() {
-    Object.keys(audioEls).forEach(function (k) { audioEls[k].remove(); });
+    Object.keys(audioEls).forEach(function (k) { audioEls[k].node.remove(); });
     audioEls = {};
     hands = {};
     speaking = {};
     handUp = false;
-    el.people.innerHTML = "";
+    micWanted = false;
+    micBusy = false;
+    shareBusy = false;
+    peopleNodes = {};
+    peopleKey = "";
+    panelKey = "";
+    el.people.textContent = "";
     if (el.panelList) el.panelList.innerHTML = "";
     hideShare();
     setCount(0);
@@ -466,11 +857,9 @@
      ============================================================ */
   el.micBtn.addEventListener("click", function () {
     if (!room) return;
-    var lp = room.localParticipant;
-    lp.setMicrophoneEnabled(!lp.isMicrophoneEnabled).catch(function (err) {
-      var info = readError(err);
-      say(info.text || "مش قادرين نفتح الميك.", true);
-    });
+    micWanted = !micWanted;
+    setMic(micWanted);   // الشكل بيتغيّر دلوقتي حالاً
+    applyMic();
   });
 
   el.hangupBtn.addEventListener("click", function () {
@@ -496,12 +885,44 @@
   /* ---------- خاص بالمدرّس ---------- */
   if (IS_HOST) {
     el.shareBtn.addEventListener("click", function () {
-      if (!room) return;
+      if (!room || shareBusy) return;
+      var LK = window.LivekitClient;
       var lp = room.localParticipant;
-      lp.setScreenShareEnabled(!lp.isScreenShareEnabled).catch(function (err) {
-        var info = readError(err);
-        say(info.text || "مشاركة الشاشة مش شغالة على الجهاز ده.", true);
-      });
+      var want = !lp.isScreenShareEnabled;
+
+      shareBusy = true;
+      if (want) say("اختار الشاشة من النافذة اللي فتحت 🖥️", true);
+
+      lp.setScreenShareEnabled(
+        want,
+        want ? SCREEN_CAPTURE : undefined,
+        want
+          ? {
+              videoEncoding: SCREEN_ENCODING,
+              screenShareEncoding: SCREEN_ENCODING,
+              simulcast: false,
+              videoCodec: "vp8",
+              backupCodec: false,
+              degradationPreference: "maintain-framerate",
+              /* لو المدرّس بيشغّل فيديو أو أغنية، الصوت ده
+                 بيتبعت على تراك لوحده بجودة أعلى من الكلام */
+              audioPreset: LK.AudioPresets.music,
+            }
+          : undefined
+      )
+        .then(function () { say(""); })
+        .catch(function (err) {
+          setShare(lp.isScreenShareEnabled);
+          var raw = String((err && (err.message || err.name)) || "");
+          /* المدرّس قفل نافذة الاختيار — ده مش خطأ، نسكت */
+          if (/NotAllowed|Permission denied|AbortError|dismissed|cancel/i.test(raw)) {
+            say("");
+            return;
+          }
+          var info = readError(err);
+          say(info.text || "مشاركة الشاشة مش شغالة على الجهاز ده.", true);
+        })
+        .then(function () { shareBusy = false; });
     });
 
     el.muteAllBtn.addEventListener("click", function () {
@@ -521,7 +942,7 @@
     function togglePanel(open) {
       el.panel.hidden = !open;
       document.body.classList.toggle("panel-open", open);
-      if (open) renderPanel();
+      if (open) { panelKey = ""; renderPanel(); }
     }
     el.panelBtn.addEventListener("click", function () {
       togglePanel(el.panel.hidden);

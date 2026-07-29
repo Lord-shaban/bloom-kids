@@ -210,6 +210,8 @@
   box-shadow: 0 4px 10px rgba(246, 169, 44, 0.5);
   animation: hand-wave 1.6s ease-in-out infinite;
 }
+/* لازم تيجي بعد display: grid عشان تغلبه */
+.person-hand[hidden] { display: none; }
 @keyframes hand-wave {
   0%, 100% { transform: rotate(-8deg); }
   50% { transform: rotate(12deg); }
