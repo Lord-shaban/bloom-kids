@@ -78,7 +78,9 @@ async function ensureRoom(env, name) {
         enable_chat: false,         // مفيش شات
         enable_prejoin_ui: false,   // إحنا بناخد الاسم قبل كده
         enable_knocking: false,
-        max_participants: 30,
+        // الباقة المجانية في Daily بترفض أي رقم أكبر من ٢٠ وبترجّع
+        // 400، فخلي بالك لو غيّرته
+        max_participants: 20,
         exp: Math.floor(Date.now() / 1000) + ROOM_HOURS * 3600,
       },
     }),
