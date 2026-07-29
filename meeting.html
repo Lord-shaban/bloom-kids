@@ -18,7 +18,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css?v=8">
-  <link rel="stylesheet" href="css/meeting.css?v=3">
+  <link rel="stylesheet" href="css/meeting.css?v=4">
+
+  <!-- مكتبة Daily بتتحمّل بدري عشان الدخول يبقى فوري -->
+  <link rel="preload" as="script" href="https://unpkg.com/@daily-co/daily-js" crossorigin>
 </head>
 <body class="meet-page">
 
@@ -43,7 +46,7 @@
         <div class="gate-card">
           <span class="eyebrow">🎧 سيشن مباشرة</span>
           <h1>ادخل <span class="hl hl-teal">السيشن</span></h1>
-          <p class="gate-sub">صوت بس — مفيش كاميرا خالص. تقدر تشارك شاشتك وترفع إيدك.</p>
+          <p class="gate-sub">صوت بس — مفيش كاميرا خالص. تقدر ترفع إيدك وتشارك شاشتك.</p>
 
           <form class="gate-form" id="gateForm" novalidate>
             <label class="field">
@@ -71,21 +74,18 @@
             <li><span class="bg-purple">🔇</span> مفيش كاميرا — صوت بس</li>
           </ul>
 
-          <!-- ركن المدرّس: لازم يفتح الأوضة من عند جيتسي مباشرةً،
-               لأن تسجيل الدخول بجوجل مش بيشتغل جوه iframe -->
+          <!-- ركن المدرّس -->
           <details class="host-box" id="hostBox">
             <summary>👩‍🏫 أنا المدرّس</summary>
 
-            <ol class="host-steps">
-              <li>اضغط <b>افتح السيشن كمدرّس</b> — هتتفتح تاب جديدة عند جيتسي.</li>
-              <li>سجّل دخول بجوجل (مرة واحدة بس، المتصفح بيفتكرها).</li>
-              <li>سيب التاب دي مفتوحة — دي السيشن، وانت الهوست فيها.</li>
-              <li>ابعت اللينك اللي تحت للأطفال على واتساب.</li>
-            </ol>
-
-            <button class="btn btn-teal btn-block" id="hostBtn" type="button">
-              👩‍🏫 افتح السيشن كمدرّس ↗
-            </button>
+            <label class="field">
+              <span>مفتاح المدرّس</span>
+              <input type="password" id="hostKey" dir="ltr" autocomplete="off"
+                     placeholder="عشان تقدر تكتم وتنظّم السيشن">
+            </label>
+            <p class="host-note" style="text-align:start">
+              اكتب المفتاح واضغط <b>ادخل السيشن</b> فوق — هتدخل كمدرّس.
+            </p>
 
             <label class="field share-field">
               <span>لينك الأطفال</span>
@@ -95,7 +95,7 @@
               📋 انسخ اللينك
             </button>
             <p class="host-note">
-              الأطفال مش محتاجين أي تسجيل — بيفتحوا اللينك ويكتبوا اسمهم وبس.
+              الأطفال مش محتاجين أي تسجيل ولا برنامج — بيفتحوا اللينك ويكتبوا اسمهم وبس.
             </p>
           </details>
         </div>
@@ -110,10 +110,20 @@
         <span class="meet-status" id="meetStatus" hidden></span>
       </div>
 
-      <div class="meet-frame" id="meet"></div>
+      <div class="meet-body">
+        <!-- بيظهر بس لما حد يشارك شاشته -->
+        <div class="share-stage" id="shareStage" hidden>
+          <video id="shareVideo" autoplay playsinline muted></video>
+          <span class="share-tag" id="shareTag"></span>
+        </div>
 
-      <!-- شريط التحكم بتاعنا — شريط جيتسي متخفي بالكامل، عشان
-           الأطفال يلاقوا أزرار كبيرة وواضحة وبالعربي -->
+        <!-- كروت المشاركين -->
+        <div class="people" id="people"></div>
+      </div>
+
+      <!-- الصوت بيتشغّل من هنا (مخفي) -->
+      <div id="audioSink" aria-hidden="true"></div>
+
       <div class="meet-controls" role="group" aria-label="أزرار السيشن">
         <button class="ctl ctl-mic" id="micBtn" type="button" aria-pressed="false">
           <span class="ctl-icon" id="micIcon">🔇</span>
@@ -142,18 +152,13 @@
       <div class="container">
         <div class="gate-card">
           <h2 id="fallbackTitle">مش قادرين نفتح السيشن 😕</h2>
-          <p class="gate-sub" id="fallbackMsg">
-            يمكن النت عندك بيمنع الخدمة. جرّب تفتح الأوضة في تاب لوحدها.
-          </p>
-          <a class="btn btn-primary btn-lg" id="fallbackLink" href="#" target="_blank" rel="noopener">
-            افتح السيشن في تاب جديدة ↗
-          </a>
-          <button class="btn btn-ghost" id="fallbackBack" type="button">رجوع</button>
+          <p class="gate-sub" id="fallbackMsg"></p>
+          <button class="btn btn-primary btn-lg" id="fallbackBack" type="button">حاول تاني</button>
         </div>
       </div>
     </section>
   </main>
 
-  <script src="js/meeting.js?v=5"></script>
+  <script src="js/meeting.js?v=6"></script>
 </body>
 </html>
