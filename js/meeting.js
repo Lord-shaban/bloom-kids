@@ -1,21 +1,20 @@
 /* ============================================================
-   Bloom Kids — سيشن مباشرة (Daily.co)
+   Bloom Kids — سيشن مباشرة (LiveKit)
 
-   ليه Daily مش Jitsi؟ لأن جيتسي العام بيطلب تسجيل دخول بجوجل
-   من أول واحد يفتح الأوضة، والتسجيل ده مش بيشتغل جوه iframe.
-   Daily مفيش فيه تسجيل خالص: السيرفر بتاعنا بينشئ الأوضة
-   ويطلع توكن، والطفل بيدخل على طول.
+   ليه LiveKit؟
+     • Jitsi العام بيطلب تسجيل دخول بجوجل من أول واحد يفتح
+       الأوضة، والتسجيل ده مش بيشتغل جوه iframe.
+     • Daily بيرفض أي مكالمة لحد ما تضيف كارت في الحساب.
+     • LiveKit شغال من غير كارت خالص، وسيرفره SFU يعني الصوت
+       أنضف والجهاز بيتعب أقل من الاتصال المباشر.
 
-   الواجهة كلها بتاعتنا (call object مش prebuilt)، عشان:
-     • عربي بالكامل ومن اليمين للشمال
-     • كروت مشاركين كبيرة، اللي بيتكلم إطاره بيولّع أخضر
-     • رفع الإيد بيبان كشارة صفراء على كارت الطفل
-     • مفيش كاميرا ولا شات ولا أي زرار زيادة
+   الواجهة كلها بتاعتنا عشان تبقى عربي وبسيطة للأطفال:
+   كروت كبيرة، اللي بيتكلم إطاره أخضر، ورفع الإيد شارة صفراء.
    ============================================================ */
 (function () {
   "use strict";
 
-  var DAILY_SRC = "https://unpkg.com/@daily-co/daily-js";
+  var LK_SRC = "https://cdn.jsdelivr.net/npm/livekit-client@2.21.0/dist/livekit-client.umd.min.js";
   var DEFAULT_ROOM = "bloom-1";
   var NAME_KEY = "bloomkids_meet_name";
 
@@ -32,11 +31,12 @@
     el[id] = document.getElementById(id);
   });
 
-  var call = null;        // Daily call object
+  var room = null;
   var handUp = false;
-  var hands = {};         // من رافع إيده: { sessionId: true }
-  var talkingId = null;
-  var audioEls = {};      // عنصر <audio> لكل مشارك
+  var hands = {};        // identity -> true
+  var speaking = {};     // identity -> true
+  var audioEls = {};     // identity -> <audio>
+  var isHost = false;
 
   /* ---------- مساعدات ---------- */
 
@@ -84,55 +84,35 @@
     el.joinBtn.textContent = "🎤 ادخل السيشن";
   }
 
-  /* Daily بيرمي كائن شكله { action, errorMsg, error } — مش Error
-     عادي، يعني err.message بيبقى undefined. لازم نقرا errorMsg،
-     وإلا بنطلع رسالة عامة متنفعش نتصرف بيها. */
-  var DAILY_ERRORS = {
-    "account-missing-payment-method":
-      "حساب Daily محتاج تضيف وسيلة دفع من dashboard.daily.co → Billing. " +
-      "الدقايق المجانية بتفضل زي ما هي.",
-    "exp-room": "السيشن دي خلص وقتها. اطلب من المدرّس يفتح واحدة جديدة.",
-    "exp-token": "الجلسة انتهت. اقفل الصفحة وافتحها تاني.",
-    "nbf-room": "السيشن لسه مفتحتش. استنى شوية وجرّب تاني.",
-    "meeting-full": "السيشن كاملة العدد دلوقتي.",
-    "not-allowed": "مش مسموحلك تدخل السيشن دي. اتأكد من الكود.",
-    "no-room": "الكود ده مالوش سيشن. اتأكد منه مع المدرّس.",
-    "connection-error": "النت فصل. اتأكد من الاتصال وجرّب تاني.",
-  };
-
+  /* بنقرا سبب الغلطة من كذا شكل، عشان ميظهرش للمستخدم رسالة
+     عامة متنفعش نتصرف بيها */
   function readError(err) {
     if (!err) return { code: "", text: "" };
-    var code = err.errorMsg || (err.error && err.error.msg) || err.message || "";
-    var known = DAILY_ERRORS[code];
-    if (known) return { code: code, text: known };
+    var code = err.message || err.reason || err.errorMsg || String(err);
 
-    /* غلطات المتصفح المعروفة وقت طلب الميك */
-    if (/NotAllowed|Permission/i.test(code)) {
+    if (/NotAllowed|Permission denied/i.test(code)) {
       return { code: code, text: "لازم تسمح للموقع باستخدام الميكروفون من المتصفح 🎤" };
     }
-    if (/NotFound|Requested device/i.test(code)) {
+    if (/NotFound|Requested device|no audio/i.test(code)) {
       return { code: code, text: "مفيش ميكروفون على الجهاز. وصّل سماعة وجرّب تاني." };
+    }
+    if (/token|expired|invalid|unauthorized|401|403/i.test(code)) {
+      return { code: code, text: "الجلسة انتهت. اقفل الصفحة وافتحها تاني." };
+    }
+    if (/quota|limit|exceeded/i.test(code)) {
+      return { code: code, text: "دقايق السيشنز خلصت الشهر ده. كلّم المسؤول." };
+    }
+    if (/network|connect|timeout|ws|websocket/i.test(code)) {
+      return { code: code, text: "النت فصل أو بطيء. اتأكد من الاتصال وجرّب تاني." };
     }
     return { code: code, text: "" };
   }
 
-  /* Daily بيقول إن p.audio و p.screen مهملين والمفروض نقرا من
-     tracks — بنعمل كده، ومسيبين الخاصية القديمة كاحتياطي */
-  function trackOn(p, kind) {
-    var t = p && p.tracks && p.tracks[kind];
-    if (t && t.state) return t.state === "playable";
-    return kind === "audio" ? !!(p && p.audio) : !!(p && p.screen);
-  }
-  function micOn(p) { return trackOn(p, "audio"); }
-  function isSharing(p) { return trackOn(p, "screenVideo"); }
-
-  /* أول حرف من الاسم — بيتحط في الدايرة الملونة */
   function initial(name) {
     var n = String(name || "").trim();
     return n ? n[0] : "؟";
   }
 
-  /* لون ثابت لكل اسم، عشان الطفل يعرف نفسه من اللون كل مرة */
   var FACE_COLORS = ["#6a4fb6", "#23a89f", "#ef5f7c", "#f6a92c", "#7dc242", "#332d6e"];
   function faceColor(key) {
     var sum = 0;
@@ -140,19 +120,24 @@
     return FACE_COLORS[sum % FACE_COLORS.length];
   }
 
-  /* ---------- تحميل مكتبة Daily ---------- */
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  /* ---------- تحميل مكتبة LiveKit ---------- */
   var loader = null;
-  function loadDaily() {
-    if (window.Daily) return Promise.resolve();
+  function loadLiveKit() {
+    if (window.LivekitClient) return Promise.resolve();
     if (loader) return loader;
 
     loader = new Promise(function (resolve, reject) {
       var s = document.createElement("script");
-      s.src = DAILY_SRC;
-      s.crossOrigin = "anonymous";
+      s.src = LK_SRC;
       s.async = true;
       s.onload = function () {
-        window.Daily ? resolve() : reject(new Error("missing"));
+        window.LivekitClient ? resolve() : reject(new Error("missing"));
       };
       s.onerror = function () {
         reject(new Error("blocked"));
@@ -162,49 +147,60 @@
     return loader;
   }
 
-  /* بنبدأ التحميل من دلوقتي عشان لما يضغط "ادخل" يكون جاهز */
-  loadDaily().catch(function () {
+  /* بنبدأ التحميل من دلوقتي عشان الدخول يبقى فوري */
+  loadLiveKit().catch(function () {
     /* هنتعامل مع الغلطة وقت الدخول */
   });
 
   /* ============================================================
      رسم المشاركين
      ============================================================ */
+  function everyone() {
+    if (!room) return [];
+    var list = [room.localParticipant];
+    room.remoteParticipants.forEach(function (p) {
+      list.push(p);
+    });
+    return list;
+  }
+
   function renderPeople() {
-    if (!call) return;
+    if (!room) return;
 
-    var all = call.participants();
-    var ids = Object.keys(all);
-
-    el.people.innerHTML = ids
-      .map(function (key) {
-        var p = all[key];
-        var id = p.session_id;
-        var isMe = key === "local";
-        var name = p.user_name || (isMe ? "أنا" : "ضيف");
-        var talking = id === talkingId;
+    var list = everyone();
+    el.people.innerHTML = list
+      .map(function (p) {
+        var id = p.identity;
+        var isMe = p === room.localParticipant;
+        var name = p.name || id || "ضيف";
+        var talking = !!speaking[id];
+        var micLive = isMe ? !!room.localParticipant.isMicrophoneEnabled : !isMicMuted(p);
 
         return (
           '<div class="person' + (talking ? " is-talking" : "") + '">' +
           (hands[id] ? '<span class="person-hand" title="رافع إيده">✋</span>' : "") +
           '<div class="person-face" style="background:' + faceColor(name + id) + '">' +
-          initial(name) +
+          escapeHtml(initial(name)) +
           "</div>" +
           '<div class="person-name">' + escapeHtml(name) + (isMe ? " (أنت)" : "") + "</div>" +
-          '<div class="person-state">' + (micOn(p) ? "🎤 الميك مفتوح" : "🔇 ساكت") + "</div>" +
-          (p.owner ? '<span class="person-badge">المدرّس</span>' : "") +
+          '<div class="person-state">' + (micLive ? "🎤 الميك مفتوح" : "🔇 ساكت") + "</div>" +
           "</div>"
         );
       })
       .join("");
 
-    setCount(ids.length);
+    setCount(list.length);
   }
 
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  /* المشارك البعيد: بنشوف نشر الصوت بتاعه مكتوم ولا لأ */
+  function isMicMuted(p) {
+    var pubs = p.audioTrackPublications;
+    if (!pubs || !pubs.size) return true;
+    var muted = true;
+    pubs.forEach(function (pub) {
+      if (!pub.isMuted) muted = false;
     });
+    return muted;
   }
 
   function setCount(n) {
@@ -214,77 +210,6 @@
     }
     el.peopleCount.textContent = n === 1 ? "👤 لوحدك دلوقتي" : "👥 " + n + " في السيشن";
     el.peopleCount.hidden = false;
-  }
-
-  /* ---------- الصوت ----------
-     لازم نعمل عنصر <audio> لكل مشارك عشان صوته يطلع.
-     Daily مش بيعمل ده لوحده في وضع call object. */
-  function attachAudio(p) {
-    if (!p || p.local) return;
-    var id = p.session_id;
-    var track = p.tracks && p.tracks.audio;
-    var ready = track && track.state === "playable" && track.persistentTrack;
-
-    if (!ready) {
-      if (audioEls[id]) {
-        audioEls[id].remove();
-        delete audioEls[id];
-      }
-      return;
-    }
-
-    var node = audioEls[id];
-    if (!node) {
-      node = document.createElement("audio");
-      node.autoplay = true;
-      node.playsInline = true;
-      audioEls[id] = node;
-      el.audioSink.appendChild(node);
-    }
-
-    var stream = new MediaStream([track.persistentTrack]);
-    node.srcObject = stream;
-    var playing = node.play();
-    if (playing && playing.catch) {
-      playing.catch(function () {
-        say("اضغط على أي حتة في الصفحة عشان الصوت يشتغل 🔊", true);
-      });
-    }
-  }
-
-  function refreshAudio() {
-    if (!call) return;
-    var all = call.participants();
-    Object.keys(all).forEach(function (k) {
-      attachAudio(all[k]);
-    });
-  }
-
-  /* ---------- مشاركة الشاشة ---------- */
-  function refreshScreen() {
-    if (!call) return;
-    var all = call.participants();
-    var sharer = null;
-
-    Object.keys(all).forEach(function (k) {
-      var p = all[k];
-      var t = p.tracks && p.tracks.screenVideo;
-      if (t && t.state === "playable" && t.persistentTrack) sharer = p;
-    });
-
-    if (!sharer) {
-      el.shareStage.hidden = true;
-      el.shareVideo.srcObject = null;
-      el.stage.classList.remove("is-sharing");
-      return;
-    }
-
-    el.shareStage.hidden = false;
-    el.stage.classList.add("is-sharing");
-    el.shareTag.textContent = "🖥️ " + (sharer.user_name || "ضيف") + " بيشارك شاشته";
-    el.shareVideo.srcObject = new MediaStream([sharer.tracks.screenVideo.persistentTrack]);
-    var playing = el.shareVideo.play();
-    if (playing && playing.catch) playing.catch(function () {});
   }
 
   /* ---------- حالة الأزرار ---------- */
@@ -309,81 +234,140 @@
      الدخول
      ============================================================ */
   function joinRoom(info, name, code) {
-    call = window.Daily.createCallObject({
-      subscribeToTracksAutomatically: true,
-      dailyConfig: { useDevicePreferenceCookies: true },
+    var LK = window.LivekitClient;
+    var RoomEvent = LK.RoomEvent;
+
+    room = new LK.Room({
+      adaptiveStream: true,
+      dynacast: true,
+      // مفيش كاميرا خالص، فمش محتاجين أي إعدادات فيديو
+      publishDefaults: { simulcast: false },
     });
 
-    call
-      .on("joined-meeting", function () {
+    room
+      .on(RoomEvent.Connected, function () {
         say("");
         setMic(false);
         renderPeople();
-        refreshAudio();
       })
-      .on("participant-joined", function (e) {
-        renderPeople();
-        attachAudio(e && e.participant);
-        refreshScreen();
-      })
-      .on("participant-updated", function (e) {
-        renderPeople();
-        attachAudio(e && e.participant);
-        refreshScreen();
-        if (e && e.participant && e.participant.local) {
-          setMic(micOn(e.participant));
-          setShare(isSharing(e.participant));
+      .on(RoomEvent.ParticipantConnected, renderPeople)
+      .on(RoomEvent.ParticipantDisconnected, function (p) {
+        delete hands[p.identity];
+        delete speaking[p.identity];
+        var node = audioEls[p.identity];
+        if (node) {
+          node.remove();
+          delete audioEls[p.identity];
         }
+        renderPeople();
       })
-      .on("participant-left", function (e) {
-        var id = e && e.participant && e.participant.session_id;
-        if (id) {
-          delete hands[id];
-          if (audioEls[id]) {
-            audioEls[id].remove();
-            delete audioEls[id];
+
+      /* الصوت: لازم نربط كل تراك بعنصر <audio> عشان يتسمع */
+      .on(RoomEvent.TrackSubscribed, function (track, pub, participant) {
+        if (track.kind === "audio") {
+          var node = track.attach();
+          node.autoplay = true;
+          node.playsInline = true;
+          audioEls[participant.identity] = node;
+          el.audioSink.appendChild(node);
+          var playing = node.play && node.play();
+          if (playing && playing.catch) {
+            playing.catch(function () {
+              say("اضغط على أي حتة في الصفحة عشان الصوت يشتغل 🔊", true);
+            });
           }
+        } else if (isScreenPub(pub)) {
+          track.attach(el.shareVideo);
+          el.shareStage.hidden = false;
+          el.stage.classList.add("is-sharing");
+          el.shareTag.textContent =
+            "🖥️ " + (participant.name || participant.identity) + " بيشارك شاشته";
         }
         renderPeople();
-        refreshScreen();
       })
-      .on("active-speaker-change", function (e) {
-        talkingId = e && e.activeSpeaker ? e.activeSpeaker.peerId : null;
+      .on(RoomEvent.TrackUnsubscribed, function (track, pub, participant) {
+        track.detach().forEach(function (n) {
+          n.remove();
+        });
+        if (track.kind === "audio") delete audioEls[participant.identity];
+        else if (isScreenPub(pub)) hideShare();
         renderPeople();
       })
-      .on("app-message", function (e) {
-        // رسالة رفع إيد من مشارك تاني
-        var d = e && e.data;
-        if (!d || d.kind !== "hand") return;
-        if (d.up) hands[e.fromId] = true;
-        else delete hands[e.fromId];
+
+      .on(RoomEvent.ActiveSpeakersChanged, function (speakers) {
+        speaking = {};
+        (speakers || []).forEach(function (p) {
+          speaking[p.identity] = true;
+        });
         renderPeople();
       })
-      .on("error", function (e) {
-        var info = readError(e);
-        fail(
-          info.text ||
-            "حصلت مشكلة في الاتصال. اتأكد من النت وحاول تاني." +
-              (info.code ? " (" + info.code + ")" : "")
-        );
-        cleanup();
+
+      .on(RoomEvent.TrackMuted, renderPeople)
+      .on(RoomEvent.TrackUnmuted, renderPeople)
+
+      .on(RoomEvent.LocalTrackPublished, function (pub) {
+        if (isScreenPub(pub)) {
+          setShare(true);
+          // بنوري نفسنا إن المشاركة شغالة، من غير ما نعرض شاشتنا لنفسنا
+          el.shareTag.textContent = "🖥️ انت بتشارك شاشتك";
+          el.shareStage.hidden = false;
+          el.stage.classList.add("is-sharing");
+          if (pub.track) pub.track.attach(el.shareVideo);
+        } else {
+          setMic(true);
+        }
+        renderPeople();
       })
-      .on("left-meeting", function () {
+      .on(RoomEvent.LocalTrackUnpublished, function (pub) {
+        if (isScreenPub(pub)) {
+          setShare(false);
+          hideShare();
+        } else {
+          setMic(false);
+        }
+        renderPeople();
+      })
+
+      .on(RoomEvent.DataReceived, function (payload, participant) {
+        var msg;
+        try {
+          msg = JSON.parse(new TextDecoder().decode(payload));
+        } catch (_) {
+          return;
+        }
+        if (!msg || msg.kind !== "hand" || !participant) return;
+        if (msg.up) hands[participant.identity] = true;
+        else delete hands[participant.identity];
+        renderPeople();
+      })
+
+      .on(RoomEvent.Disconnected, function () {
         cleanup();
         show("gate");
       });
 
     el.roomLabel.textContent = code;
+    isHost = !!info.isHost;
     show("stage");
     say("بنوصّلك بالسيشن…", true);
 
-    return call.join({
-      url: info.url,
-      token: info.token,
-      userName: name,
-      startVideoOff: true,
-      startAudioOff: true,
+    return room.connect(info.url, info.token).then(function () {
+      // بيدخل ساكت — يفتح الميك لما يحب
+      return room.localParticipant.setMicrophoneEnabled(false);
     });
+  }
+
+  function isScreenPub(pub) {
+    if (!pub) return false;
+    var src = pub.source;
+    return src === "screen_share" || src === "screen_share_audio" ||
+      (window.LivekitClient && src === window.LivekitClient.Track.Source.ScreenShare);
+  }
+
+  function hideShare() {
+    el.shareStage.hidden = true;
+    el.shareVideo.srcObject = null;
+    el.stage.classList.remove("is-sharing");
   }
 
   function cleanup() {
@@ -392,22 +376,23 @@
     });
     audioEls = {};
     hands = {};
-    talkingId = null;
+    speaking = {};
     handUp = false;
+    isHost = false;
     el.people.innerHTML = "";
-    el.shareStage.hidden = true;
-    el.shareVideo.srcObject = null;
-    el.stage.classList.remove("is-sharing");
+    hideShare();
     setCount(0);
+    setHand(false);
+    setShare(false);
     say("");
 
-    if (call) {
+    if (room) {
       try {
-        call.destroy();
+        room.disconnect();
       } catch (_) {
         /* خلاص اتقفل */
       }
-      call = null;
+      room = null;
     }
     el.joinBtn.disabled = false;
     el.joinBtn.textContent = "🎤 ادخل السيشن";
@@ -415,21 +400,27 @@
 
   /* ---------- الأزرار ---------- */
   el.micBtn.addEventListener("click", function () {
-    if (!call) return;
-    call.setLocalAudio(!call.localAudio());
+    if (!room) return;
+    var lp = room.localParticipant;
+    lp.setMicrophoneEnabled(!lp.isMicrophoneEnabled).catch(function (err) {
+      var info = readError(err);
+      say(info.text || "مش قادرين نفتح الميك.", true);
+    });
   });
 
   el.handBtn.addEventListener("click", function () {
-    if (!call) return;
+    if (!room) return;
     setHand(!handUp);
 
-    var me = call.participants().local;
-    if (me) {
-      if (handUp) hands[me.session_id] = true;
-      else delete hands[me.session_id];
-    }
+    var me = room.localParticipant.identity;
+    if (handUp) hands[me] = true;
+    else delete hands[me];
+
     try {
-      call.sendAppMessage({ kind: "hand", up: handUp }, "*");
+      room.localParticipant.publishData(
+        new TextEncoder().encode(JSON.stringify({ kind: "hand", up: handUp })),
+        { reliable: true }
+      );
     } catch (_) {
       /* الرسالة مش ضرورية للسيشن نفسها */
     }
@@ -438,20 +429,16 @@
   });
 
   el.shareBtn.addEventListener("click", function () {
-    if (!call) return;
-    var me = call.participants().local;
-    if (me && isSharing(me)) call.stopScreenShare();
-    else {
-      try {
-        call.startScreenShare();
-      } catch (_) {
-        say("مشاركة الشاشة مش شغالة على الجهاز ده.");
-      }
-    }
+    if (!room) return;
+    var lp = room.localParticipant;
+    lp.setScreenShareEnabled(!lp.isScreenShareEnabled).catch(function (err) {
+      var info = readError(err);
+      say(info.text || "مشاركة الشاشة مش شغالة على الجهاز ده.", true);
+    });
   });
 
   el.hangupBtn.addEventListener("click", function () {
-    if (call) call.leave();
+    if (room) room.disconnect();
     else show("gate");
   });
 
@@ -518,7 +505,7 @@
     el.joinBtn.disabled = true;
     el.joinBtn.textContent = "بنجهّز السيشن…";
 
-    loadDaily()
+    loadLiveKit()
       .then(function () {
         return fetch("/api/meeting", {
           method: "POST",
@@ -534,7 +521,11 @@
       .then(function (res) {
         return res.json().then(function (data) {
           if (!res.ok || !data.ok) {
-            throw new Error(data.error || "مقدرناش نجهّز السيشن");
+            /* رسايل السيرفر بتاعنا عربي ومفهومة أصلاً — بنعلّمها
+               عشان تتعرض زي ما هي من غير ما نلفّها في كلام تاني */
+            var e = new Error(data.error || "مقدرناش نجهّز السيشن");
+            e.fromApi = true;
+            throw e;
           }
           return data;
         });
@@ -543,15 +534,18 @@
         return joinRoom(info, name, code);
       })
       .catch(function (err) {
-        var info = readError(err);
+        if (err && err.fromApi) {
+          fail(err.message);
+          cleanup();
+          return;
+        }
 
+        var info = readError(err);
         if (info.code === "blocked" || info.code === "missing") {
           fail("النت عندك بيمنع تحميل خدمة السيشن. جرّب شبكة تانية.");
         } else if (info.text) {
           fail(info.text);
         } else {
-          /* مش عارفين الغلطة — نوري الكود نفسه بدل رسالة عامة
-             متنفعش نتصرف بيها */
           fail(
             "مقدرناش نفتح السيشن." +
               (info.code ? " التفاصيل: " + info.code : " حاول تاني.")
