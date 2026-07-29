@@ -744,7 +744,7 @@
     return room
       .connect(info.url, info.token, { autoSubscribe: true, maxRetries: 3 })
       .then(function () {
-        return primeMic(LK);
+        return primeMic();
       });
   }
 
@@ -776,39 +776,155 @@
   }
 
   /* ============================================================
+     طلب الميك — لازم يبقى جوه اللمسة نفسها
+
+     دي كانت مشكلة الموبايل. المتصفح (خصوصاً سفاري على الآيفون)
+     بيسمح بطلب الميكروفون بس وإحنا لسه "جوه" لمسة المستخدم.
+     إحنا كنا بنطلبه بعد ما نجيب التوكن من السيرفر ونتصل بالأوضة
+     — يعني بعد ثانية أو اتنين من اللمسة، والمتصفح ساعتها بيرفض
+     الطلب من غير حتى ما يسأل صاحب الجهاز.
+
+     عشان كده بنطلب الميك دلوقتي حالاً في نفس لحظة اللمسة،
+     والتوكن بيتجاب في نفس الوقت بالتوازي. الاتنين بيخلصوا مع
+     بعض، فمفيش وقت ضايع كمان.
+
+     مهم: الدالة دي لازم تتنادى من غير أي await قبلها، وإلا
+     المتصفح بيعتبر اللمسة "خلصت".
+     ============================================================ */
+  var micTrackPromise = null;
+
+  /* بنستخدم getUserMedia الأصلي بتاع المتصفح مباشرةً — مش
+     مكتبة LiveKit — عشان الطلب يخرج في نفس اللحظة من غير ما
+     يستنى المكتبة تتحمّل. ده اللي بيخلي المتصفح يقبل يسأل. */
+  function requestMicTrack() {
+    var md = navigator.mediaDevices;
+    if (!md || !md.getUserMedia) {
+      return Promise.reject(new Error("NotFoundError: no mediaDevices"));
+    }
+
+    return md
+      .getUserMedia({ audio: MIC_CONSTRAINTS, video: false })
+      .catch(function (err) {
+        /* بعض أجهزة الموبايل مش بتعرف تنفّذ القيود بالظبط.
+           لو دي المشكلة، الإذن يبقى اتاخد خلاص، فنعيد الطلب
+           بأبسط شكل من غير ما يتسأل تاني */
+        var raw = String((err && (err.name || err.message)) || "");
+        if (/Overconstrained|Constraint|NotSupported|TypeError/i.test(raw)) {
+          return md.getUserMedia({ audio: true, video: false });
+        }
+        throw err;
+      })
+      .then(function (stream) {
+        var msTrack = stream.getAudioTracks()[0];
+        if (!msTrack) throw new Error("NotFoundError: no audio track");
+        return msTrack;
+      });
+  }
+
+  /* بنجهّز التراك ونحطه في الجيب — بيستنانا لحد ما الاتصال يخلص */
+  function grabMicEarly() {
+    micTrackPromise = requestMicTrack();
+    micTrackPromise.catch(function () { /* هنتعامل معاها في primeMic */ });
+  }
+
+  /* لو الدخول فشل، منسيبش الميك مفتوح والنور الأحمر شغال */
+  function releaseEarlyMic() {
+    if (!micTrackPromise) return;
+    var pending = micTrackPromise;
+    micTrackPromise = null;
+    pending.then(function (msTrack) {
+      try { msTrack.stop(); } catch (_) {}
+    }, function () {});
+  }
+
+  function publishMic(msTrack, muted) {
+    var LK = window.LivekitClient;
+    var track = new LK.LocalAudioTrack(msTrack, MIC_CONSTRAINTS, false);
+    track.source = LK.Track.Source.Microphone;
+
+    var step = muted ? track.mute() : Promise.resolve();
+    return Promise.resolve(step).then(function () {
+      return room.localParticipant.publishTrack(track, {
+        source: LK.Track.Source.Microphone,
+        audioPreset: VOICE_PRESET,
+        dtx: false,
+        red: true,
+        stopMicTrackOnMute: false,
+      });
+    });
+  }
+
+  /* ============================================================
      تجهيز الميك من أول لحظة
 
-     لو استنينا لحد ما اللاعب يضغط "افتح الميك"، الضغطة دي
-     بتعمل ٣ حاجات تقيلة مع بعض: تطلب إذن المتصفح، تفتح الجهاز،
-     وتتفاوض مع السيرفر عشان تنشر التراك — وده اللي كان بياخد
-     ثواني.
-
-     بدل كده بننشر التراك **مكتوم** من ساعة الدخول، فالضغطة
+     بننشر التراك **مكتوم** من ساعة الدخول، فضغطة "افتح الميك"
      بعد كده بتبقى مجرد unmute — لحظية.
      ============================================================ */
-  function primeMic(LK) {
-    return LK.createLocalAudioTrack(MIC_CONSTRAINTS)
-      .then(function (track) {
-        // بنكتمه قبل النشر عشان محدش يسمع حاجة بالغلط
-        return track.mute().then(function () {
-          return room.localParticipant.publishTrack(track, {
-            source: LK.Track.Source.Microphone,
-            audioPreset: VOICE_PRESET,
-            dtx: false,
-            red: true,
-            stopMicTrackOnMute: false,
-          });
-        });
-      })
-      .then(function () {
-        scheduleRender();
-      })
+  function primeMic() {
+    var pending = micTrackPromise || requestMicTrack();
+    micTrackPromise = null;
+
+    return pending
+      // بنكتمه قبل النشر عشان محدش يسمع حاجة بالغلط
+      .then(function (track) { return publishMic(track, true); })
+      .then(function () { scheduleRender(); })
       .catch(function (err) {
         /* مفيش ميك أو الإذن مرفوض — السيشن بتكمل سماع عادي،
-           وبنقوله المشكلة بدل ما يضغط ومحصلش حاجة */
-        var info = readError(err);
+           والزرار لسه بيشتغل: أول ما يدوس هنطلب الإذن تاني */
         scheduleRender();
-        say(info.text || "مش لاقيين الميك — اسمح للموقع باستخدامه 🎤", true);
+        micHelp(err);
+      });
+  }
+
+  /* رسايل واضحة لكل سبب — الطفل لازم يعرف يعمل إيه بالظبط */
+  function micHelp(err) {
+    var raw = String((err && (err.name || err.message)) || "");
+
+    if (/NotAllowed|Permission|Denied|SecurityError/i.test(raw)) {
+      say("الميكروفون مقفول. دوس على 🔒 جنب عنوان الموقع فوق ← الأذونات ← اسمح للميكروفون، وبعدين دوس على زرار الميك تاني 🎤", true);
+    } else if (/NotFound|DevicesNotFound|no audio/i.test(raw)) {
+      say("مش لاقيين ميكروفون على الجهاز.", true);
+    } else if (/NotReadable|TrackStart|Busy|AbortError/i.test(raw)) {
+      say("الميكروفون مشغول في تطبيق تاني (مكالمة أو واتساب). اقفله وجرّب تاني.", true);
+    } else if (!window.isSecureContext) {
+      say("لازم تفتح الموقع بـ https عشان الميكروفون يشتغل.", true);
+    } else {
+      var info = readError(err);
+      say(info.text || "مقدرناش نفتح الميك. دوس على الزرار تاني.", true);
+    }
+  }
+
+  /* ============================================================
+     طلب الإذن من جديد بضغطة الزرار
+
+     لو الإذن اترفض وقت الدخول، الطفل لسه يقدر يدوس على زرار
+     الميك — وساعتها بنطلب الإذن **جوه اللمسة** على طول، من غير
+     أي انتظار قبلها، عشان المتصفح يقبل يسأل.
+     ============================================================ */
+  function grabMicNow() {
+    if (micBusy || !room) return;
+    micBusy = true;
+
+    /* الطلب أول سطر خالص — أي انتظار قبله بيضيّع اللمسة */
+    var pending = requestMicTrack();
+
+    setMic(true);
+    say("بنطلب إذن الميكروفون — اقبل من فوق 🎤", true);
+
+    pending
+      .then(function (track) {
+        return publishMic(track, false);
+      })
+      .then(function () {
+        say("الميك اشتغل 🎤");
+      })
+      .catch(function (err) {
+        micWanted = false;
+        micHelp(err);
+      })
+      .then(function () {
+        micBusy = false;
+        scheduleRender();
       });
   }
 
@@ -838,7 +954,9 @@
 
     var pub = micPub();
     var live = !!pub && !pub.isMuted;
-    if (live === micWanted) { micTries = 0; scheduleRender(); return; }
+    /* خلص الأمر — بنرسم حالاً مش في الإطار الجاي، عشان الكارت
+       والزرار يتغيّروا مع بعض في نفس اللحظة */
+    if (live === micWanted) { micTries = 0; renderPeople(); return; }
 
     /* لو الأمر مشي والحالة ما اتغيّرتش، مش هنفضل نعيد للأبد —
        بنسيب المزامنة ترجّع الزرار على الحقيقة */
@@ -912,6 +1030,8 @@
     setMic(false);
     say("");
 
+    releaseEarlyMic();
+
     if (room) {
       try { room.disconnect(); } catch (_) { /* خلاص اتقفل */ }
       room = null;
@@ -927,6 +1047,14 @@
     micTries = 0;
     micWanted = !micWanted;
     setMic(micWanted);   // الشكل بيتغيّر دلوقتي حالاً
+
+    /* مفيش تراك ميك أصلاً؟ يبقى الإذن اترفض أو فشل وقت الدخول.
+       بنطلبه دلوقتي من جوه اللمسة — لازم يبقى أول سطر، من غير
+       أي انتظار قبله، وإلا الموبايل هيرفض من غير ما يسأل */
+    if (micWanted && !micPub()) {
+      grabMicNow();
+      return;
+    }
     applyMic();
   });
 
@@ -1101,6 +1229,12 @@
 
     el.joinBtn.disabled = true;
     el.joinBtn.textContent = "بنجهّز السيشن…";
+
+    /* أول حاجة خالص: نطلب الميكروفون وإحنا لسه جوه اللمسة.
+       أي كود بينتظر قبل كده (تحميل مكتبة، طلب سيرفر) بيخلي
+       الموبايل يعتبر اللمسة خلصت ويرفض الطلب من غير ما يسأل.
+       الطلب ده بيمشي بالتوازي مع جلب التوكن، فمفيش وقت ضايع */
+    grabMicEarly();
 
     loadLiveKit()
       .then(function () {
