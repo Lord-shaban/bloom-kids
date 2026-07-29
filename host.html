@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>سيشن مباشرة | بلوم كيدز</title>
-  <meta name="description" content="ادخل سيشن بلوم كيدز المباشرة — صوت من غير كاميرا.">
+  <title>لوحة المدرّس | بلوم كيدز</title>
 
-  <!-- مش عايزين الأوضة تتفهرس في جوجل -->
+  <!-- صفحة خاصة بالمدرّس — مفيش لينك ليها من الموقع -->
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#332d6e">
 
@@ -20,19 +19,17 @@
   <link rel="stylesheet" href="css/style.css?v=8">
   <link rel="stylesheet" href="css/meeting.css?v=5">
 
-  <!-- مكتبة LiveKit بتتحمّل بدري عشان الدخول يبقى فوري -->
   <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/livekit-client@2.21.0/dist/livekit-client.umd.min.js">
 </head>
-<body class="meet-page" data-role="kid">
+<body class="meet-page is-host" data-role="host">
 
-  <!-- ===== الترويسة ===== -->
   <header class="site-header">
     <div class="container header-inner">
       <a href="index.html" class="brand" aria-label="بلوم كيدز — الرئيسية">
         <img src="assets/images/logo.jpeg" alt="شعار بلوم كيدز" class="brand-logo">
         <span class="brand-text">
           <strong>Bloom Kids</strong>
-          <small>حكايات · لعب · نمو</small>
+          <small>لوحة المدرّس</small>
         </span>
       </a>
       <a href="index.html" class="btn btn-ghost btn-sm">الموقع الرئيسي</a>
@@ -40,18 +37,18 @@
   </header>
 
   <main>
-    <!-- ===== شاشة الدخول ===== -->
+    <!-- ===== دخول المدرّس ===== -->
     <section class="meet-gate" id="gate">
       <div class="container">
         <div class="gate-card">
-          <span class="eyebrow">🎧 سيشن مباشرة</span>
-          <h1>ادخل <span class="hl hl-teal">السيشن</span></h1>
-          <p class="gate-sub">صوت بس — مفيش كاميرا خالص.</p>
+          <span class="eyebrow">👩‍🏫 لوحة المدرّس</span>
+          <h1>ابدأ <span class="hl hl-pink">السيشن</span></h1>
+          <p class="gate-sub">من هنا بتفتح السيشن وتتحكم فيها بالكامل.</p>
 
           <form class="gate-form" id="gateForm" novalidate>
             <label class="field">
               <span>اسمك</span>
-              <input type="text" id="displayName" placeholder="اسم الطفل" required
+              <input type="text" id="displayName" placeholder="مثال: أ. سارة" required
                      autocomplete="name" maxlength="40">
             </label>
 
@@ -61,18 +58,31 @@
                      dir="ltr" autocomplete="off" maxlength="40">
             </label>
 
+            <label class="field">
+              <span>مفتاح المدرّس</span>
+              <input type="password" id="hostKey" dir="ltr" autocomplete="current-password"
+                     placeholder="المفتاح السري" required>
+            </label>
+
             <p class="field-error" id="gateError" hidden></p>
 
             <button type="submit" class="btn btn-primary btn-lg btn-block" id="joinBtn">
-              🎤 ادخل السيشن
+              🚀 ابدأ السيشن
             </button>
           </form>
 
-          <ul class="gate-tips">
-            <li><span class="bg-teal">🎧</span> استخدم سماعة عشان الصوت يطلع أنضف</li>
-            <li><span class="bg-pink">🙋</span> ارفع إيدك لما تحب تتكلم</li>
-            <li><span class="bg-purple">🔇</span> مفيش كاميرا — صوت بس</li>
-          </ul>
+          <div class="host-share">
+            <label class="field share-field">
+              <span>لينك الأطفال</span>
+              <input type="text" id="shareLink" dir="ltr" readonly>
+            </label>
+            <button class="btn btn-ghost btn-block" id="copyBtn" type="button">
+              📋 انسخ لينك الأطفال
+            </button>
+            <p class="host-note">
+              الأطفال بيفتحوا اللينك ده ويكتبوا اسمهم وبس — مش محتاجين المفتاح.
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -80,9 +90,10 @@
     <!-- ===== الأوضة ===== -->
     <section class="meet-stage" id="stage" hidden>
       <div class="meet-top">
-        <span class="meet-room">🎧 <b id="roomLabel">…</b></span>
+        <span class="meet-room">👩‍🏫 <b id="roomLabel">…</b></span>
         <span class="meet-count" id="peopleCount" hidden></span>
         <span class="meet-status" id="meetStatus" hidden></span>
+        <button class="btn btn-ghost btn-sm" id="panelBtn" type="button">🎛️ التحكم</button>
       </div>
 
       <div class="meet-body">
@@ -95,24 +106,43 @@
 
       <div id="audioSink" aria-hidden="true"></div>
 
-      <!-- الطالب معاهوش مشاركة شاشة — لا هنا ولا في التوكن -->
       <div class="meet-controls" role="group" aria-label="أزرار السيشن">
         <button class="ctl ctl-mic" id="micBtn" type="button" aria-pressed="false">
           <span class="ctl-icon" id="micIcon">🔇</span>
           <span class="ctl-text" id="micText">افتح الميك</span>
         </button>
 
-        <button class="ctl ctl-hand" id="handBtn" type="button" aria-pressed="false">
-          <span class="ctl-icon">🙋</span>
-          <span class="ctl-text" id="handText">ارفع إيدك</span>
+        <button class="ctl ctl-share" id="shareBtn" type="button" aria-pressed="false">
+          <span class="ctl-icon">🖥️</span>
+          <span class="ctl-text" id="shareText">شارك شاشتك</span>
+        </button>
+
+        <button class="ctl ctl-muteall" id="muteAllBtn" type="button">
+          <span class="ctl-icon">🤫</span>
+          <span class="ctl-text">اكتم الكل</span>
+        </button>
+
+        <button class="ctl ctl-hands" id="clearHandsBtn" type="button">
+          <span class="ctl-icon">🧹</span>
+          <span class="ctl-text">نزّل الإيدين</span>
         </button>
 
         <button class="ctl ctl-leave" id="hangupBtn" type="button">
           <span class="ctl-icon">👋</span>
-          <span class="ctl-text">اخرج</span>
+          <span class="ctl-text">اقفل</span>
         </button>
       </div>
     </section>
+
+    <!-- ===== لوحة التحكم ===== -->
+    <aside class="host-panel" id="panel" hidden>
+      <div class="panel-head">
+        <strong>🎛️ تحكم السيشن</strong>
+        <button class="btn-icon" id="panelClose" type="button" title="اقفل">✕</button>
+      </div>
+      <p class="panel-hint" id="panelHint">…</p>
+      <div class="panel-list" id="panelList"></div>
+    </aside>
 
     <!-- ===== لو حصلت مشكلة ===== -->
     <section class="meet-fallback" id="fallback" hidden>

@@ -33,6 +33,15 @@
 /game
   X-Robots-Tag: noindex, nofollow
 
+# صفحة المدرّس: خاصة تماماً — مفيش لينك ليها من أي مكان
+/host.html
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+/host
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
 # صفحة السيشن المباشرة: ملهاش لازمة في نتايج البحث
 /meeting.html
   X-Robots-Tag: noindex, nofollow

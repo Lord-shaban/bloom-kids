@@ -280,6 +280,81 @@
 .ctl-leave { background: var(--navy); color: var(--white); }
 .ctl-leave:hover { background: var(--pink-dark); }
 
+/* ============ أزرار المدرّس الزيادة ============ */
+.ctl-muteall[aria-pressed], .ctl-muteall { background: rgba(106, 79, 182, 0.12); color: var(--purple); border-color: rgba(106, 79, 182, 0.3); }
+.ctl-muteall:hover { background: var(--purple); color: var(--white); }
+.ctl-hands { background: rgba(246, 169, 44, 0.14); color: #8a5a00; border-color: rgba(246, 169, 44, 0.35); }
+.ctl-hands:hover { background: var(--yellow); color: var(--navy-deep); }
+
+/* ============ لوحة تحكم المدرّس ============ */
+.host-panel {
+  position: fixed; inset-block: 0; inset-inline-end: 0; z-index: 70;
+  width: min(360px, 92vw);
+  background: var(--white);
+  box-shadow: -14px 0 40px rgba(51, 45, 110, 0.18);
+  display: flex; flex-direction: column;
+  padding: 1rem 0.9rem;
+}
+.host-panel[hidden] { display: none; }
+
+/* لما اللوحة تتفتح، السيشن تزاح بدل ما تتغطى */
+@media (min-width: 900px) {
+  body.panel-open .meet-stage { padding-inline-end: calc(min(360px, 92vw) + 0.7rem); }
+  body.panel-open .site-header .container { padding-inline-end: calc(min(360px, 92vw) + 1rem); }
+}
+
+.panel-head {
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--font-head); font-size: 1.05rem; color: var(--navy);
+  margin-bottom: 0.3rem;
+}
+.panel-hint { color: var(--ink-soft); font-weight: 600; font-size: 0.85rem; margin-bottom: 0.8rem; }
+
+.panel-list { flex: 1; overflow-y: auto; display: grid; gap: 0.55rem; align-content: start; }
+
+.panel-row {
+  border: 2px solid rgba(51, 45, 110, 0.1);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.7rem;
+  background: var(--cream);
+}
+/* اللي رافع إيده بيبان على طول */
+.panel-row.has-hand { border-color: var(--yellow); background: rgba(246, 169, 44, 0.12); }
+
+.panel-who {
+  display: flex; align-items: center; gap: 0.45rem;
+  margin-bottom: 0.5rem; min-width: 0;
+}
+.panel-who b {
+  font-family: var(--font-head); color: var(--navy); font-size: 0.95rem;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.panel-who small { color: var(--ink-soft); font-weight: 700; font-size: 0.76rem; margin-inline-start: auto; white-space: nowrap; }
+.panel-hand { font-size: 1rem; }
+
+.panel-acts { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+
+.pbtn {
+  font-family: var(--font-head); font-weight: 700; font-size: 0.78rem;
+  padding: 0.32rem 0.65rem; border-radius: 99px; cursor: pointer;
+  border: 2px solid rgba(51, 45, 110, 0.15);
+  background: var(--white); color: var(--navy);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.pbtn:hover { background: var(--navy); color: var(--white); }
+.pbtn:disabled { opacity: 0.5; cursor: not-allowed; }
+.pbtn-mute:hover { background: var(--pink-dark); border-color: var(--pink-dark); }
+.pbtn-kick:hover { background: var(--pink-dark); border-color: var(--pink-dark); }
+.pbtn-ok { border-color: var(--green); color: #4e8720; }
+.pbtn-ok:hover { background: var(--green); color: var(--white); }
+
+/* لينك الأطفال في صفحة المدرّس */
+.host-share {
+  margin-top: 1.3rem; padding-top: 1.1rem;
+  border-top: 2px dashed rgba(51, 45, 110, 0.15);
+  text-align: start;
+}
+
 /* ============ شاشة الخطأ ============ */
 .meet-fallback { padding: 3rem 0; }
 .meet-fallback[hidden] { display: none; }
