@@ -84,6 +84,38 @@
     el.joinBtn.textContent = "🎤 ادخل السيشن";
   }
 
+  /* Daily بيرمي كائن شكله { action, errorMsg, error } — مش Error
+     عادي، يعني err.message بيبقى undefined. لازم نقرا errorMsg،
+     وإلا بنطلع رسالة عامة متنفعش نتصرف بيها. */
+  var DAILY_ERRORS = {
+    "account-missing-payment-method":
+      "حساب Daily محتاج تضيف وسيلة دفع من dashboard.daily.co → Billing. " +
+      "الدقايق المجانية بتفضل زي ما هي.",
+    "exp-room": "السيشن دي خلص وقتها. اطلب من المدرّس يفتح واحدة جديدة.",
+    "exp-token": "الجلسة انتهت. اقفل الصفحة وافتحها تاني.",
+    "nbf-room": "السيشن لسه مفتحتش. استنى شوية وجرّب تاني.",
+    "meeting-full": "السيشن كاملة العدد دلوقتي.",
+    "not-allowed": "مش مسموحلك تدخل السيشن دي. اتأكد من الكود.",
+    "no-room": "الكود ده مالوش سيشن. اتأكد منه مع المدرّس.",
+    "connection-error": "النت فصل. اتأكد من الاتصال وجرّب تاني.",
+  };
+
+  function readError(err) {
+    if (!err) return { code: "", text: "" };
+    var code = err.errorMsg || (err.error && err.error.msg) || err.message || "";
+    var known = DAILY_ERRORS[code];
+    if (known) return { code: code, text: known };
+
+    /* غلطات المتصفح المعروفة وقت طلب الميك */
+    if (/NotAllowed|Permission/i.test(code)) {
+      return { code: code, text: "لازم تسمح للموقع باستخدام الميكروفون من المتصفح 🎤" };
+    }
+    if (/NotFound|Requested device/i.test(code)) {
+      return { code: code, text: "مفيش ميكروفون على الجهاز. وصّل سماعة وجرّب تاني." };
+    }
+    return { code: code, text: "" };
+  }
+
   /* Daily بيقول إن p.audio و p.screen مهملين والمفروض نقرا من
      tracks — بنعمل كده، ومسيبين الخاصية القديمة كاحتياطي */
   function trackOn(p, kind) {
@@ -328,9 +360,11 @@
         renderPeople();
       })
       .on("error", function (e) {
+        var info = readError(e);
         fail(
-          (e && e.errorMsg) ||
-            "حصلت مشكلة في الاتصال. اتأكد من النت وحاول تاني."
+          info.text ||
+            "حصلت مشكلة في الاتصال. اتأكد من النت وحاول تاني." +
+              (info.code ? " (" + info.code + ")" : "")
         );
         cleanup();
       })
@@ -509,11 +543,20 @@
         return joinRoom(info, name, code);
       })
       .catch(function (err) {
-        var msg = err && err.message ? err.message : "";
-        if (msg === "blocked" || msg === "missing") {
-          msg = "النت عندك بيمنع تحميل خدمة السيشن. جرّب شبكة تانية.";
+        var info = readError(err);
+
+        if (info.code === "blocked" || info.code === "missing") {
+          fail("النت عندك بيمنع تحميل خدمة السيشن. جرّب شبكة تانية.");
+        } else if (info.text) {
+          fail(info.text);
+        } else {
+          /* مش عارفين الغلطة — نوري الكود نفسه بدل رسالة عامة
+             متنفعش نتصرف بيها */
+          fail(
+            "مقدرناش نفتح السيشن." +
+              (info.code ? " التفاصيل: " + info.code : " حاول تاني.")
+          );
         }
-        fail(msg || "مقدرناش نفتح السيشن. حاول تاني.");
         cleanup();
       });
   });
