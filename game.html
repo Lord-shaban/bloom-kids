@@ -6,8 +6,6 @@
   <title>اكتشف الفروق | بلوم كيدز</title>
   <meta name="description" content="لعبة اكتشف الفروق من بلوم كيدز — دوّر على الفروق بين الصورتين وشغّل تركيزك!">
 
-  <!-- صفحة مخفية: مش موجودة في محركات البحث ومفيش لينك ليها من الموقع -->
-  <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#332d6e">
 
   <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
@@ -18,13 +16,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=8">
-  <link rel="stylesheet" href="css/game.css?v=6">
+  <link rel="stylesheet" href="css/style.css?v=9">
+  <link rel="stylesheet" href="css/game-ui.css?v=1">
+  <link rel="stylesheet" href="css/game.css?v=7">
 
   <!-- صور مراحل الصور بتتحمّل في الخلفية من js/game.js بعد ما الصفحة
        تخلص، مش بـ preload، عشان مايتأخرش ظهور الصفحة نفسها -->
 </head>
-<body class="game-page">
+<body class="play-page game-page">
 
   <!-- ===== الترويسة ===== -->
   <header class="site-header">
@@ -36,7 +35,10 @@
           <small>حكايات · لعب · نمو</small>
         </span>
       </a>
-      <a href="index.html" class="btn btn-ghost btn-sm">الموقع الرئيسي</a>
+      <div class="hud-group">
+        <a href="games.html" class="btn btn-teal btn-sm">🎮 <span class="btn-label">كل الألعاب</span></a>
+        <a href="index.html" class="btn btn-ghost btn-sm"><span class="btn-label">الموقع الرئيسي</span><span aria-hidden="true" class="btn-label-mini">🏠</span></a>
+      </div>
     </div>
   </header>
 

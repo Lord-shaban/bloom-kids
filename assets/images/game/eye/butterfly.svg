@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="فراشة ملونة">
+  <title>فراشة</title>
+  <defs>
+    <linearGradient id="bf-up" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0%" stop-color="#ff9f43"/>
+      <stop offset="55%" stop-color="#ef5f7c"/>
+      <stop offset="100%" stop-color="#a44bd3"/>
+    </linearGradient>
+    <linearGradient id="bf-low" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0%" stop-color="#f6a92c"/>
+      <stop offset="100%" stop-color="#ef5f7c"/>
+    </linearGradient>
+    <!-- جناح ناحية واحدة، وبنعكسه على الناحية التانية -->
+    <g id="bf-wing">
+      <!-- الجناح العلوي -->
+      <path d="M400 292 C 470 172 612 112 692 158 C 764 200 750 322 678 378
+               C 592 444 452 442 400 402 Z"
+            fill="url(#bf-up)" stroke="#2b2440" stroke-width="11" stroke-linejoin="round"/>
+      <!-- الجناح السفلي -->
+      <path d="M400 412 C 502 422 614 470 646 548 C 674 616 606 674 524 652
+               C 448 632 406 546 400 470 Z"
+            fill="url(#bf-low)" stroke="#2b2440" stroke-width="11" stroke-linejoin="round"/>
+
+      <!-- عروق الجناح -->
+      <g fill="none" stroke="#2b2440" stroke-width="6" stroke-linecap="round" opacity="0.5">
+        <path d="M412 330 C 500 268 596 226 690 208"/>
+        <path d="M410 366 C 500 344 600 330 700 316"/>
+        <path d="M408 452 C 490 470 570 508 634 566"/>
+        <path d="M406 500 C 470 528 520 576 552 640"/>
+      </g>
+
+      <!-- العيون الكبيرة على الجناح -->
+      <circle cx="586" cy="262" r="52" fill="#2b2440"/>
+      <circle cx="586" cy="262" r="27" fill="#ffd25a"/>
+      <circle cx="578" cy="253" r="10" fill="#ffffff" opacity="0.85"/>
+
+      <circle cx="548" cy="540" r="38" fill="#2b2440"/>
+      <circle cx="548" cy="540" r="19" fill="#7fe3d8"/>
+
+      <!-- نقط بيضا على أطراف الجناح -->
+      <g fill="#ffffff">
+        <circle cx="688" cy="196" r="15"/>
+        <circle cx="722" cy="252" r="13"/>
+        <circle cx="712" cy="316" r="14"/>
+        <circle cx="660" cy="360" r="12"/>
+        <circle cx="500" cy="196" r="13"/>
+        <circle cx="624" cy="592" r="13"/>
+        <circle cx="566" cy="634" r="12"/>
+        <circle cx="482" cy="608" r="10"/>
+      </g>
+      <g fill="#2b2440" opacity="0.85">
+        <circle cx="486" cy="330" r="17"/>
+        <circle cx="470" cy="472" r="14"/>
+      </g>
+    </g>
+  </defs>
+
+  <rect width="800" height="800" fill="#f3ecff"/>
+
+  <!-- الجناحين -->
+  <use href="#bf-wing"/>
+  <use href="#bf-wing" transform="translate(800,0) scale(-1,1)"/>
+
+  <!-- الجسم -->
+  <rect x="376" y="262" width="48" height="342" rx="24" fill="#332d6e"/>
+  <rect x="386" y="272" width="16" height="320" rx="8" fill="#5b568c" opacity="0.7"/>
+  <g stroke="#221d4f" stroke-width="5" stroke-linecap="round" opacity="0.6">
+    <path d="M382 330 H418"/><path d="M382 380 H418"/><path d="M382 430 H418"/>
+    <path d="M382 480 H418"/><path d="M382 530 H418"/>
+  </g>
+  <circle cx="400" cy="262" r="36" fill="#332d6e"/>
+  <circle cx="386" cy="254" r="9" fill="#ffffff"/>
+  <circle cx="414" cy="254" r="9" fill="#ffffff"/>
+  <circle cx="387" cy="256" r="4.5" fill="#221d4f"/>
+  <circle cx="415" cy="256" r="4.5" fill="#221d4f"/>
+
+  <!-- قرون الاستشعار -->
+  <g fill="none" stroke="#332d6e" stroke-width="9" stroke-linecap="round">
+    <path d="M386 234 C 362 182 322 152 288 144"/>
+    <path d="M414 234 C 438 182 478 152 512 144"/>
+  </g>
+  <circle cx="284" cy="142" r="15" fill="#ef5f7c"/>
+  <circle cx="516" cy="142" r="15" fill="#ef5f7c"/>
+</svg>

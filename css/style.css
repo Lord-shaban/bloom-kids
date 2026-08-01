@@ -609,3 +609,111 @@ h3 { font-size: 1.15rem; font-weight: 700; }
   gap: 0.7rem; text-align: center;
 }
 .live-hint { color: var(--ink-soft); font-weight: 600; font-size: 0.88rem; }
+
+/* ============================================================
+   ركن الألعاب — بيتستخدم في games.html وفي قسم الألعاب بالرئيسية
+   ============================================================ */
+.games-section { background: linear-gradient(180deg, var(--cream), var(--white)); }
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 1.6rem;
+}
+
+.game-card {
+  display: flex; flex-direction: column;
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow); overflow: hidden;
+  border: 3px solid transparent;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.game-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--teal);
+}
+
+.game-card-media {
+  position: relative; aspect-ratio: 16 / 9;
+  background: var(--cream); overflow: hidden;
+}
+.game-card-media img { width: 100%; height: 100%; object-fit: cover; }
+
+.game-card-badge {
+  position: absolute; top: 12px; inset-inline-start: 12px;
+  background: var(--navy); color: var(--white);
+  font-family: var(--font-head); font-weight: 700; font-size: 0.78rem;
+  padding: 0.2rem 0.8rem; border-radius: 99px;
+  box-shadow: 0 4px 10px rgba(51, 45, 110, 0.3);
+}
+.game-card-badge-new { background: var(--pink); }
+
+.game-card-body {
+  display: flex; flex-direction: column; gap: 0.75rem;
+  padding: 1.4rem 1.3rem 1.5rem; flex: 1;
+}
+.game-card-body h3 {
+  font-family: var(--font-head); font-weight: 800;
+  color: var(--navy); font-size: 1.2rem;
+}
+.game-card-body > p { color: var(--ink-soft); font-weight: 600; font-size: 0.94rem; }
+
+.game-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.game-tag {
+  background: var(--cream); border-radius: 99px;
+  padding: 0.25rem 0.8rem; font-size: 0.78rem; font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.game-how {
+  display: grid; gap: 0.4rem; text-align: start;
+  font-size: 0.88rem; font-weight: 600; color: var(--ink-soft);
+}
+.game-how li { display: flex; align-items: flex-start; gap: 0.5rem; }
+.game-how li::before { content: "✓"; color: var(--green); font-weight: 800; }
+
+/* الزرار دايمًا في آخر الكارت، عشان كل الكروت تبان متساوية */
+.game-card .btn { margin-top: auto; }
+
+/* ترويسة صغيرة لصفحة الألعاب */
+.games-hero { padding: 3rem 0 1rem; text-align: center; }
+.games-hero p { color: var(--ink-soft); font-weight: 600; margin-top: 0.7rem; }
+
+/* غلاف "العين الحديدية" — أربع تفاصيل مكبّرة.
+   اتعمل HTML مش ملف SVG واحد، لأن الـ SVG لما بيتحمّل جوه <img>
+   بيتمنع من تحميل أي ملفات خارجية، فالصور الجوّه كانت بتطلع فاضية */
+.eye-cover {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 1fr;          /* من غيرها الشرايح بتاخد طول الصورة مش طول البرواز */
+  gap: 3px; background: var(--navy);
+}
+/* لازم تكون .ec مش span — الشارة نفسها span، ولو اتلمّت هنا
+   هتاخد position:relative وتقع جوه الشبكة بدل ما تفضل فوق الغلاف */
+.eye-cover .ec { position: relative; overflow: hidden; }
+.eye-cover .ec img {
+  width: 100%; height: 100%; object-fit: cover;
+  transform-origin: var(--fx) var(--fy);
+  transform: scale(4.5);
+}
+.ec-1 { --fx: 63%; --fy: 26%; }
+.ec-2 { --fx: 50%; --fy: 36%; }
+.ec-3 { --fx: 50%; --fy: 41%; }
+.ec-4 { --fx: 73%; --fy: 33%; }
+
+/* علامة الاستفهام في نص الغلاف */
+.eye-cover b {
+  position: absolute; inset: 0; margin: auto;
+  width: 74px; height: 74px; border-radius: 50%;
+  background: rgba(39, 34, 83, 0.55);
+  -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+  border: 4px solid rgba(255, 255, 255, 0.92);
+  color: var(--white); font-family: var(--font-head); font-size: 2rem;
+  display: grid; place-items: center; line-height: 1;
+}
+
+/* غلاف اللعبة اللي لسه متعملتش */
+.soon-cover {
+  display: grid; place-items: center; font-size: 3.4rem;
+  background: repeating-linear-gradient(45deg, var(--cream), var(--cream) 14px, #f6efe2 14px, #f6efe2 28px);
+}

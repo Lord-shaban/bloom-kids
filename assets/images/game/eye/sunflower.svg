@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="زهرة عبّاد الشمس">
+  <title>عبّاد الشمس</title>
+  <defs>
+    <linearGradient id="sf-petal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffd25a"/>
+      <stop offset="60%" stop-color="#f9a825"/>
+      <stop offset="100%" stop-color="#ef8b12"/>
+    </linearGradient>
+    <linearGradient id="sf-petal2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffe58a"/>
+      <stop offset="100%" stop-color="#f6a92c"/>
+    </linearGradient>
+    <radialGradient id="sf-disc" cx="40%" cy="34%" r="72%">
+      <stop offset="0%" stop-color="#8b5a2b"/>
+      <stop offset="100%" stop-color="#4a2c14"/>
+    </radialGradient>
+    <!-- اللب: نقش بذور بيفضل واضح مهما كبّرنا -->
+    <pattern id="sf-seeds" width="34" height="34" patternUnits="userSpaceOnUse" patternTransform="rotate(18)">
+      <ellipse cx="9"  cy="9"  rx="7.5" ry="10" fill="#2f1c0c"/>
+      <ellipse cx="9"  cy="7"  rx="3"   ry="3.6" fill="#7a4f27" opacity="0.8"/>
+      <ellipse cx="26" cy="26" rx="7.5" ry="10" fill="#38210e"/>
+      <ellipse cx="26" cy="24" rx="3"   ry="3.6" fill="#8a5c2f" opacity="0.8"/>
+    </pattern>
+  </defs>
+
+  <rect width="800" height="800" fill="#e8f4fb"/>
+
+  <!-- الساق -->
+  <path d="M400 430 C 390 560 410 660 400 800" fill="none" stroke="#3f8f34" stroke-width="30" stroke-linecap="round"/>
+  <path d="M400 430 C 390 560 410 660 400 800" fill="none" stroke="#57ad45" stroke-width="12" stroke-linecap="round"/>
+
+  <!-- ورقتين — تحت البتلات بمسافة عشان يفضلوا بانيين -->
+  <g>
+    <path d="M396 700 C 292 696 232 638 228 556 C 314 554 380 610 396 700 Z" fill="#3f8f34"/>
+    <path d="M396 700 C 348 652 296 600 234 564" fill="none" stroke="#2c6e26" stroke-width="7" stroke-linecap="round"/>
+    <path d="M404 772 C 508 768 570 710 574 628 C 488 626 420 682 404 772 Z" fill="#4a9c3d"/>
+    <path d="M404 772 C 452 724 506 672 568 636" fill="none" stroke="#2c6e26" stroke-width="7" stroke-linecap="round"/>
+  </g>
+
+  <!-- البتلات — طبقتين عشان الزهرة تبان مليانة -->
+  <g fill="url(#sf-petal)" stroke="#e07d0c" stroke-width="3">
+    <ellipse cx="400" cy="112" rx="41" ry="120"/>
+    <ellipse cx="400" cy="112" rx="41" ry="120" transform="rotate(20 400 330)"/>
+    <ellipse cx="400" cy="112" rx="41" ry="120" transform="rotate(40 400 330)"/>
+    <ellipse cx="400" cy="112" rx="41" ry="120" transform="rotate(60 400 330)"/>
+    <ellipse cx="400" cy="112" rx="41" ry="120" transform="rotate(80 400 330)"/>
+    <ellipse cx="400" cy="112" rx="41" ry="120" transform="rotate(100 400 330)"/>
+    <ellipse cx="400" cy="112" rx="41" ry="120" transform="rotate(120 400 330)"/>
+    <ellipse cx="400" cy="112" rx="41" ry="120" transform="rotate(140 400 330)"/>
+    <ellipse cx="400" cy="112" rx="41" ry="120" transform="rotate(160 400 330)"/>
+    <ellipse cx="400" cy="112" rx="41" ry="120" transform="rotate(180 400 330)"/>
+    <ellipse cx="400" cy="112" rx="41" ry="120" transform="rotate(200 400 330)"/>
+    <ellipse cx="400" cy="112" rx="41" ry="120" transform="rotate(220 400 330)"/>
+    <ellipse cx="400" cy="112" rx="41" ry="120" transform="rotate(240 400 330)"/>
+    <ellipse cx="400" cy="112" rx="41" ry="120" transform="rotate(260 400 330)"/>
+    <ellipse cx="400" cy="112" rx="41" ry="120" transform="rotate(280 400 330)"/>
+    <ellipse cx="400" cy="112" rx="41" ry="120" transform="rotate(300 400 330)"/>
+    <ellipse cx="400" cy="112" rx="41" ry="120" transform="rotate(320 400 330)"/>
+    <ellipse cx="400" cy="112" rx="41" ry="120" transform="rotate(340 400 330)"/>
+  </g>
+  <g fill="url(#sf-petal2)" stroke="#e8951a" stroke-width="3">
+    <ellipse cx="400" cy="160" rx="34" ry="98" transform="rotate(10 400 330)"/>
+    <ellipse cx="400" cy="160" rx="34" ry="98" transform="rotate(30 400 330)"/>
+    <ellipse cx="400" cy="160" rx="34" ry="98" transform="rotate(50 400 330)"/>
+    <ellipse cx="400" cy="160" rx="34" ry="98" transform="rotate(70 400 330)"/>
+    <ellipse cx="400" cy="160" rx="34" ry="98" transform="rotate(90 400 330)"/>
+    <ellipse cx="400" cy="160" rx="34" ry="98" transform="rotate(110 400 330)"/>
+    <ellipse cx="400" cy="160" rx="34" ry="98" transform="rotate(130 400 330)"/>
+    <ellipse cx="400" cy="160" rx="34" ry="98" transform="rotate(150 400 330)"/>
+    <ellipse cx="400" cy="160" rx="34" ry="98" transform="rotate(170 400 330)"/>
+    <ellipse cx="400" cy="160" rx="34" ry="98" transform="rotate(190 400 330)"/>
+    <ellipse cx="400" cy="160" rx="34" ry="98" transform="rotate(210 400 330)"/>
+    <ellipse cx="400" cy="160" rx="34" ry="98" transform="rotate(230 400 330)"/>
+    <ellipse cx="400" cy="160" rx="34" ry="98" transform="rotate(250 400 330)"/>
+    <ellipse cx="400" cy="160" rx="34" ry="98" transform="rotate(270 400 330)"/>
+    <ellipse cx="400" cy="160" rx="34" ry="98" transform="rotate(290 400 330)"/>
+    <ellipse cx="400" cy="160" rx="34" ry="98" transform="rotate(310 400 330)"/>
+    <ellipse cx="400" cy="160" rx="34" ry="98" transform="rotate(330 400 330)"/>
+    <ellipse cx="400" cy="160" rx="34" ry="98" transform="rotate(350 400 330)"/>
+  </g>
+
+  <!-- اللب -->
+  <circle cx="400" cy="330" r="140" fill="#7a4a22"/>
+  <circle cx="400" cy="330" r="132" fill="url(#sf-disc)"/>
+  <circle cx="400" cy="330" r="124" fill="url(#sf-seeds)"/>
+  <circle cx="400" cy="330" r="132" fill="none" stroke="#5c3418" stroke-width="10"/>
+  <ellipse cx="352" cy="280" rx="62" ry="40" fill="#ffffff" opacity="0.10" transform="rotate(-30 352 280)"/>
+</svg>

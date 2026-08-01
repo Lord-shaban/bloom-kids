@@ -6,32 +6,40 @@
    ============================================================ */
 const WHATSAPP_NUMBER = "201225940734"; // رقم بلوم كيدز على واتساب (01225940734)
 
+/* الملف ده بيشتغل على أكتر من صفحة (الرئيسية، صفحة الألعاب…)، فكل
+   جزء بيتأكد إن العناصر بتاعته موجودة الأول — من غير كده أول عنصر
+   ناقص كان هيوقف باقي السكريبت كله */
+
 /* ---------- Sticky header shadow ---------- */
 const header = document.querySelector(".site-header");
-window.addEventListener("scroll", () => {
-  header.classList.toggle("scrolled", window.scrollY > 10);
-}, { passive: true });
+if (header) {
+  window.addEventListener("scroll", () => {
+    header.classList.toggle("scrolled", window.scrollY > 10);
+  }, { passive: true });
+}
 
 /* ---------- Mobile nav ---------- */
 const navToggle = document.getElementById("navToggle");
 const mainNav = document.getElementById("mainNav");
 
-navToggle.addEventListener("click", () => {
-  const isOpen = mainNav.classList.toggle("open");
-  navToggle.classList.toggle("open", isOpen);
-  navToggle.setAttribute("aria-expanded", String(isOpen));
-  document.body.style.overflow = isOpen ? "hidden" : "";
-});
-
-// اقفل القائمة لما المستخدم يدوس على أي لينك
-mainNav.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", () => {
-    mainNav.classList.remove("open");
-    navToggle.classList.remove("open");
-    navToggle.setAttribute("aria-expanded", "false");
-    document.body.style.overflow = "";
+if (navToggle && mainNav) {
+  navToggle.addEventListener("click", () => {
+    const isOpen = mainNav.classList.toggle("open");
+    navToggle.classList.toggle("open", isOpen);
+    navToggle.setAttribute("aria-expanded", String(isOpen));
+    document.body.style.overflow = isOpen ? "hidden" : "";
   });
-});
+
+  // اقفل القائمة لما المستخدم يدوس على أي لينك
+  mainNav.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      mainNav.classList.remove("open");
+      navToggle.classList.remove("open");
+      navToggle.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+    });
+  });
+}
 
 /* ---------- Reveal on scroll ---------- */
 const revealObserver = new IntersectionObserver(
@@ -77,7 +85,7 @@ const form = document.getElementById("registerForm");
 const submitBtn = document.getElementById("submitBtn");
 const formFeedback = document.getElementById("formFeedback");
 
-form.addEventListener("submit", async (e) => {
+if (form) form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   // فاليديشن بسيط
@@ -137,9 +145,12 @@ form.addEventListener("submit", async (e) => {
 });
 
 // شيل تحديد الخطأ أول ما المستخدم يكتب
-form.querySelectorAll("input, select, textarea").forEach((field) => {
-  field.addEventListener("input", () => field.classList.remove("invalid"));
-});
+if (form) {
+  form.querySelectorAll("input, select, textarea").forEach((field) => {
+    field.addEventListener("input", () => field.classList.remove("invalid"));
+  });
+}
 
 /* ---------- السنة في الفوتر ---------- */
-document.getElementById("year").textContent = new Date().getFullYear();
+const yearEl = document.getElementById("year");
+if (yearEl) yearEl.textContent = new Date().getFullYear();

@@ -1,0 +1,243 @@
+/* ============================================================
+   Bloom Kids — لعبة "العين الحديدية"
+   بتكمّل على css/style.css (الهوية) + css/game-ui.css (قطع الألعاب
+   المشتركة: شريط المعلومات، الطبقات، التوست، الكونفيتي…)
+   ============================================================ */
+
+.eye-page {
+  --eye-max: 560px;
+  /* مقاس مبدئي لحد ما js/iron-eye.js يقيس المساحة الفاضية بالظبط
+     ويحطّ القيمة الحقيقية في --eye-size (شوف sizeFrame هناك) */
+  --eye-size: min(60vh, 88vw, var(--eye-max));
+}
+
+/* height مش min-height — مقصودة.
+   المسرح جوّه بياخد `flex: 1` (يعني flex-basis: 0%)، والنسبة المئوية
+   دي مش بتتحسب غير لو طول الأب معروف. مع min-height الطول بيفضل
+   "غير محدد"، فالمتصفح بيرجع لحجم المحتوى — والمحتوى هو البرواز
+   اللي إحنا أصلاً بنحسب مقاسه من المسرح، فتحصل لفّة: البرواز يكبّر
+   المسرح، والمسرح يكبّر البرواز، والاختيارات تقع تحت الشاشة. */
+.eye-shell {
+  width: 100%;
+  height: calc(100vh - var(--header-h));
+  height: calc(100dvh - var(--header-h));
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  padding: 0.55rem var(--page-pad) 1rem;
+}
+
+/* ============ مؤشّر الوضوح ============ */
+.clarity {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.55rem; margin-bottom: 0.6rem;
+}
+.clarity-label {
+  font-family: var(--font-head); font-weight: 800;
+  font-size: 0.8rem; color: var(--ink-soft);
+}
+.clarity-bars { display: inline-flex; gap: 5px; }
+.clarity-bars i {
+  width: 30px; height: 9px; border-radius: 99px;
+  background: rgba(51, 45, 110, 0.14);
+  transition: background 0.4s ease, transform 0.3s ease;
+}
+.clarity-bars i.is-on {
+  background: linear-gradient(90deg, var(--teal), var(--green));
+  transform: scaleY(1.25);
+}
+
+/* ============ منطقة الصورة ============ */
+/* المسرح بياخد كل اللي فاضل بعد الشريط والاختيارات — وده اللي
+   بنقيسه في الجافاسكريبت عشان نحسب مقاس البرواز */
+.eye-stage {
+  flex: 1; min-height: 170px;
+  display: grid; place-items: center;
+  margin-bottom: 0.7rem;
+  overflow: hidden;
+}
+
+/* البرواز مربّع دايمًا، وبياخد أكبر مقاس بيدخل في المساحة الفاضية */
+.eye-frame {
+  width: var(--eye-size); height: var(--eye-size);
+  position: relative;
+  overflow: hidden;                 /* دي اللي بتخلي الزوم يقصّ */
+  border-radius: var(--radius);
+  background: var(--cream);
+  box-shadow: var(--shadow-lg);
+  outline: 4px solid var(--navy);
+  outline-offset: -4px;
+  -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
+}
+
+/* ============================================================
+   قلب اللعبة
+
+   الصورة بتملا البرواز، و transform-origin بيتحط على التفصيلة اللي
+   عايزين نبدأ عندها (بالنسبة المئوية من الصورة). لما نعمل scale من
+   نفس النقطة دي، النقطة بتفضل مكانها والباقي بيتمدّد بره البرواز
+   فيتقص — فبنشوف التفصيلة دي مكبّرة. كل ما نقلّل الـ scale، بيبان
+   حواليها أكتر لحد ما نوصل لـ scale(1) = الصورة كلها.
+   ============================================================ */
+.eye-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transform-origin: var(--fx, 50%) var(--fy, 50%);
+  transform: scale(var(--zoom, 1));
+  transition: transform 900ms cubic-bezier(0.22, 0.72, 0.24, 1);
+  will-change: transform;
+  -webkit-user-drag: none;
+}
+
+/* إطار عدسة فوق الصورة — إحساس إن فيه عين بتبصّ من خرم صغير */
+.eye-lens {
+  position: absolute; inset: 0; pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 6px rgba(255, 255, 255, 0.85),
+    inset 0 0 70px 26px rgba(51, 45, 110, 0.28);
+}
+.eye-lens::before, .eye-lens::after {
+  content: ""; position: absolute;
+  width: 46px; height: 46px;
+  border: 5px solid rgba(255, 255, 255, 0.95);
+  border-radius: 6px;
+  filter: drop-shadow(0 2px 4px rgba(51, 45, 110, 0.4));
+}
+.eye-lens::before {
+  top: 16px; inset-inline-start: 16px;
+  border-inline-end: 0; border-bottom: 0;
+}
+.eye-lens::after {
+  bottom: 16px; inset-inline-end: 16px;
+  border-inline-start: 0; border-top: 0;
+}
+
+/* ومضة بيضا كل ما الوضوح يزيد */
+.eye-flash {
+  position: absolute; inset: 0; pointer-events: none;
+  background: var(--white); opacity: 0;
+}
+.eye-flash.is-on { animation: eye-flash 0.55s ease-out; }
+@keyframes eye-flash {
+  0% { opacity: 0.5; }
+  100% { opacity: 0; }
+}
+
+/* ============ السؤال والاختيارات ============ */
+.eye-ask {
+  text-align: center; font-family: var(--font-head); font-weight: 800;
+  color: var(--navy); font-size: 1.1rem; margin-bottom: 0.55rem;
+}
+
+.choice-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem; width: 100%; max-width: 820px; margin: 0 auto;
+}
+
+.choice {
+  font-family: var(--font-head); font-weight: 800; font-size: 1.02rem;
+  color: var(--navy); background: var(--white);
+  border: 3px solid rgba(51, 45, 110, 0.14);
+  border-radius: var(--radius-sm);
+  padding: 0.8rem 0.5rem; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(51, 45, 110, 0.07);
+  transition: transform 0.2s ease, border-color 0.2s ease,
+              background 0.25s ease, box-shadow 0.2s ease, opacity 0.25s ease;
+}
+.choice:hover:not(:disabled) {
+  transform: translateY(-3px); border-color: var(--teal);
+  box-shadow: 0 10px 20px rgba(35, 168, 159, 0.22);
+}
+.choice:focus-visible { outline: 3px solid var(--purple); outline-offset: 2px; }
+.choice:disabled { cursor: default; }
+
+.choice.is-right {
+  background: rgba(125, 194, 66, 0.2); border-color: var(--green); color: #3f7318;
+  animation: choice-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.choice.is-wrong {
+  background: rgba(239, 95, 124, 0.15); border-color: var(--pink); color: var(--pink-dark);
+  opacity: 0.7; animation: choice-shake 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+/* الاختيار اللي شاله التلميح */
+.choice.is-out { opacity: 0.28; text-decoration: line-through; }
+
+@keyframes choice-pop {
+  0% { transform: scale(0.9); }
+  60% { transform: scale(1.07); }
+  100% { transform: scale(1); }
+}
+@keyframes choice-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(7px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(3px); }
+}
+
+/* ============ شاشة نتيجة الجولة ============ */
+.reveal-shot {
+  width: 158px; height: 158px; margin: 0 auto 1rem;
+  border-radius: 24px; overflow: hidden;
+  box-shadow: var(--shadow); border: 4px solid var(--white);
+  outline: 3px solid rgba(51, 45, 110, 0.1);
+  animation: reveal-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.reveal-shot img { width: 100%; height: 100%; object-fit: cover; }
+@keyframes reveal-in {
+  from { transform: scale(0.55) rotate(-6deg); opacity: 0; }
+  to { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+.round-answer {
+  font-family: var(--font-head); font-weight: 800;
+  font-size: 1.35rem; color: var(--teal-dark);
+  margin-bottom: 0.8rem !important;
+}
+
+.eye-fact {
+  background: var(--cream); border-radius: var(--radius-sm);
+  padding: 0.7rem 0.9rem; font-size: 0.9rem; font-weight: 700;
+  color: var(--ink-soft); margin-bottom: 1.2rem !important;
+}
+
+/* ============ شاشة النهاية ============ */
+.end-score {
+  font-family: var(--font-head); color: var(--navy);
+  margin-bottom: 0.5rem;
+}
+.end-score b { font-size: 3rem; font-weight: 800; color: var(--pink); line-height: 1; }
+.end-score span { font-weight: 700; font-size: 0.95rem; color: var(--ink-soft); }
+
+/* لازم تسبق `.overlay-card p` في الترتيب المحدِّد، عشان كده متخصّصة */
+.overlay-card .end-stars {
+  font-size: 1.8rem; letter-spacing: 0.15rem; margin-bottom: 0.6rem;
+}
+
+/* ============ الموبايل ============ */
+@media (max-width: 900px) {
+  .eye-ask { font-size: 1rem; }
+  .choice { font-size: 0.95rem; padding: 0.7rem 0.4rem; }
+  .clarity-bars i { width: 24px; }
+}
+
+@media (max-width: 640px) {
+  /* اختيارين في السطر — الكلام العربي محتاج عرض */
+  .choice-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* على الشاشات القصيرة بنشيل مؤشر الوضوح — شريط الوقت كفاية */
+@media (max-height: 680px) {
+  .clarity { display: none; }
+  .eye-lens::before, .eye-lens::after { width: 32px; height: 32px; }
+}
+
+/* ============ تقليل الحركة ============ */
+@media (prefers-reduced-motion: reduce) {
+  .eye-img { transition: none; }
+  .eye-flash.is-on, .choice.is-right, .choice.is-wrong, .reveal-shot {
+    animation: none !important;
+  }
+}

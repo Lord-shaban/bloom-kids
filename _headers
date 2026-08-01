@@ -26,12 +26,9 @@
   Cache-Control: no-store
   X-Robots-Tag: noindex, nofollow
 
-# اللعبة: صفحة مخفية — مفيش لينك ليها من الموقع ومش بتظهر في جوجل
-/game.html
-  X-Robots-Tag: noindex, nofollow
-
-/game
-  X-Robots-Tag: noindex, nofollow
+# الألعاب بقت جزء من الموقع (٢ أغسطس ٢٠٢٦) — كانت مخفية قبل كده
+# بـ X-Robots-Tag هنا + noindex في الصفحة نفسها، والاتنين اتشالوا.
+# لو ضفت لعبة جديدة، متحطّهاش هنا إلا لو عايزها تفضل مخفية.
 
 # صفحة المدرّس: خاصة تماماً — مفيش لينك ليها من أي مكان
 /host.html

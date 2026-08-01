@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="كورة قدم">
+  <title>كورة قدم</title>
+  <defs>
+    <radialGradient id="fb-shade" cx="34%" cy="28%" r="78%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="62%" stop-color="#f2f2f4"/>
+      <stop offset="100%" stop-color="#c9cad2"/>
+    </radialGradient>
+    <clipPath id="fb-clip"><circle cx="400" cy="400" r="330"/></clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- ظل تحت الكورة -->
+  <ellipse cx="400" cy="742" rx="238" ry="30" fill="#332d6e" opacity="0.13"/>
+
+  <!-- جسم الكورة -->
+  <circle cx="400" cy="400" r="330" fill="url(#fb-shade)"/>
+
+  <g clip-path="url(#fb-clip)">
+    <!-- الخياطة (الدرزة) -->
+    <g stroke="#9a9cab" stroke-width="7" stroke-linecap="round">
+      <path d="M400 295 L400 70"/>
+      <path d="M499.9 367.6 L713.8 298"/>
+      <path d="M461.7 484.9 L593.9 666.9"/>
+      <path d="M338.3 484.9 L206.1 666.9"/>
+      <path d="M300.1 367.6 L86.2 298"/>
+    </g>
+
+    <!-- اللمعة تحت الخماسيات، عشان متعملش بقعة رمادية فوق الأسود -->
+    <ellipse cx="272" cy="228" rx="118" ry="70" fill="#ffffff" opacity="0.85" transform="rotate(-34 272 228)"/>
+
+    <!-- الخماسي اللي في النص -->
+    <polygon points="400,295 499.9,367.6 461.7,484.9 338.3,484.9 300.1,367.6"
+             fill="#23212e" stroke="#3d3b4d" stroke-width="6" stroke-linejoin="round"/>
+
+    <!-- خمس خماسيات على الأطراف -->
+    <g fill="#23212e" stroke="#3d3b4d" stroke-width="6" stroke-linejoin="round">
+      <polygon points="400,588 487.5,651.6 454.1,754.4 345.9,754.4 312.5,651.6"/>
+      <polygon points="400,588 487.5,651.6 454.1,754.4 345.9,754.4 312.5,651.6" transform="rotate(72 400 400)"/>
+      <polygon points="400,588 487.5,651.6 454.1,754.4 345.9,754.4 312.5,651.6" transform="rotate(144 400 400)"/>
+      <polygon points="400,588 487.5,651.6 454.1,754.4 345.9,754.4 312.5,651.6" transform="rotate(216 400 400)"/>
+      <polygon points="400,588 487.5,651.6 454.1,754.4 345.9,754.4 312.5,651.6" transform="rotate(288 400 400)"/>
+    </g>
+
+    <!-- ظل داخلي عند الحافة عشان تبان كورة مش دايرة مسطحة -->
+    <circle cx="400" cy="400" r="330" fill="none" stroke="#332d6e" stroke-width="52" opacity="0.10"/>
+    <circle cx="400" cy="400" r="330" fill="none" stroke="#332d6e" stroke-width="20" opacity="0.10"/>
+  </g>
+
+  <circle cx="400" cy="400" r="330" fill="none" stroke="#8f909e" stroke-width="6"/>
+</svg>
