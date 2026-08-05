@@ -64,6 +64,7 @@
     "stage", "roomLabel", "peopleCount", "meetStatus",
     "shareStage", "shareVideo", "shareTag", "people", "audioSink",
     "fsBtn", "fsIcon", "fsText",
+    "recBtn", "recIcon", "recText", "recBadge",
     "micBtn", "micIcon", "micText", "handBtn", "handText",
     "shareBtn", "shareText", "muteAllBtn", "clearHandsBtn", "hangupBtn",
     "panel", "panelBtn", "panelClose", "panelList", "panelHint",
@@ -641,7 +642,12 @@
         renderPeople();
         startHeartbeat();
       })
-      .on(E.ParticipantConnected, scheduleRender)
+      .on(E.ParticipantConnected, function () {
+        /* اللي بيدخل متأخر لازم يشوف إن التسجيل شغال — الرسالة
+           الأولى راحت قبل ما يدخل */
+        if (rec) broadcast({ kind: "rec", on: true });
+        scheduleRender();
+      })
       .on(E.ParticipantDisconnected, function (p) {
         delete hands[p.identity];
         delete speaking[p.identity];
@@ -656,6 +662,9 @@
 
       .on(E.TrackSubscribed, function (track, pub, participant) {
         if (track.kind === "audio") {
+          /* لو التسجيل شغال، أي حد بيدخل بعد ما بدأنا لازم صوته
+             يدخل المزيج كمان — مش بس اللي كانوا موجودين */
+          recAddAudio(pub.trackSid, track.mediaStreamTrack);
           var node = track.attach();
           node.autoplay = true;
           node.playsInline = true;
@@ -686,6 +695,7 @@
       })
       .on(E.TrackUnsubscribed, function (track, pub) {
         if (track.kind === "audio") {
+          recDropAudio(pub.trackSid);
           track.detach().forEach(function (n) { n.remove(); });
           delete audioEls[pub.trackSid];
         } else if (isScreenPub(pub)) {
@@ -721,6 +731,11 @@
       })
 
       .on(E.LocalTrackPublished, function (pub) {
+        /* ميك المدرّس أو صوت المشاركة لو اتنشروا بعد ما التسجيل
+           بدأ (مثلاً فتح الميك في نص السيشن) */
+        if (pub.kind === "audio" && pub.track && pub.track.mediaStreamTrack) {
+          recAddAudio("local-" + pub.trackSid, pub.track.mediaStreamTrack);
+        }
         if (isScreenPub(pub) && pub.kind === "video") {
           showShare(null);
           if (pub.track) {
@@ -761,6 +776,11 @@
           renderPeople();
         } else if (msg.kind === "muted-you" && isHostIdentity(participant.identity)) {
           if (msg.to === room.localParticipant.identity) say("المدرّس كتم الميك بتاعك 🔇", true);
+        } else if (msg.kind === "rec" && isHostIdentity(participant.identity)) {
+          /* الأطفال لازم يعرفوا إن فيه تسجيل شغال — مش حاجة
+             تحصل من ورا ظهرهم */
+          if (el.recBadge) el.recBadge.hidden = !msg.on;
+          say(msg.on ? "🔴 المدرّس بدأ يسجّل السيشن" : "التسجيل وقف ⏹️");
         }
       })
 
@@ -1248,7 +1268,356 @@
     if (e.key === "Escape" && zoomed && !fsNode()) exitZoom();
   });
 
+  /* ============================================================
+     تسجيل السيشن — بيتسجّل في متصفح المدرّس
+
+     ليه في المتصفح مش على السيرفر؟ تسجيل LiveKit (Egress) مش
+     داخل في الباقة المجانية وعايز اشتراك مدفوع + مساحة تخزين
+     (S3 وخلافه). التسجيل هنا بيطلع ملف على جهاز المدرّس على
+     طول، من غير أي تكلفة ولا أي إعداد زيادة.
+
+     إزاي بيشتغل؟
+       الصوت  → AudioContext بيلمّ ميك المدرّس + صوت كل الأطفال +
+                صوت المشاركة في مسار واحد.
+       الصورة → canvas بنرسم عليه إطارات المشاركة. ليه canvas مش
+                المسار نفسه؟ لأن MediaRecorder بيمسك المسارات
+                الموجودة لحظة البداية بس؛ فلو المدرّس وقّف
+                المشاركة ورجّعها، المسار المباشر كان هيقطع
+                التسجيل. الـ canvas بيفضل ثابت فالملف بيطلع
+                قطعة واحدة مهما فتح وقفل المشاركة.
+
+     الكفاءة: بنرسم على الـ canvas بس لما توصل إطار جديدة فعلاً
+     (requestVideoFrameCallback)، والـ captureStream(0) معناه
+     إن مفيش إطار بتترمّز غير لما إحنا نطلب. يعني شاشة ساكنة =
+     شغل شبه معدوم على المعالج، مش ٣٠ إطار في الثانية على الفاضي.
+     ============================================================ */
+  var REC_MAX_MS = 2 * 60 * 60 * 1000;   // ساعتين — بعد كده بنقفل لوحدنا
+  var REC_W = 1280, REC_H = 720;
+
+  var rec = null;          // MediaRecorder
+  var recChunks = [];
+  var recStart = 0;
+  var recTimer = null;
+  var recStopping = false;
+
+  var recAudioCtx = null;
+  var recDest = null;      // MediaStreamAudioDestinationNode
+  var recSources = {};     // trackSid -> MediaStreamAudioSourceNode
+  var recCanvas = null;
+  var recCtx = null;
+  var recVideoTrack = null;
+  var recFrameReq = null;  // handle بتاع requestVideoFrameCallback
+  var recBeat = null;
+
+  function recSupported() {
+    return !!(window.MediaRecorder && (window.AudioContext || window.webkitAudioContext));
+  }
+
+  /* MP4 الأول: بيتفتح على أي موبايل وفي الواتساب من غير مشاكل.
+     الـ webm أخف في الترميز بس iPhone بيرفض يشغّله، والمدرّسة
+     غالباً هتبعت الملف على واتساب — فالتوافق أهم هنا. */
+  function recMime() {
+    var list = [
+      "video/mp4;codecs=avc1.42E01E,mp4a.40.2",
+      "video/mp4",
+      "video/webm;codecs=vp8,opus",
+      "video/webm",
+    ];
+    for (var i = 0; i < list.length; i += 1) {
+      if (MediaRecorder.isTypeSupported(list[i])) return list[i];
+    }
+    return "";
+  }
+
+  function recExt(mime) { return mime.indexOf("mp4") >= 0 ? "mp4" : "webm"; }
+
+  /* ---------- مزج الصوت ---------- */
+  function recAddAudio(sid, mediaStreamTrack) {
+    if (!recDest || !mediaStreamTrack || recSources[sid]) return;
+    try {
+      var src = recAudioCtx.createMediaStreamSource(
+        new MediaStream([mediaStreamTrack])
+      );
+      src.connect(recDest);
+      recSources[sid] = src;
+    } catch (_) { /* مسار واحد وقع مش هيوقّع التسجيل كله */ }
+  }
+
+  function recDropAudio(sid) {
+    var src = recSources[sid];
+    if (!src) return;
+    try { src.disconnect(); } catch (_) {}
+    delete recSources[sid];
+  }
+
+  /* بنلمّ كل الصوت الموجود دلوقتي: ميك المدرّس + كل طفل + صوت
+     المشاركة. اللي بيدخل بعد كده بيتضاف من TrackSubscribed */
+  function recCollectAudio() {
+    if (!room) return;
+    var lp = room.localParticipant;
+
+    lp.audioTrackPublications.forEach(function (pub, sid) {
+      if (pub.track && pub.track.mediaStreamTrack) {
+        recAddAudio("local-" + sid, pub.track.mediaStreamTrack);
+      }
+    });
+    lp.trackPublications.forEach(function (pub, sid) {
+      if (pub.kind === "audio" && pub.track && pub.track.mediaStreamTrack) {
+        recAddAudio("local-" + sid, pub.track.mediaStreamTrack);
+      }
+    });
+
+    room.remoteParticipants.forEach(function (p) {
+      p.trackPublications.forEach(function (pub, sid) {
+        if (pub.kind === "audio" && pub.track && pub.track.mediaStreamTrack) {
+          recAddAudio(sid, pub.track.mediaStreamTrack);
+        }
+      });
+    });
+  }
+
+  /* ---------- الصورة ---------- */
+  function recDrawPlaceholder() {
+    if (!recCtx) return;
+    recCtx.fillStyle = "#332d6e";
+    recCtx.fillRect(0, 0, REC_W, REC_H);
+    recCtx.fillStyle = "#ffffff";
+    recCtx.textAlign = "center";
+    recCtx.textBaseline = "middle";
+    recCtx.font = "600 44px 'Baloo Bhaijaan 2', 'Cairo', sans-serif";
+    recCtx.fillText("🎧 سيشن بلوم كيدز", REC_W / 2, REC_H / 2 - 34);
+    recCtx.font = "600 30px 'Cairo', sans-serif";
+    recCtx.fillText("صوت من غير مشاركة شاشة", REC_W / 2, REC_H / 2 + 30);
+  }
+
+  function recDrawFrame() {
+    if (!recCtx) return;
+    var v = el.shareVideo;
+    var live = !el.shareStage.hidden && v.videoWidth > 0 && v.videoHeight > 0;
+
+    if (!live) { recDrawPlaceholder(); }
+    else {
+      /* بنحافظ على نسبة الصورة وبنحط الباقي أسود — أحسن من إن
+         شاشة المدرّس تطلع متمططة في التسجيل */
+      var scale = Math.min(REC_W / v.videoWidth, REC_H / v.videoHeight);
+      var w = Math.round(v.videoWidth * scale);
+      var h = Math.round(v.videoHeight * scale);
+      var x = Math.round((REC_W - w) / 2);
+      var y = Math.round((REC_H - h) / 2);
+      recCtx.fillStyle = "#000000";
+      recCtx.fillRect(0, 0, REC_W, REC_H);
+      try { recCtx.drawImage(v, x, y, w, h); } catch (_) {}
+    }
+    if (recVideoTrack && recVideoTrack.requestFrame) {
+      try { recVideoTrack.requestFrame(); } catch (_) {}
+    }
+  }
+
+  /* بنعلّق على إطارات الفيديو نفسها: الرسم بيحصل لما توصل إطار
+     جديدة بس. لو المتصفح مبيدعمش، بنقع على مؤقّت ١٥ في الثانية */
+  function recPumpVideo() {
+    var v = el.shareVideo;
+    if (v.requestVideoFrameCallback) {
+      var step = function () {
+        if (!rec) return;
+        recDrawFrame();
+        recFrameReq = v.requestVideoFrameCallback(step);
+      };
+      recFrameReq = v.requestVideoFrameCallback(step);
+    } else {
+      recFrameReq = window.setInterval(function () {
+        if (rec) recDrawFrame();
+      }, 66);
+      recFrameReq = { fallback: recFrameReq };
+    }
+
+    /* نبضة كل ثانية: لو مفيش مشاركة (أو الشاشة ساكنة تماماً)
+       لازم يفضل يخرج إطارات، وإلا مسار الفيديو بيقف والملف
+       بيطلع مقطوع */
+    recBeat = window.setInterval(function () { if (rec) recDrawFrame(); }, 1000);
+  }
+
+  function recStopPump() {
+    var v = el.shareVideo;
+    if (recFrameReq && recFrameReq.fallback) {
+      window.clearInterval(recFrameReq.fallback);
+    } else if (recFrameReq != null && v.cancelVideoFrameCallback) {
+      try { v.cancelVideoFrameCallback(recFrameReq); } catch (_) {}
+    }
+    recFrameReq = null;
+    if (recBeat) { window.clearInterval(recBeat); recBeat = null; }
+  }
+
+  /* ---------- شكل الزرار ---------- */
+  function recFmt(ms) {
+    var s = Math.floor(ms / 1000);
+    var m = Math.floor(s / 60);
+    var h = Math.floor(m / 60);
+    function two(n) { return (n < 10 ? "0" : "") + n; }
+    return (h ? two(h) + ":" : "") + two(m % 60) + ":" + two(s % 60);
+  }
+
+  function paintRec() {
+    var on = !!rec;
+    /* عند المدرّس العلامة بتتبع التسجيل الحقيقي. عند الطفل
+       بتتبع رسالة المدرّس بس (شوف DataReceived) — عشان كده
+       مبنلمسهاش هنا */
+    if (IS_HOST && el.recBadge) el.recBadge.hidden = !on;
+    if (!el.recBtn) return;
+    el.recBtn.classList.toggle("is-on", on);
+    el.recBtn.setAttribute("aria-pressed", String(on));
+    el.recIcon.textContent = on ? "⏹️" : "⏺️";
+    el.recText.textContent = on ? recFmt(Date.now() - recStart) : "سجّل";
+  }
+
+  function startRecording() {
+    if (rec || !room) return;
+
+    if (!recSupported()) {
+      say("المتصفح ده مش بيدعم التسجيل. استخدم كروم أو إيدج 🙏", true);
+      return;
+    }
+    var mime = recMime();
+    if (!mime) {
+      say("المتصفح ده مش بيدعم التسجيل. استخدم كروم أو إيدج 🙏", true);
+      return;
+    }
+
+    try {
+      recAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (recAudioCtx.state === "suspended") recAudioCtx.resume();
+      recDest = recAudioCtx.createMediaStreamDestination();
+      recSources = {};
+      recCollectAudio();
+
+      recCanvas = document.createElement("canvas");
+      recCanvas.width = REC_W;
+      recCanvas.height = REC_H;
+      recCtx = recCanvas.getContext("2d", { alpha: false });
+      recDrawPlaceholder();
+
+      /* captureStream(0) = مفيش إطار بتتاخد غير لما نطلب بـ
+         requestFrame — ده اللي بيخلي الشاشة الساكنة مجانية */
+      var canvasStream = recCanvas.captureStream(0);
+      recVideoTrack = canvasStream.getVideoTracks()[0];
+
+      var mixed = new MediaStream();
+      if (recVideoTrack) mixed.addTrack(recVideoTrack);
+      recDest.stream.getAudioTracks().forEach(function (t) { mixed.addTrack(t); });
+
+      rec = new MediaRecorder(mixed, {
+        mimeType: mime,
+        videoBitsPerSecond: 1200000,
+        audioBitsPerSecond: 96000,
+      });
+      recChunks = [];
+      recStopping = false;
+
+      rec.ondataavailable = function (e) {
+        if (e.data && e.data.size) recChunks.push(e.data);
+      };
+      rec.onerror = function () {
+        say("حصلت مشكلة في التسجيل — بنحفظ اللي اتسجّل 💾", true);
+        stopRecording();
+      };
+      rec.onstop = function () { finishRecording(mime); };
+
+      rec.start(1000);   // شريحة كل ثانية بدل ما نستنى للآخر
+      recStart = Date.now();
+      recPumpVideo();
+
+      recTimer = window.setInterval(function () {
+        paintRec();
+        if (Date.now() - recStart >= REC_MAX_MS) {
+          say("التسجيل وصل ساعتين — قفلناه وحفظناه 💾", true);
+          stopRecording();
+        }
+      }, 1000);
+
+      paintRec();
+      broadcast({ kind: "rec", on: true });
+      say("🔴 التسجيل بدأ — الملف هينزل على جهازك لما تقفله", true);
+    } catch (err) {
+      /* لو حاجة وقعت في النص، منسيبش نص جراف صوت شغال */
+      teardownRecording();
+      say("مقدرناش نبدأ التسجيل على الجهاز ده 😕", true);
+    }
+  }
+
+  function stopRecording() {
+    if (!rec || recStopping) return;
+    recStopping = true;
+    try { rec.stop(); } catch (_) { finishRecording(recMime()); }
+  }
+
+  function finishRecording(mime) {
+    var chunks = recChunks;
+    recChunks = [];
+    teardownRecording();
+
+    if (!chunks.length) {
+      say("مفيش حاجة اتسجّلت 🤔", true);
+      return;
+    }
+
+    var blob = new Blob(chunks, { type: mime || "video/webm" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    var d = new Date();
+    function two(n) { return (n < 10 ? "0" : "") + n; }
+    a.href = url;
+    a.download =
+      "bloomkids-" + (currentCode || "session") + "-" +
+      d.getFullYear() + two(d.getMonth() + 1) + two(d.getDate()) + "-" +
+      two(d.getHours()) + two(d.getMinutes()) + "." + recExt(mime || "");
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    /* بنستنى شوية قبل ما نفكّ الرابط — بعض المتصفحات بتلغي
+       التنزيل لو الرابط اتفك بدري */
+    window.setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+
+    var mb = (blob.size / (1024 * 1024)).toFixed(1);
+    say("💾 التسجيل اتحفظ (" + mb + " ميجا) — دوّر عليه في التنزيلات", true);
+  }
+
+  /* بيوقف كل حاجة ويرجّع المتغيرات لأصلها — بتتنادى في النهاية
+     الطبيعية وفي حالة الخطأ وفي الخروج من السيشن */
+  function teardownRecording() {
+    recStopPump();
+    if (recTimer) { window.clearInterval(recTimer); recTimer = null; }
+
+    Object.keys(recSources).forEach(recDropAudio);
+    recSources = {};
+
+    if (recVideoTrack) { try { recVideoTrack.stop(); } catch (_) {} recVideoTrack = null; }
+    if (recDest) { try { recDest.disconnect(); } catch (_) {} recDest = null; }
+    if (recAudioCtx) { try { recAudioCtx.close(); } catch (_) {} recAudioCtx = null; }
+
+    recCanvas = null;
+    recCtx = null;
+    rec = null;
+    recStopping = false;
+
+    paintRec();
+    if (room) broadcast({ kind: "rec", on: false });
+  }
+
+  if (el.recBtn) {
+    el.recBtn.addEventListener("click", function () {
+      if (!room) return;
+      if (rec) stopRecording(); else startRecording();
+    });
+  }
+
   function cleanup() {
+    /* أول حاجة قبل ما نقفل الأوضة: لو فيه تسجيل شغال نقفله
+       ونحفظه. لو سبناه شغال بعد ما مصادر الصوت تموت، هيفضل
+       يسجّل سكوت والمدرّس هيلاقي ملف نصه فاضي — الأحسن إنه
+       ياخد اللي اتسجّل لحد اللحظة دي */
+    if (rec) stopRecording();
+    if (el.recBadge) el.recBadge.hidden = true;
+
     Object.keys(audioEls).forEach(function (k) { audioEls[k].node.remove(); });
     audioEls = {};
     hands = {};
