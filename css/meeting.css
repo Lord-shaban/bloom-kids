@@ -400,3 +400,61 @@
   .ctl { transition: none; }
   .ctl:hover, .ctl:active { transform: none; }
 }
+
+/* ============================================================
+   وضع ملء الشاشة وقت مشاركة الشاشة
+
+   التكبير معمول بالـ CSS (body.is-zoom) مش معتمد على الـ
+   Fullscreen API لوحده — عشان المتصفحات اللي جوه الأبليكيشنات
+   بترفض ملء الشاشة كتير، ولازم الطفل يقدر يكبّر برضه.
+   الـ API بيتطلب كمان فوقه عشان يشيل شريط المتصفح لو المتصفح سمح.
+   ============================================================ */
+.share-zoom {
+  position: absolute; top: 10px; inset-inline-end: 10px; z-index: 4;
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: rgba(39, 34, 83, 0.85); color: var(--white);
+  border: 2px solid rgba(255, 255, 255, 0.35); border-radius: 99px;
+  font-family: var(--font-head); font-weight: 800; font-size: 0.82rem;
+  padding: 0.3rem 0.85rem; cursor: pointer; line-height: 1.4;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.share-zoom:hover { background: var(--navy); transform: translateY(-2px); }
+.share-zoom:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+
+/* بنشيل كل حاجة مش المشاركة، وبنخلي قسم السيشن هو الشاشة كلها.
+   الأزرار بتفضل — الطفل لازم يقدر يرفع إيده وهو متفرّج */
+body.is-zoom .site-header,
+body.is-zoom .meet-top,
+body.is-zoom .people { display: none; }
+
+body.is-zoom .meet-stage {
+  position: fixed; inset: 0; z-index: 300;
+  height: 100vh; height: 100dvh;
+  padding: 0; gap: 0; background: #000;
+}
+body.is-zoom .meet-body { gap: 0; }
+body.is-zoom .share-stage {
+  border-radius: 0; box-shadow: none; background: #000;
+}
+
+body.is-zoom .meet-controls {
+  padding: 0.5rem 0.4rem calc(0.5rem + env(safe-area-inset-bottom));
+  background: rgba(39, 34, 83, 0.78);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+}
+body.is-zoom .ctl { min-width: 88px; padding: 0.45rem 0.8rem; }
+
+/* لوحة المدرّس لازم تفضل فوق طبقة التكبير */
+body.is-zoom .host-panel { z-index: 320; }
+
+/* الموبايل بالعرض: الشاشة واطية جداً، فبنسيب الأيقونات بس */
+@media (max-height: 460px) {
+  body.is-zoom .ctl-text { display: none; }
+  body.is-zoom .ctl { min-width: 54px; padding: 0.4rem 0.6rem; }
+  body.is-zoom .meet-controls { padding-block: 0.35rem; }
+  .share-zoom .share-zoom-text { display: none; }
+}
+
+/* جوه ملء الشاشة الحقيقي العنصر نفسه بيبقى هو الشاشة */
+.meet-stage:fullscreen { background: #000; }
+.meet-stage:-webkit-full-screen { background: #000; }

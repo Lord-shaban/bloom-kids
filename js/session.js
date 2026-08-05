@@ -63,6 +63,7 @@
     "shareLink", "copyBtn",
     "stage", "roomLabel", "peopleCount", "meetStatus",
     "shareStage", "shareVideo", "shareTag", "people", "audioSink",
+    "fsBtn", "fsIcon", "fsText",
     "micBtn", "micIcon", "micText", "handBtn", "handText",
     "shareBtn", "shareText", "muteAllBtn", "clearHandsBtn", "hangupBtn",
     "panel", "panelBtn", "panelClose", "panelList", "panelHint",
@@ -83,6 +84,34 @@
   var micBusy = false;     // فيه أمر ميك شغال لسه
   var shareBusy = false;
   var audioUnlockArmed = false;
+
+  /* ============================================================
+     الرجوع التلقائي بعد قطع النت
+
+     joinCtx = بيانات الدخول (اسم/كود/مفتاح). طول ما هي موجودة،
+     معناها إن المفروض إحنا جوه سيشن — فلو الاتصال قطع لأي سبب
+     مش مقصود، بنجيب توكن جديد ونرجّع لوحدنا بدل ما نرمي الطفل
+     على شاشة الدخول من غير ما يفهم حصل إيه.
+     ============================================================ */
+  var joinCtx = null;      // { name, code, key }
+  var leaving = false;     // المستخدم هو اللي ضغط "اخرج"
+  var rejoinTries = 0;
+  var rejoinTimer = null;
+  var REJOIN_MAX = 6;
+
+  /* أرقام DisconnectReason من LiveKit (متأكدين منها من نسخة
+     المكتبة اللي إحنا مثبّتينها: 2 هوية مكررة، 3 السيرفر بيقفل،
+     4 المدرّس طرده، 5/10 الأوضة اتقفلت، 12 الدخول اترفض).
+     أي رقم تاني (0 مجهول، 6، 9 السيجنال قفل، 14 timeout…)
+     معناه مشكلة شبكة — ودي بنحاول نصلّحها لوحدنا. */
+  var FINAL_REASON = {
+    2: "دخلت على السيشن من جهاز تاني، فقفلنا الاتصال هنا.",
+    3: "السيرفر بيتحدّث دلوقتي. جرّب تدخل تاني بعد شوية.",
+    4: "المدرّس خرّجك من السيشن.",
+    5: "السيشن اتقفلت.",
+    10: "السيشن اتقفلت.",
+    12: "الدخول للسيشن اترفض.",
+  };
 
   /* ---------- مساعدات ---------- */
 
@@ -582,6 +611,15 @@
       stopLocalTrackOnUnpublish: false,
       webAudioMix: false,
 
+      /* ⚠️ ده كان سبب "بيخرّجني من السيشن فجأة".
+         الافتراضي في LiveKit إن disconnectOnPageLeave = true، وهو
+         بيسمع لـ pagehide و beforeunload وبيعمل disconnect كامل.
+         على الموبايل الـ pagehide بيضرب لما الطفل يفتح واتساب أو
+         الشاشة تتقفل — فكان بيتفصل فوراً، وبيرجع يلاقي نفسه على
+         شاشة الدخول تاني. قفلناه، وبنسيب السوكيت هو اللي يموت لو
+         الصفحة اتقفلت فعلاً (السيرفر بيشيل المشارك لوحده ساعتها). */
+      disconnectOnPageLeave: false,
+
       audioCaptureDefaults: MIC_CONSTRAINTS,
 
       publishDefaults: {
@@ -726,9 +764,35 @@
         }
       })
 
-      .on(E.Disconnected, function () {
-        cleanup();
-        show("gate");
+      /* ============================================================
+         الخروج من الأوضة
+
+         قبل كده الدالة دي كانت بترمي المستخدم على شاشة الدخول في
+         أي حالة قطع، من غير ما تقول ليه — فأي هزّة نت كانت بتبان
+         للطفل كأنه اتطرد من السيشن. دلوقتي بنفرّق:
+           • خروج بإرادته أو بأمر المدرّس → نخرج ونقول السبب
+           • أي حاجة تانية (نت/سوكيت) → نفضل في الشاشة ونرجّع لوحدنا
+         ============================================================ */
+      .on(E.Disconnected, function (reason) {
+        var code = typeof reason === "number" ? reason : -1;
+
+        // ١ = CLIENT_INITIATED، يعني إحنا اللي قطعنا
+        if (leaving || code === 1) {
+          leaving = false;
+          joinCtx = null;
+          cleanup();
+          show("gate");
+          return;
+        }
+
+        if (FINAL_REASON[code]) {
+          joinCtx = null;
+          cleanup();
+          fail(FINAL_REASON[code]);
+          return;
+        }
+
+        scheduleRejoin();
       });
 
     el.roomLabel.textContent = code;
@@ -747,6 +811,100 @@
         return primeMic();
       });
   }
+
+  /* ============================================================
+     التوكن — بنستخدمها في الدخول الأول وفي الرجوع بعد القطع
+     ============================================================ */
+  function requestToken(ctx) {
+    return fetch("/api/meeting", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        code: ctx.code,
+        name: ctx.name,
+        role: ROLE,
+        hostKey: ctx.key,
+      }),
+    }).then(function (res) {
+      return res.json().then(function (data) {
+        if (!res.ok || !data.ok) {
+          var e = new Error(data.error || "مقدرناش نجهّز السيشن");
+          e.fromApi = true;
+          throw e;
+        }
+        return data;
+      });
+    });
+  }
+
+  /* ============================================================
+     الرجوع بعد قطع النت
+
+     بنجيب توكن جديد كل مرة مش بنعيد استخدام القديم: التوكن فيه
+     الهوية، وتوكن جديد = هوية جديدة، فمفيش خطر إن الاتصال القديم
+     لو لسه محسوب على السيرفر يطرد الجديد.
+     ============================================================ */
+  function scheduleRejoin() {
+    if (rejoinTimer || !joinCtx) return;
+
+    /* لازم ننضّف دلوقتي حالاً مش وقت المحاولة: الـ room القديم
+       بقى ميّت، ولو سبناه متعلّق فـ rejoinNow() هتلاقي room مش
+       فاضي وهتفتكر إننا لسه متوصّلين وترفض تحاول */
+    cleanup();
+
+    if (rejoinTries >= REJOIN_MAX) {
+      fail("النت قطع ومقدرناش نرجّعك للسيشن. اتأكد من النت واضغط \"حاول تاني\".");
+      joinCtx = null;
+      return;
+    }
+
+    /* مهم: مبنعملش show("gate") هنا — الطفل بيفضل شايف شاشة
+       السيشن وجنبها رسالة إننا بنرجّعه، مش بيتحط قدام فورم دخول */
+    var wait = Math.min(8000, 800 * Math.pow(2, rejoinTries));
+    rejoinTries += 1;
+    say("النت قطع… بنرجّعك (" + rejoinTries + "/" + REJOIN_MAX + ") 🔄", true);
+
+    rejoinTimer = window.setTimeout(function () {
+      rejoinTimer = null;
+      doRejoin();
+    }, wait);
+  }
+
+  function doRejoin() {
+    if (!joinCtx) return;
+    var ctx = joinCtx;
+
+    show("stage");
+    el.roomLabel.textContent = ctx.code;
+    say("بنرجّعك للسيشن… 🔄", true);
+
+    requestToken(ctx)
+      .then(function (info) { return joinRoom(info, ctx.code); })
+      .then(function () {
+        rejoinTries = 0;
+        say("رجعنا ✅");
+      })
+      .catch(function () {
+        scheduleRejoin();
+      });
+  }
+
+  /* لو الطفل رجع للتاب أو النت رجع، منستناش الدور الجاي في
+     العدّاد — نجرّب على طول */
+  function rejoinNow() {
+    if (!joinCtx || room || el.stage.hidden) return;
+    if (rejoinTimer) {
+      window.clearTimeout(rejoinTimer);
+      rejoinTimer = null;
+    }
+    rejoinTries = 0;
+    doRejoin();
+  }
+
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) rejoinNow();
+  });
+  window.addEventListener("online", rejoinNow);
 
   /* playoutDelayHint = 0 — اعرض الإطار أول ما يوصل من غير
      تخزين احتياطي. (متطبقش على الصوت: هناك المخزون بيتظبط
@@ -1002,7 +1160,93 @@
     el.shareStage.hidden = true;
     el.shareVideo.srcObject = null;
     el.stage.classList.remove("is-sharing");
+    /* لو المدرّس وقّف المشاركة والطفل كان في ملء الشاشة، لازم
+       نرجّعه — وإلا هيفضل قاعد قدام شاشة سودا */
+    exitZoom();
   }
+
+  /* ============================================================
+     ملء الشاشة وقت مشاركة الشاشة
+
+     بنعمل حاجتين مع بعض عشان يشتغل في كل مكان:
+       ١) body.is-zoom — تكبير بالـ CSS. ده بيشتغل في أي متصفح،
+          حتى المتصفحات اللي جوه الأبليكيشنات (فيسبوك/انستجرام)
+          اللي بترفض ملء الشاشة الحقيقي.
+       ٢) Fullscreen API على قسم السيشن كله — مش على الفيديو
+          لوحده — عشان أزرار الميك ورفع الإيد تفضل ظاهرة وشغالة
+          وإحنا جوه ملء الشاشة.
+     على الآيفون الـ API مش شغال على العناصر العادية، فبنقع على
+     webkitEnterFullscreen بتاعة الفيديو نفسه.
+     ============================================================ */
+  var zoomed = false;
+
+  function fsNode() {
+    return document.fullscreenElement || document.webkitFullscreenElement || null;
+  }
+
+  function paintZoom() {
+    document.body.classList.toggle("is-zoom", zoomed);
+    if (!el.fsBtn) return;
+    el.fsBtn.setAttribute("aria-pressed", String(zoomed));
+    el.fsIcon.textContent = zoomed ? "✕" : "⛶";
+    el.fsText.textContent = zoomed ? "رجوع" : "ملء الشاشة";
+    el.fsBtn.title = zoomed ? "ارجع للحجم العادي" : "ملء الشاشة";
+  }
+
+  function enterZoom() {
+    if (zoomed || el.shareStage.hidden) return;
+    zoomed = true;
+    paintZoom();
+
+    var node = el.stage;
+    var req = node.requestFullscreen || node.webkitRequestFullscreen;
+    if (req) {
+      try {
+        var p = req.call(node);
+        /* لو المتصفح رفض، التكبير بالـ CSS لوحده كفاية — مش
+           هنوقع اللعبة عشان ملء الشاشة اترفض */
+        if (p && p.catch) p.catch(function () {});
+      } catch (_) { /* عادي */ }
+    } else if (el.shareVideo.webkitEnterFullscreen) {
+      try { el.shareVideo.webkitEnterFullscreen(); } catch (_) {}
+    }
+  }
+
+  function exitZoom() {
+    if (!zoomed) return;
+    zoomed = false;
+    paintZoom();
+    if (fsNode()) {
+      var ex = document.exitFullscreen || document.webkitExitFullscreen;
+      if (ex) {
+        try {
+          var p = ex.call(document);
+          if (p && p.catch) p.catch(function () {});
+        } catch (_) { /* عادي */ }
+      }
+    }
+  }
+
+  function toggleZoom() { if (zoomed) exitZoom(); else enterZoom(); }
+
+  if (el.fsBtn) {
+    el.fsBtn.addEventListener("click", toggleZoom);
+    /* دبل كليك على الفيديو نفسه — أسرع حاجة للكبار */
+    el.shareVideo.addEventListener("dblclick", toggleZoom);
+  }
+
+  /* لو خرج من ملء الشاشة بـ Esc أو بزرار المتصفح، نرجّع شكل
+     الصفحة زي ما كان بدل ما تفضل متكبّرة بالـ CSS */
+  ["fullscreenchange", "webkitfullscreenchange"].forEach(function (ev) {
+    document.addEventListener(ev, function () {
+      if (!fsNode() && zoomed) { zoomed = false; paintZoom(); }
+    });
+  });
+
+  /* Esc وإحنا في التكبير بالـ CSS بس (من غير ملء شاشة حقيقي) */
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && zoomed && !fsNode()) exitZoom();
+  });
 
   function cleanup() {
     Object.keys(audioEls).forEach(function (k) { audioEls[k].node.remove(); });
@@ -1033,6 +1277,10 @@
     releaseEarlyMic();
 
     if (room) {
+      /* بنشيل السامعين الأول: cleanup() نفسها بتتنادى من جوه
+         handler الـ Disconnected، ولو سبناهم الـ disconnect اللي
+         تحت ده هيولّع الحدث تاني ويدخّلنا في لفّة */
+      try { room.removeAllListeners(); } catch (_) {}
       try { room.disconnect(); } catch (_) { /* خلاص اتقفل */ }
       room = null;
     }
@@ -1059,8 +1307,13 @@
   });
 
   el.hangupBtn.addEventListener("click", function () {
+    /* خروج بإرادته — بنلغي أي محاولة رجوع شغالة عشان مايرجعش
+       بالغلط بعد ما قال إنه عايز يخرج */
+    leaving = true;
+    joinCtx = null;
+    if (rejoinTimer) { window.clearTimeout(rejoinTimer); rejoinTimer = null; }
     if (room) room.disconnect();
-    else show("gate");
+    else { cleanup(); show("gate"); }
   });
 
   el.fallbackBack.addEventListener("click", function () { show("gate"); });
@@ -1238,33 +1491,19 @@
 
     loadLiveKit()
       .then(function () {
-        return fetch("/api/meeting", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            code: code,
-            name: name,
-            role: ROLE,
-            hostKey: key,
-          }),
-        });
-      })
-      .then(function (res) {
-        return res.json().then(function (data) {
-          if (!res.ok || !data.ok) {
-            var e = new Error(data.error || "مقدرناش نجهّز السيشن");
-            e.fromApi = true;
-            throw e;
-          }
-          return data;
-        });
+        return requestToken({ code: code, name: name, key: key });
       })
       .then(function (info) {
         hostKey = IS_HOST ? key : "";
         currentCode = code;
+        /* من هنا ورايح، لو الاتصال قطع لأي سبب مش مقصود، الرجوع
+           التلقائي بيعرف يجيب توكن جديد من غير ما يسأل المستخدم */
+        joinCtx = { name: name, code: code, key: key };
+        rejoinTries = 0;
         return joinRoom(info, code);
       })
       .catch(function (err) {
+        joinCtx = null;
         if (err && err.fromApi) { fail(err.message); cleanup(); return; }
         var info = readError(err);
         if (info.code === "blocked" || info.code === "missing") {

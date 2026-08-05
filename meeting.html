@@ -18,7 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css?v=11">
-  <link rel="stylesheet" href="css/meeting.css?v=7">
+  <link rel="stylesheet" href="css/meeting.css?v=8">
 
   <!-- مكتبة LiveKit بتتحمّل بدري عشان الدخول يبقى فوري -->
   <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/livekit-client@2.21.0/dist/livekit-client.umd.min.js">
@@ -89,6 +89,10 @@
         <div class="share-stage" id="shareStage" hidden>
           <video id="shareVideo" autoplay playsinline muted></video>
           <span class="share-tag" id="shareTag"></span>
+          <button class="share-zoom" id="fsBtn" type="button" aria-pressed="false" title="ملء الشاشة">
+            <span id="fsIcon" aria-hidden="true">⛶</span>
+            <span class="share-zoom-text" id="fsText">ملء الشاشة</span>
+          </button>
         </div>
         <div class="people" id="people"></div>
       </div>
@@ -126,6 +130,6 @@
     </section>
   </main>
 
-  <script src="js/session.js?v=5"></script>
+  <script src="js/session.js?v=6"></script>
 </body>
 </html>
