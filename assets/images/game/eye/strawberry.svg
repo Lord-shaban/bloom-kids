@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="فراولة">
+  <title>فراولة</title>
+  <defs>
+    <radialGradient id="sb-body" cx="36%" cy="28%" r="78%">
+      <stop offset="0%" stop-color="#ff6b6b"/>
+      <stop offset="55%" stop-color="#e8213f"/>
+      <stop offset="100%" stop-color="#b3122b"/>
+    </radialGradient>
+    <!-- جسم الفراولة، بنقصّ عليه البذور -->
+    <clipPath id="sb-clip">
+      <path d="M400 762 C 250 700 128 566 128 428 C 128 320 214 250 322 250
+               C 366 250 386 262 400 262 C 414 262 434 250 478 250
+               C 586 250 672 320 672 428 C 672 566 550 700 400 762 Z"/>
+    </clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- الجسم -->
+  <path d="M400 762 C 250 700 128 566 128 428 C 128 320 214 250 322 250
+           C 366 250 386 262 400 262 C 414 262 434 250 478 250
+           C 586 250 672 320 672 428 C 672 566 550 700 400 762 Z"
+        fill="url(#sb-body)"/>
+
+  <!-- البذور الصفرا في نُقر — دي التفصيلة اللي اللعبة بتبدأ عندها -->
+  <g clip-path="url(#sb-clip)">
+    <g fill="#9c0f24" opacity="0.55">
+      <ellipse cx="234" cy="372" rx="20" ry="27" transform="rotate(-18 234 372)"/>
+      <ellipse cx="330" cy="336" rx="20" ry="27" transform="rotate(-8 330 336)"/>
+      <ellipse cx="430" cy="336" rx="20" ry="27" transform="rotate(8 430 336)"/>
+      <ellipse cx="530" cy="366" rx="20" ry="27" transform="rotate(18 530 366)"/>
+      <ellipse cx="616" cy="424" rx="20" ry="27" transform="rotate(26 616 424)"/>
+      <ellipse cx="186" cy="452" rx="20" ry="27" transform="rotate(-26 186 452)"/>
+      <ellipse cx="282" cy="462" rx="20" ry="27" transform="rotate(-12 282 462)"/>
+      <ellipse cx="382" cy="440" rx="20" ry="27"/>
+      <ellipse cx="482" cy="452" rx="20" ry="27" transform="rotate(12 482 452)"/>
+      <ellipse cx="572" cy="510" rx="20" ry="27" transform="rotate(24 572 510)"/>
+      <ellipse cx="228" cy="562" rx="20" ry="27" transform="rotate(-22 228 562)"/>
+      <ellipse cx="330" cy="576" rx="20" ry="27" transform="rotate(-10 330 576)"/>
+      <ellipse cx="434" cy="562" rx="20" ry="27" transform="rotate(8 434 562)"/>
+      <ellipse cx="518" cy="616" rx="20" ry="27" transform="rotate(20 518 616)"/>
+      <ellipse cx="298" cy="672" rx="20" ry="27" transform="rotate(-14 298 672)"/>
+      <ellipse cx="400" cy="682" rx="20" ry="27"/>
+      <ellipse cx="470" cy="700" rx="19" ry="25" transform="rotate(14 470 700)"/>
+      <ellipse cx="176" cy="330" rx="18" ry="24" transform="rotate(-30 176 330)"/>
+    </g>
+    <g fill="#ffd75e">
+      <ellipse cx="234" cy="372" rx="11" ry="16" transform="rotate(-18 234 372)"/>
+      <ellipse cx="330" cy="336" rx="11" ry="16" transform="rotate(-8 330 336)"/>
+      <ellipse cx="430" cy="336" rx="11" ry="16" transform="rotate(8 430 336)"/>
+      <ellipse cx="530" cy="366" rx="11" ry="16" transform="rotate(18 530 366)"/>
+      <ellipse cx="616" cy="424" rx="11" ry="16" transform="rotate(26 616 424)"/>
+      <ellipse cx="186" cy="452" rx="11" ry="16" transform="rotate(-26 186 452)"/>
+      <ellipse cx="282" cy="462" rx="11" ry="16" transform="rotate(-12 282 462)"/>
+      <ellipse cx="382" cy="440" rx="11" ry="16"/>
+      <ellipse cx="482" cy="452" rx="11" ry="16" transform="rotate(12 482 452)"/>
+      <ellipse cx="572" cy="510" rx="11" ry="16" transform="rotate(24 572 510)"/>
+      <ellipse cx="228" cy="562" rx="11" ry="16" transform="rotate(-22 228 562)"/>
+      <ellipse cx="330" cy="576" rx="11" ry="16" transform="rotate(-10 330 576)"/>
+      <ellipse cx="434" cy="562" rx="11" ry="16" transform="rotate(8 434 562)"/>
+      <ellipse cx="518" cy="616" rx="11" ry="16" transform="rotate(20 518 616)"/>
+      <ellipse cx="298" cy="672" rx="11" ry="16" transform="rotate(-14 298 672)"/>
+      <ellipse cx="400" cy="682" rx="11" ry="16"/>
+      <ellipse cx="470" cy="700" rx="10" ry="15" transform="rotate(14 470 700)"/>
+      <ellipse cx="176" cy="330" rx="10" ry="14" transform="rotate(-30 176 330)"/>
+    </g>
+    <!-- لمعة -->
+    <ellipse cx="268" cy="360" rx="98" ry="58" fill="#ffffff" opacity="0.16"
+             transform="rotate(-34 268 360)"/>
+  </g>
+
+  <!-- الورق الأخضر -->
+  <g fill="#3f8f34">
+    <path d="M400 268 C 356 240 300 224 244 226 C 268 282 330 306 392 300 Z"/>
+    <path d="M400 268 C 444 240 500 224 556 226 C 532 282 470 306 408 300 Z"/>
+    <path d="M400 264 C 372 226 344 194 306 172 C 318 232 350 274 396 292 Z" fill="#4a9c3d"/>
+    <path d="M400 264 C 428 226 456 194 494 172 C 482 232 450 274 404 292 Z" fill="#4a9c3d"/>
+  </g>
+  <path d="M400 276 C 402 216 410 168 430 128" stroke="#3f8f34" stroke-width="22"
+        stroke-linecap="round" fill="none"/>
+</svg>

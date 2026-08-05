@@ -23,7 +23,7 @@
     </pattern>
   </defs>
 
-  <rect width="800" height="800" fill="#e8f4fb"/>
+  <rect width="800" height="800" fill="#fdf6ec"/>
 
   <!-- الساق -->
   <path d="M400 430 C 390 560 410 660 400 800" fill="none" stroke="#3f8f34" stroke-width="30" stroke-linecap="round"/>

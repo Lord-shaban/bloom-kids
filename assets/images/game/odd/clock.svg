@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="ساعة حائط">
+  <title>ساعة</title>
+  <rect width="800" height="800" fill="#fdf6ec"/>
+  <circle cx="400" cy="410" r="316" fill="#6a4fb6"/>
+  <circle cx="400" cy="410" r="316" fill="none" stroke="#4d3690" stroke-width="10"/>
+  <circle cx="400" cy="410" r="266" fill="#ffffff"/>
+  <circle cx="400" cy="410" r="266" fill="none" stroke="#e4e0f2" stroke-width="12"/>
+  <!-- العلامات -->
+  <g stroke="#332d6e" stroke-linecap="round">
+    <g stroke-width="18">
+      <path d="M400 176 v42"/><path d="M400 602 v42"/><path d="M166 410 h42"/><path d="M592 410 h42"/>
+    </g>
+    <g stroke-width="10" opacity="0.65">
+      <path d="M517 208 l-21 36"/><path d="M602 293 l-36 21"/><path d="M602 527 l-36 -21"/>
+      <path d="M517 612 l-21 -36"/><path d="M283 612 l21 -36"/><path d="M198 527 l36 -21"/>
+      <path d="M198 293 l36 21"/><path d="M283 208 l21 36"/>
+    </g>
+  </g>
+  <!-- العقارب -->
+  <path d="M400 410 L 400 236" stroke="#332d6e" stroke-width="24" stroke-linecap="round"/>
+  <path d="M400 410 L 536 486" stroke="#332d6e" stroke-width="18" stroke-linecap="round"/>
+  <path d="M400 410 L 316 528" stroke="#ef5f7c" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="400" cy="410" r="24" fill="#332d6e"/>
+  <circle cx="400" cy="410" r="10" fill="#ffffff"/>
+  <!-- الحلقة -->
+  <path d="M400 94 v-28" stroke="#4d3690" stroke-width="18" stroke-linecap="round"/>
+  <circle cx="400" cy="56" r="26" fill="none" stroke="#4d3690" stroke-width="16"/>
+</svg>

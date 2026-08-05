@@ -55,7 +55,7 @@
     </g>
   </defs>
 
-  <rect width="800" height="800" fill="#f3ecff"/>
+  <rect width="800" height="800" fill="#fdf6ec"/>
 
   <!-- الجناحين -->
   <use href="#bf-wing"/>

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="عصفور">
+  <title>عصفور</title>
+  <defs>
+    <linearGradient id="bd" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0%" stop-color="#7fd4f5"/><stop offset="100%" stop-color="#2b9fd4"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="#fdf6ec"/>
+  <!-- الديل -->
+  <path d="M596 400 C 676 344 726 330 764 336 C 742 400 742 452 764 512
+           C 726 516 674 496 596 444 Z" fill="#1f86b8" stroke="#14688f" stroke-width="9" stroke-linejoin="round"/>
+  <!-- الجسم -->
+  <ellipse cx="368" cy="416" rx="242" ry="192" fill="url(#bd)" stroke="#14688f" stroke-width="10"/>
+  <!-- البطن -->
+  <ellipse cx="352" cy="486" rx="152" ry="106" fill="#fdf1cf"/>
+  <!-- الجناح -->
+  <path d="M338 330 C 442 296 546 328 572 402 C 512 452 400 456 330 414 Z"
+        fill="#1f86b8" stroke="#14688f" stroke-width="9" stroke-linejoin="round"/>
+  <path d="M372 348 C 452 330 520 350 546 396" fill="none" stroke="#7fd4f5" stroke-width="8" stroke-linecap="round"/>
+  <!-- المنقار -->
+  <path d="M132 400 L 32 434 L 130 468 Z" fill="#f6a92c" stroke="#cf8306" stroke-width="8" stroke-linejoin="round"/>
+  <!-- العين -->
+  <circle cx="212" cy="368" r="42" fill="#ffffff" stroke="#14688f" stroke-width="7"/>
+  <circle cx="204" cy="372" r="21" fill="#2b2440"/>
+  <circle cx="212" cy="362" r="8" fill="#ffffff"/>
+  <!-- الرجلين -->
+  <g stroke="#f6a92c" stroke-width="14" stroke-linecap="round" fill="none">
+    <path d="M312 604 L 306 676"/><path d="M306 676 L 262 706"/><path d="M306 676 L 350 706"/>
+    <path d="M412 604 L 418 676"/><path d="M418 676 L 374 706"/><path d="M418 676 L 462 706"/>
+  </g>
+</svg>

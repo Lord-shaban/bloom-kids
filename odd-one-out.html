@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>أوجد المختلف | بلوم كيدز</title>
+  <meta name="description" content="لعبة أوجد المختلف من بلوم كيدز — ٤ صور، تلاتة بينهم حاجة مشتركة وواحدة مختلفة. اكتشفها وقول ليه!">
+  <meta name="theme-color" content="#332d6e">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="أوجد المختلف | لعبة بلوم كيدز">
+  <meta property="og:description" content="٤ صور، تلاتة بينهم حاجة مشتركة وواحدة مختلفة. اكتشفها وقول ليه!">
+  <meta property="og:image" content="assets/images/logo.jpeg">
+  <meta property="og:locale" content="ar_EG">
+
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
+  <link rel="apple-touch-icon" href="assets/images/logo.jpeg">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css?v=11">
+  <link rel="stylesheet" href="css/game-ui.css?v=2">
+  <link rel="stylesheet" href="css/odd-one-out.css?v=1">
+</head>
+<body class="play-page odd-page">
+
+  <!-- ===== الترويسة ===== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand" aria-label="بلوم كيدز — الرئيسية">
+        <img src="assets/images/logo.jpeg" alt="شعار بلوم كيدز" class="brand-logo">
+        <span class="brand-text">
+          <strong>Bloom Kids</strong>
+          <small>حكايات · لعب · نمو</small>
+        </span>
+      </a>
+      <div class="hud-group">
+        <a href="games.html" class="btn btn-teal btn-sm">🎮 <span class="btn-label">كل الألعاب</span></a>
+        <a href="index.html" class="btn btn-ghost btn-sm"><span class="btn-label">الموقع الرئيسي</span><span aria-hidden="true" class="btn-label-mini">🏠</span></a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <h1 class="sr-only">أوجد المختلف — لعبة بلوم كيدز</h1>
+
+    <div class="odd-shell">
+      <!-- شريط المعلومات -->
+      <div class="game-hud">
+        <div class="hud-level">
+          <span id="roundName">…</span>
+          <span class="level-pips" id="roundPips"></span>
+        </div>
+
+        <div class="hud-group">
+          <span class="hud-pill hud-score">⭐ <span dir="ltr"><b id="scoreNow">٠</b></span></span>
+          <span class="hud-pill hud-found">🎯 <b id="pickValue">٢</b> نقط</span>
+        </div>
+
+        <div class="hud-group">
+          <button class="btn btn-yellow btn-sm" id="hintBtn" type="button">
+            💡 <span class="btn-label">تلميح</span> (<span id="hintCount">٣</span>)
+          </button>
+          <button class="btn btn-ghost btn-sm" id="roundsBtn" type="button">
+            🗂️ <span class="btn-label">الجولات</span>
+          </button>
+          <button class="btn-icon" id="soundBtn" type="button" aria-pressed="true" title="اقفل الصوت">🔊</button>
+        </div>
+      </div>
+
+      <div class="odd-main">
+        <p class="odd-ask" id="oddAsk">مين المختلف؟ 🤔</p>
+
+        <!-- ===== الأربع صور ===== -->
+        <div class="odd-grid" id="oddGrid"></div>
+
+        <p class="odd-tip">خد وقتك… مفيش عدّاد. بصّ في الأربعة وفكّر إيه اللي بيجمع التلاتة.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== شاشة البداية / اختيار الجولة ===== -->
+  <div class="overlay" id="startOverlay">
+    <div class="overlay-card overlay-card-wide">
+      <h2>أوجد المختلف 🧠</h2>
+      <p>٤ صور… تلاتة منهم بينهم حاجة مشتركة، وواحدة مختلفة. تعرف مين؟</p>
+      <ul class="how-list" id="howList">
+        <li><span class="bg-teal">🔍</span> بصّ في الأربع صور كويس</li>
+        <li><span class="bg-pink">👆</span> اضغط على الصورة المختلفة</li>
+        <li><span class="bg-purple">💬</span> وبعدين قول <b>ليه</b> هي المختلفة</li>
+        <li><span class="bg-yellow">⭐</span> ٢ نقطة للصورة + ١ للسبب</li>
+      </ul>
+
+      <h3 class="levels-title" id="roundsTitle">اختار الجولة 👇</h3>
+      <div class="level-grid" id="roundGrid"></div>
+
+      <div class="overlay-actions">
+        <button class="btn btn-primary" id="playAllBtn" type="button">▶ ابدأ من الأول</button>
+        <button class="btn btn-ghost" id="closeRoundsBtn" type="button" hidden>↩ رجوع للجولة الحالية</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== شاشة "ليه؟" ثم القاعدة ===== -->
+  <div class="overlay" id="whyOverlay" hidden>
+    <div class="overlay-card">
+      <div class="odd-shot"><img id="oddImg" src="" alt=""></div>
+
+      <!-- الخطوة ١: السبب -->
+      <div id="whyStep">
+        <h2 id="whyTitle">ليه دي المختلفة؟</h2>
+        <p>ده أهم سؤال في اللعبة — مش المهم تعرفها بس، المهم تعرف ليه 💡</p>
+        <div class="reason-list" id="reasonList"></div>
+      </div>
+
+      <!-- الخطوة ٢: القاعدة والنتيجة -->
+      <div id="ruleStep" hidden>
+        <h2 id="ruleTitle">🎉 برافو!</h2>
+        <p class="odd-rule" id="ruleText"></p>
+        <div class="win-stats" id="roundStats"></div>
+        <div class="overlay-actions">
+          <button class="btn btn-primary" id="nextRoundBtn" type="button">الجولة الجاية ▶</button>
+          <button class="btn btn-ghost" id="retryRoundBtn" type="button">إعادة الجولة</button>
+          <button class="btn btn-ghost" id="roundLevelsBtn" type="button">🗂️ الجولات</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== شاشة النهاية ===== -->
+  <div class="overlay" id="endOverlay" hidden>
+    <div class="overlay-card">
+      <h2 id="endTitle">🏆 خلّصت اللعبة!</h2>
+      <div class="end-score"><b id="endScore">٠</b> <span>من <span id="endMax">٢٤</span> نقطة</span></div>
+      <p class="end-stars" id="endStars"></p>
+      <p class="win-best" id="endBest"></p>
+      <div class="overlay-actions">
+        <button class="btn btn-primary" id="playAgainBtn" type="button">🔄 العب تاني</button>
+        <a class="btn btn-teal" href="iron-eye.html">👁️ جرّب العين الحديدية</a>
+        <a class="btn btn-ghost" href="games.html">🎮 كل الألعاب</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+  <script src="js/odd-one-out-rounds.js?v=1"></script>
+  <script src="js/odd-one-out.js?v=1"></script>
+</body>
+</html>

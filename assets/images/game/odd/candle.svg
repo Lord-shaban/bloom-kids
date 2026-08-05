@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="شمعة">
+  <title>شمعة</title>
+  <defs>
+    <linearGradient id="cd" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fff6e2"/><stop offset="55%" stop-color="#ffe2c0"/>
+      <stop offset="100%" stop-color="#e7bd91"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="#fdf6ec"/>
+  <!-- هالة النور -->
+  <circle cx="400" cy="196" r="150" fill="#ffd233" opacity="0.16"/>
+  <circle cx="400" cy="196" r="96" fill="#ffd233" opacity="0.18"/>
+  <!-- اللهب -->
+  <path d="M400 296 C 330 232 362 148 400 96 C 438 148 470 232 400 296 Z" fill="#f6a92c"/>
+  <path d="M400 282 C 358 240 376 184 400 148 C 424 184 442 240 400 282 Z" fill="#ffd233"/>
+  <path d="M400 268 C 382 242 390 214 400 194 C 410 214 418 242 400 268 Z" fill="#fff6c9"/>
+  <!-- الفتيلة -->
+  <path d="M400 330 v-38" stroke="#5c4326" stroke-width="11" stroke-linecap="round"/>
+  <!-- جسم الشمعة -->
+  <rect x="298" y="326" width="204" height="330" rx="24" fill="url(#cd)" stroke="#c99a6a" stroke-width="11"/>
+  <!-- الشمع السايح -->
+  <path d="M298 356 h204 v46 c-26 0 -26 40 -52 40 s-26 -40 -50 -40 -26 40 -52 40 -24 -40 -50 -40 Z"
+        fill="#fff6e2" stroke="#c99a6a" stroke-width="8" stroke-linejoin="round"/>
+  <!-- خطوط حمرا -->
+  <g stroke="#ef5f7c" stroke-width="20" stroke-linecap="round" opacity="0.8">
+    <path d="M322 486 l104 -60"/><path d="M322 566 l104 -60"/><path d="M370 618 l104 -60"/>
+  </g>
+  <!-- الحامل -->
+  <path d="M244 656 h312 l-46 62 h-220 Z" fill="#d7a24a" stroke="#a97a2c" stroke-width="10" stroke-linejoin="round"/>
+  <ellipse cx="400" cy="726" rx="150" ry="26" fill="#e0ad55" stroke="#a97a2c" stroke-width="10"/>
+</svg>

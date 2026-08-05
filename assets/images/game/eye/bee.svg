@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="نحلة">
+  <title>نحلة</title>
+  <defs>
+    <linearGradient id="be-body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffd75e"/>
+      <stop offset="100%" stop-color="#f0a81c"/>
+    </linearGradient>
+    <linearGradient id="be-wing" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#bfe6f5" stop-opacity="0.85"/>
+    </linearGradient>
+    <!-- الجسم، بنقصّ عليه الخطوط عشان تقف عند حدوده بالظبط -->
+    <clipPath id="be-clip"><ellipse cx="400" cy="452" rx="228" ry="182"/></clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- الجناحين ورا الجسم -->
+  <g>
+    <ellipse cx="268" cy="236" rx="128" ry="76" fill="url(#be-wing)"
+             stroke="#8fb9c9" stroke-width="7" transform="rotate(-34 268 236)"/>
+    <ellipse cx="536" cy="236" rx="128" ry="76" fill="url(#be-wing)"
+             stroke="#8fb9c9" stroke-width="7" transform="rotate(34 536 236)"/>
+    <g stroke="#a9cfdd" stroke-width="4" fill="none" opacity="0.9">
+      <path d="M200 288 C 250 244 306 214 356 200" transform="rotate(-34 268 236)"/>
+      <path d="M604 288 C 554 244 498 214 448 200" transform="rotate(34 536 236)"/>
+    </g>
+  </g>
+
+  <!-- الإبرة -->
+  <path d="M628 452 l86 0 l-84 26 Z" fill="#4a3a1a"/>
+
+  <!-- الجسم -->
+  <ellipse cx="400" cy="452" rx="228" ry="182" fill="url(#be-body)"/>
+
+  <!-- الخطوط السودا — دي التفصيلة اللي اللعبة بتبدأ عندها -->
+  <g clip-path="url(#be-clip)" fill="#2b2318">
+    <path d="M262 250 h74 v420 h-74 Z"/>
+    <path d="M404 250 h78 v420 h-78 Z"/>
+    <path d="M550 250 h72 v420 h-72 Z"/>
+  </g>
+  <ellipse cx="400" cy="452" rx="228" ry="182" fill="none" stroke="#2b2318" stroke-width="10"/>
+  <!-- لمعة على الجسم -->
+  <ellipse cx="316" cy="356" rx="96" ry="52" fill="#ffffff" opacity="0.18"
+           transform="rotate(-20 316 356)"/>
+
+  <!-- الوش -->
+  <circle cx="212" cy="430" r="112" fill="#2b2318"/>
+  <circle cx="196" cy="404" r="24" fill="#ffffff"/>
+  <circle cx="192" cy="408" r="11" fill="#2b2318"/>
+  <circle cx="254" cy="398" r="24" fill="#ffffff"/>
+  <circle cx="250" cy="402" r="11" fill="#2b2318"/>
+  <path d="M182 476 C 206 500 244 500 268 474" stroke="#ffffff" stroke-width="9"
+        stroke-linecap="round" fill="none"/>
+  <circle cx="150" cy="470" r="20" fill="#ef5f7c" opacity="0.55"/>
+  <circle cx="286" cy="462" r="20" fill="#ef5f7c" opacity="0.55"/>
+
+  <!-- قرون الاستشعار -->
+  <g fill="none" stroke="#2b2318" stroke-width="11" stroke-linecap="round">
+    <path d="M170 344 C 148 288 128 254 106 232"/>
+    <path d="M246 322 C 240 262 236 226 228 196"/>
+  </g>
+  <circle cx="102" cy="226" r="16" fill="#2b2318"/>
+  <circle cx="226" cy="190" r="16" fill="#2b2318"/>
+</svg>

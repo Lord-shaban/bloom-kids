@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="بيتزا">
+  <title>بيتزا</title>
+  <defs>
+    <radialGradient id="pz-cheese" cx="40%" cy="34%" r="72%">
+      <stop offset="0%" stop-color="#ffd97a"/>
+      <stop offset="70%" stop-color="#f6b93b"/>
+      <stop offset="100%" stop-color="#e79a1f"/>
+    </radialGradient>
+    <radialGradient id="pz-crust" cx="40%" cy="32%" r="70%">
+      <stop offset="0%" stop-color="#e8b473"/>
+      <stop offset="100%" stop-color="#c8873f"/>
+    </radialGradient>
+    <clipPath id="pz-in"><circle cx="400" cy="400" r="286"/></clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- الحافة -->
+  <circle cx="400" cy="400" r="330" fill="url(#pz-crust)"/>
+  <circle cx="400" cy="400" r="330" fill="none" stroke="#a86a2c" stroke-width="8"/>
+  <!-- فقاعات على الحافة -->
+  <g fill="#a86a2c" opacity="0.35">
+    <ellipse cx="400" cy="92" rx="26" ry="14"/>
+    <ellipse cx="613" cy="187" rx="24" ry="13" transform="rotate(60 613 187)"/>
+    <ellipse cx="613" cy="613" rx="24" ry="13" transform="rotate(-60 613 613)"/>
+    <ellipse cx="400" cy="708" rx="26" ry="14"/>
+    <ellipse cx="187" cy="613" rx="24" ry="13" transform="rotate(60 187 613)"/>
+    <ellipse cx="187" cy="187" rx="24" ry="13" transform="rotate(-60 187 187)"/>
+  </g>
+
+  <!-- الجبنة -->
+  <circle cx="400" cy="400" r="288" fill="url(#pz-cheese)"/>
+  <circle cx="400" cy="400" r="288" fill="none" stroke="#d98f1c" stroke-width="6"/>
+
+  <g clip-path="url(#pz-in)">
+    <!-- خيوط جبنة سايحة -->
+    <g fill="#ffe9a8" opacity="0.65">
+      <ellipse cx="250" cy="300" rx="72" ry="44" transform="rotate(-24 250 300)"/>
+      <ellipse cx="520" cy="272" rx="62" ry="38" transform="rotate(18 520 272)"/>
+      <ellipse cx="330" cy="560" rx="66" ry="40" transform="rotate(12 330 560)"/>
+      <ellipse cx="560" cy="520" rx="58" ry="36" transform="rotate(-16 560 520)"/>
+    </g>
+
+    <!-- البيبروني — دي التفصيلة اللي اللعبة بتبدأ عندها -->
+    <g>
+      <circle cx="286" cy="266" r="56" fill="#c0392b"/>
+      <circle cx="286" cy="266" r="48" fill="#e05244"/>
+      <circle cx="470" cy="230" r="50" fill="#c0392b"/>
+      <circle cx="470" cy="230" r="43" fill="#e05244"/>
+      <circle cx="576" cy="378" r="54" fill="#c0392b"/>
+      <circle cx="576" cy="378" r="46" fill="#e05244"/>
+      <circle cx="252" cy="452" r="52" fill="#c0392b"/>
+      <circle cx="252" cy="452" r="44" fill="#e05244"/>
+      <circle cx="430" cy="470" r="58" fill="#c0392b"/>
+      <circle cx="430" cy="470" r="50" fill="#e05244"/>
+      <circle cx="330" cy="628" r="48" fill="#c0392b"/>
+      <circle cx="330" cy="628" r="41" fill="#e05244"/>
+      <circle cx="546" cy="596" r="46" fill="#c0392b"/>
+      <circle cx="546" cy="596" r="39" fill="#e05244"/>
+    </g>
+    <!-- نقط دهن غامقة على البيبروني -->
+    <g fill="#96271c" opacity="0.75">
+      <circle cx="272" cy="252" r="7"/><circle cx="302" cy="280" r="6"/><circle cx="278" cy="288" r="5"/>
+      <circle cx="460" cy="218" r="6"/><circle cx="484" cy="242" r="5.5"/>
+      <circle cx="566" cy="364" r="7"/><circle cx="590" cy="392" r="5.5"/>
+      <circle cx="242" cy="440" r="6.5"/><circle cx="264" cy="466" r="5"/>
+      <circle cx="418" cy="456" r="7"/><circle cx="446" cy="484" r="6"/><circle cx="424" cy="490" r="5"/>
+      <circle cx="322" cy="616" r="6"/><circle cx="342" cy="640" r="5"/>
+      <circle cx="536" cy="586" r="6"/><circle cx="558" cy="608" r="5"/>
+    </g>
+
+    <!-- زيتون -->
+    <g>
+      <circle cx="368" cy="340" r="24" fill="#3e4a2b"/><circle cx="368" cy="340" r="9" fill="#f6b93b"/>
+      <circle cx="520" cy="470" r="22" fill="#3e4a2b"/><circle cx="520" cy="470" r="8" fill="#f6b93b"/>
+      <circle cx="196" cy="352" r="21" fill="#3e4a2b"/><circle cx="196" cy="352" r="8" fill="#f6b93b"/>
+      <circle cx="430" cy="596" r="22" fill="#3e4a2b"/><circle cx="430" cy="596" r="8" fill="#f6b93b"/>
+    </g>
+
+    <!-- ريحان -->
+    <g fill="#3f8f34">
+      <ellipse cx="360" cy="196" rx="26" ry="15" transform="rotate(-20 360 196)"/>
+      <ellipse cx="626" cy="290" rx="24" ry="14" transform="rotate(30 626 290)"/>
+      <ellipse cx="196" cy="546" rx="25" ry="15" transform="rotate(-40 196 546)"/>
+      <ellipse cx="486" cy="676" rx="24" ry="14" transform="rotate(14 486 676)"/>
+    </g>
+  </g>
+</svg>

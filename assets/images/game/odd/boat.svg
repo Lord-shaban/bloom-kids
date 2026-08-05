@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="مركب شراعي">
+  <title>مركب</title>
+  <rect width="800" height="800" fill="#fdf6ec"/>
+  <!-- الصاري -->
+  <path d="M400 128 v396" stroke="#8d5a2b" stroke-width="18" stroke-linecap="round"/>
+  <!-- الشراع الكبير -->
+  <path d="M420 152 C 552 250 616 372 632 500 L 420 500 Z"
+        fill="#ef5f7c" stroke="#c93f5c" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M420 240 C 500 300 548 380 570 452" fill="none" stroke="#ffffff" stroke-width="8" opacity="0.45"/>
+  <!-- الشراع الصغير -->
+  <path d="M380 224 C 300 300 258 400 246 500 L 380 500 Z"
+        fill="#ffd75e" stroke="#d99a10" stroke-width="10" stroke-linejoin="round"/>
+  <!-- العلم -->
+  <path d="M406 128 L 500 152 L 406 178 Z" fill="#23a89f"/>
+  <!-- البدن -->
+  <path d="M132 520 h536 l-78 122 c-12 20 -30 30 -56 30 H 266 c-26 0 -44 -10 -56 -30 Z"
+        fill="#8d5a2b" stroke="#5f3b1a" stroke-width="12" stroke-linejoin="round"/>
+  <path d="M160 566 h480" stroke="#c9884b" stroke-width="16" stroke-linecap="round"/>
+  <!-- المية -->
+  <g fill="none" stroke="#4aa8d8" stroke-width="14" stroke-linecap="round">
+    <path d="M56 690 c34 -26 68 -26 102 0 s68 26 102 0"/>
+    <path d="M280 730 c34 -26 68 -26 102 0 s68 26 102 0"/>
+    <path d="M504 690 c34 -26 68 -26 102 0 s68 26 102 0"/>
+  </g>
+</svg>

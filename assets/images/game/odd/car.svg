@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="عربية">
+  <title>عربية</title>
+  <defs>
+    <linearGradient id="cr" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ff8ba4"/><stop offset="100%" stop-color="#ef5f7c"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="#fdf6ec"/>
+  <!-- الأرض -->
+  <path d="M40 636 h720" stroke="#d9d2c4" stroke-width="12" stroke-linecap="round"/>
+  <!-- الجسم -->
+  <path d="M78 606 v-104 c0 -34 22 -58 56 -66 l64 -14 l72 -92 c14 -18 32 -26 56 -26 h164
+           c26 0 44 10 58 30 l56 88 l88 20 c32 8 48 30 48 62 v102 Z"
+        fill="url(#cr)" stroke="#c93f5c" stroke-width="12" stroke-linejoin="round"/>
+  <!-- الشبابيك -->
+  <path d="M262 414 l58 -74 c8 -10 16 -14 28 -14 h58 v88 Z" fill="#bfe6f5" stroke="#8fb9c9" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M438 414 v-88 h68 c14 0 22 6 30 18 l46 70 Z" fill="#bfe6f5" stroke="#8fb9c9" stroke-width="8" stroke-linejoin="round"/>
+  <!-- الشنطة والنور -->
+  <rect x="86" y="470" width="58" height="42" rx="12" fill="#ffd75e" stroke="#d99a10" stroke-width="7"/>
+  <rect x="656" y="470" width="58" height="42" rx="12" fill="#ffd75e" stroke="#d99a10" stroke-width="7"/>
+  <path d="M300 500 h200" stroke="#c93f5c" stroke-width="10" stroke-linecap="round"/>
+  <!-- العجل -->
+  <g>
+    <circle cx="236" cy="606" r="92" fill="#2b2440"/>
+    <circle cx="236" cy="606" r="46" fill="#cfd4e0" stroke="#9aa1b5" stroke-width="8"/>
+    <circle cx="236" cy="606" r="14" fill="#7d8499"/>
+    <circle cx="566" cy="606" r="92" fill="#2b2440"/>
+    <circle cx="566" cy="606" r="46" fill="#cfd4e0" stroke="#9aa1b5" stroke-width="8"/>
+    <circle cx="566" cy="606" r="14" fill="#7d8499"/>
+  </g>
+</svg>

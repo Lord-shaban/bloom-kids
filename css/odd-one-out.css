@@ -1,0 +1,197 @@
+/* ============================================================
+   Bloom Kids — لعبة "أوجد المختلف"
+   بتكمّل على css/style.css (الهوية) + css/game-ui.css (قطع الألعاب
+   المشتركة: شريط المعلومات، الطبقات، التوست، الكونفيتي…)
+   ============================================================ */
+
+/* الصفحة دي مفيهاش عدّاد وقت عن قصد — اللعبة عن التفكير مش السرعة —
+   فمش محتاجين نحبس كل حاجة في شاشة واحدة زي لعبة الزوم. بنسيب
+   الصفحة تسكرول لو احتاجت، والشبكة بتتظبط بالـ CSS لوحدها. */
+.odd-shell {
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+  min-height: calc(100vh - var(--header-h));
+  min-height: calc(100dvh - var(--header-h));
+  display: flex;
+  flex-direction: column;
+  padding: 0.55rem var(--page-pad) 1.4rem;
+}
+
+/* المحتوى كتلة واحدة في نص المساحة الفاضية، بدل ما الشبكة تتمطّط
+   وتسيب فراغ فوقها وتحتها.
+   `margin-block: auto` أأمن من إن الشريط يبقى absolute — على شاشة
+   ٣٦٠ الشريط بينزل سطرين وكان بيركب على سؤال اللعبة. */
+.odd-main { margin-block: auto; width: 100%; }
+
+.odd-ask {
+  text-align: center; font-family: var(--font-head); font-weight: 800;
+  color: var(--navy); font-size: 1.25rem; margin-bottom: 0.9rem;
+}
+
+.odd-tip {
+  text-align: center; color: var(--ink-soft); font-weight: 600;
+  font-size: 0.86rem; margin-top: 1rem;
+}
+
+/* ============ شبكة الأربع صور ============ */
+.odd-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.9rem;
+}
+
+.odd-card {
+  display: flex; flex-direction: column; align-items: stretch;
+  background: var(--white); cursor: pointer; font-family: inherit;
+  border: 4px solid rgba(51, 45, 110, 0.12);
+  border-radius: var(--radius);
+  padding: 0; overflow: hidden;
+  box-shadow: 0 6px 16px rgba(51, 45, 110, 0.08);
+  transition: transform 0.2s ease, border-color 0.2s ease,
+              box-shadow 0.2s ease, opacity 0.3s ease;
+}
+.odd-card:hover:not(:disabled) {
+  transform: translateY(-6px); border-color: var(--teal);
+  box-shadow: 0 14px 26px rgba(35, 168, 159, 0.24);
+}
+.odd-card:focus-visible { outline: 4px solid var(--purple); outline-offset: 3px; }
+.odd-card:disabled { cursor: default; }
+
+.odd-card-media {
+  position: relative;
+  aspect-ratio: 1; background: #fdf6ec;
+}
+.odd-card-media img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+.odd-card-name {
+  font-family: var(--font-head); font-weight: 800; font-size: 1.02rem;
+  color: var(--navy); padding: 0.6rem 0.4rem;
+  border-top: 3px solid rgba(51, 45, 110, 0.08);
+}
+
+/* علامة صح/غلط بتتحط فوق الصورة */
+.odd-card-mark {
+  position: absolute; inset-block-start: 8px; inset-inline-end: 8px;
+  width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 1.3rem; font-weight: 800; color: var(--white);
+  box-shadow: 0 4px 10px rgba(51, 45, 110, 0.3);
+  animation: mark-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes mark-pop {
+  from { transform: scale(0.2); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.odd-card.is-right {
+  border-color: var(--green); background: rgba(125, 194, 66, 0.12);
+  animation: odd-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.odd-card.is-right .odd-card-mark { background: #5aa832; }
+.odd-card.is-right .odd-card-name { color: #3f7318; }
+
+.odd-card.is-wrong {
+  border-color: var(--pink); background: rgba(239, 95, 124, 0.1);
+  animation: odd-shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+.odd-card.is-wrong .odd-card-mark { background: var(--pink-dark); }
+
+/* الاختيار اللي شاله التلميح */
+.odd-card.is-out { opacity: 0.3; }
+/* التلاتة اللي بينهم حاجة مشتركة، بيبهتوا لما الإجابة تظهر */
+.odd-card.is-dim { opacity: 0.45; }
+
+@keyframes odd-pop {
+  0% { transform: scale(0.94); }
+  60% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+@keyframes odd-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(9px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(4px); }
+}
+
+/* ============ شاشة "ليه؟" ============ */
+.odd-shot {
+  width: 132px; height: 132px; margin: 0 auto 0.9rem;
+  border-radius: 22px; overflow: hidden; background: #fdf6ec;
+  border: 4px solid var(--white); box-shadow: var(--shadow);
+  outline: 3px solid rgba(51, 45, 110, 0.1);
+  animation: reveal-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.odd-shot img { width: 100%; height: 100%; object-fit: contain; }
+@keyframes reveal-in {
+  from { transform: scale(0.55) rotate(-6deg); opacity: 0; }
+  to { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+.reason-list { display: grid; gap: 0.6rem; margin-bottom: 0.4rem; }
+
+.reason {
+  font-family: inherit; font-weight: 700; font-size: 0.98rem;
+  color: var(--navy); background: var(--cream);
+  border: 3px solid transparent; border-radius: var(--radius-sm);
+  padding: 0.8rem 1rem; cursor: pointer; text-align: start;
+  display: flex; align-items: center; gap: 0.6rem;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.25s ease;
+}
+.reason::before {
+  content: "💭"; flex-shrink: 0; font-size: 1.05rem;
+}
+.reason:hover:not(:disabled) { transform: translateY(-3px); border-color: var(--teal); }
+.reason:focus-visible { outline: 3px solid var(--purple); outline-offset: 2px; }
+.reason:disabled { cursor: default; }
+.reason.is-right {
+  background: rgba(125, 194, 66, 0.2); border-color: var(--green); color: #3f7318;
+}
+.reason.is-right::before { content: "✅"; }
+.reason.is-wrong {
+  background: rgba(239, 95, 124, 0.14); border-color: var(--pink);
+  color: var(--pink-dark); opacity: 0.75;
+}
+.reason.is-wrong::before { content: "❌"; }
+
+/* القاعدة — أهم سطر في اللعبة، فبنبرزه */
+.overlay-card .odd-rule {
+  background: rgba(35, 168, 159, 0.1);
+  border: 3px solid rgba(35, 168, 159, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem; margin-bottom: 1rem;
+  font-family: var(--font-head); font-weight: 800;
+  font-size: 1rem; color: var(--teal-dark); line-height: 1.6;
+}
+
+/* ============ شاشة النهاية ============ */
+.end-score { font-family: var(--font-head); color: var(--navy); margin-bottom: 0.5rem; }
+.end-score b { font-size: 3rem; font-weight: 800; color: var(--pink); line-height: 1; }
+.end-score span { font-weight: 700; font-size: 0.95rem; color: var(--ink-soft); }
+
+/* لازم تسبق `.overlay-card p` في الترتيب المحدِّد، عشان كده متخصّصة */
+.overlay-card .end-stars {
+  font-size: 1.8rem; letter-spacing: 0.15rem; margin-bottom: 0.6rem;
+}
+
+/* ============ الشاشات الصغيرة ============ */
+@media (max-width: 900px) {
+  .odd-ask { font-size: 1.08rem; margin-bottom: 0.7rem; }
+  .odd-card-name { font-size: 0.92rem; padding: 0.45rem 0.3rem; }
+  .odd-grid { gap: 0.6rem; }
+  .reason { font-size: 0.92rem; padding: 0.7rem 0.8rem; }
+}
+
+/* صورتين في السطر — أكبر بكتير من ٤ في سطر على شاشة موبايل،
+   والطفل محتاج يشوف التفاصيل عشان يقارن */
+@media (max-width: 680px) {
+  .odd-grid { grid-template-columns: repeat(2, 1fr); }
+  .odd-shell { padding-bottom: 1.8rem; }
+}
+
+/* ============ تقليل الحركة ============ */
+@media (prefers-reduced-motion: reduce) {
+  .odd-card, .odd-card-mark, .odd-shot { animation: none !important; }
+  .odd-card { transition: none; }
+}

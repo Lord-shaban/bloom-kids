@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="سمكة ملونة">
+  <title>سمكة</title>
+  <defs>
+    <linearGradient id="fs-body" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0%" stop-color="#ffb24d"/>
+      <stop offset="55%" stop-color="#f97b28"/>
+      <stop offset="100%" stop-color="#dd5312"/>
+    </linearGradient>
+    <linearGradient id="fs-fin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7fe3d8"/>
+      <stop offset="100%" stop-color="#23a89f"/>
+    </linearGradient>
+    <!-- القشور: نقش بيفضل واضح مهما كبّرنا -->
+    <pattern id="fs-scales" width="56" height="46" patternUnits="userSpaceOnUse">
+      <path d="M0 46 A 28 28 0 0 1 56 46" fill="none" stroke="#c9430c" stroke-width="6" opacity="0.55"/>
+      <path d="M-28 23 A 28 28 0 0 1 28 23" fill="none" stroke="#c9430c" stroke-width="6" opacity="0.55"/>
+      <path d="M28 23 A 28 28 0 0 1 84 23" fill="none" stroke="#c9430c" stroke-width="6" opacity="0.55"/>
+    </pattern>
+    <clipPath id="fs-clip">
+      <ellipse cx="382" cy="400" rx="266" ry="182"/>
+    </clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- الزعنفة العليا والسفلى -->
+  <path d="M330 232 C 356 138 424 104 486 122 C 452 176 424 214 410 244 Z" fill="url(#fs-fin)"
+        stroke="#1b8a82" stroke-width="7"/>
+  <path d="M320 566 C 344 646 400 682 452 672 C 424 626 400 596 388 566 Z" fill="url(#fs-fin)"
+        stroke="#1b8a82" stroke-width="7"/>
+
+  <!-- الديل -->
+  <path d="M624 400 C 690 320 748 288 776 292 C 758 356 756 444 776 508
+           C 748 512 690 480 624 400 Z" fill="url(#fs-fin)" stroke="#1b8a82" stroke-width="8"/>
+
+  <!-- الجسم -->
+  <ellipse cx="382" cy="400" rx="266" ry="182" fill="url(#fs-body)"/>
+  <!-- القشور — دي التفصيلة اللي اللعبة بتبدأ عندها -->
+  <g clip-path="url(#fs-clip)">
+    <rect x="230" y="180" width="450" height="440" fill="url(#fs-scales)"/>
+    <ellipse cx="280" cy="320" rx="130" ry="72" fill="#ffffff" opacity="0.16"
+             transform="rotate(-18 280 320)"/>
+  </g>
+  <ellipse cx="382" cy="400" rx="266" ry="182" fill="none" stroke="#b8440d" stroke-width="9"/>
+
+  <!-- الخيشوم -->
+  <path d="M236 268 C 200 330 200 470 236 532" fill="none" stroke="#b8440d"
+        stroke-width="9" stroke-linecap="round"/>
+
+  <!-- الزعنفة الجانبية -->
+  <path d="M300 424 C 348 436 384 476 386 528 C 330 528 296 490 288 444 Z"
+        fill="#ffd75e" stroke="#d99a10" stroke-width="6"/>
+
+  <!-- العين والبق -->
+  <circle cx="176" cy="356" r="46" fill="#ffffff" stroke="#b8440d" stroke-width="6"/>
+  <circle cx="168" cy="360" r="23" fill="#2b2440"/>
+  <circle cx="176" cy="350" r="9" fill="#ffffff"/>
+  <path d="M126 452 C 148 476 182 478 202 460" fill="none" stroke="#b8440d"
+        stroke-width="10" stroke-linecap="round"/>
+
+  <!-- فقاعات -->
+  <g fill="none" stroke="#7fc8dd" stroke-width="7">
+    <circle cx="112" cy="228" r="24"/>
+    <circle cx="70" cy="152" r="16"/>
+    <circle cx="132" cy="96" r="11"/>
+  </g>
+</svg>

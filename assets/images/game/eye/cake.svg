@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="تورتة عيد ميلاد">
+  <title>تورتة</title>
+  <defs>
+    <linearGradient id="ck-sponge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f6c9a0"/>
+      <stop offset="100%" stop-color="#d99a62"/>
+    </linearGradient>
+    <linearGradient id="ck-ice" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ff9ab4"/>
+      <stop offset="100%" stop-color="#ef5f7c"/>
+    </linearGradient>
+    <linearGradient id="ck-ice2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9ae7df"/>
+      <stop offset="100%" stop-color="#23a89f"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- الطبق -->
+  <ellipse cx="400" cy="726" rx="316" ry="42" fill="#d7dbe6"/>
+  <ellipse cx="400" cy="716" rx="316" ry="42" fill="#eef1f7"/>
+
+  <!-- الدور التحتاني -->
+  <rect x="150" y="520" width="500" height="200" rx="26" fill="url(#ck-sponge)"/>
+  <path d="M150 560 h500 v-34 a26 26 0 0 0 -26 -26 h-448 a26 26 0 0 0 -26 26 Z" fill="#c9854b" opacity="0.35"/>
+  <!-- كريمة سايحة على الدور التحتاني -->
+  <path d="M150 546 h500 v40 c-30 0 -30 34 -60 34 s-30 -34 -60 -34 -30 34 -60 34 -30 -34 -60 -34
+           -30 34 -60 34 -30 -34 -60 -34 -30 34 -60 34 -30 -34 -60 -34 Z" fill="url(#ck-ice2)"/>
+
+  <!-- الدور الفوقاني -->
+  <rect x="226" y="336" width="348" height="200" rx="24" fill="url(#ck-sponge)"/>
+  <path d="M226 366 h348 v-6 a24 24 0 0 0 -24 -24 h-300 a24 24 0 0 0 -24 24 Z" fill="#c9854b" opacity="0.35"/>
+  <path d="M226 360 h348 v40 c-29 0 -29 34 -58 34 s-29 -34 -58 -34 -29 34 -58 34 -29 -34 -58 -34
+           -29 34 -58 34 -29 -34 -58 -34 Z" fill="url(#ck-ice)"/>
+
+  <!-- سطح التورتة -->
+  <ellipse cx="400" cy="336" rx="174" ry="34" fill="#ffb3c7"/>
+  <ellipse cx="400" cy="330" rx="174" ry="34" fill="#ff9ab4"/>
+
+  <!-- الحبيبات الملوّنة — دي التفصيلة اللي اللعبة بتبدأ عندها -->
+  <g stroke-linecap="round" stroke-width="11">
+    <path d="M270 412 l16 -22" stroke="#ffd75e"/>
+    <path d="M318 442 l-14 -22" stroke="#7dc242"/>
+    <path d="M366 408 l18 -20" stroke="#6a4fb6"/>
+    <path d="M414 446 l-16 -22" stroke="#23a89f"/>
+    <path d="M462 410 l16 -22" stroke="#ffd75e"/>
+    <path d="M510 444 l-16 -20" stroke="#6a4fb6"/>
+    <path d="M294 486 l18 -20" stroke="#23a89f"/>
+    <path d="M344 502 l-14 -24" stroke="#ffd75e"/>
+    <path d="M392 480 l16 -22" stroke="#7dc242"/>
+    <path d="M442 504 l-16 -22" stroke="#6a4fb6"/>
+    <path d="M492 482 l16 -20" stroke="#ffd75e"/>
+    <path d="M252 452 l-14 -22" stroke="#7dc242"/>
+    <path d="M540 476 l-16 -22" stroke="#23a89f"/>
+
+    <path d="M206 630 l16 -22" stroke="#ffd75e"/>
+    <path d="M262 660 l-14 -22" stroke="#6a4fb6"/>
+    <path d="M320 626 l18 -20" stroke="#23a89f"/>
+    <path d="M380 662 l-16 -22" stroke="#7dc242"/>
+    <path d="M440 628 l16 -22" stroke="#ffd75e"/>
+    <path d="M500 660 l-16 -20" stroke="#6a4fb6"/>
+    <path d="M558 626 l16 -22" stroke="#7dc242"/>
+    <path d="M604 658 l-14 -22" stroke="#23a89f"/>
+  </g>
+
+  <!-- الشمع -->
+  <g>
+    <rect x="286" y="196" width="26" height="128" rx="10" fill="#fdf6ec" stroke="#e2d6c2" stroke-width="5"/>
+    <rect x="292" y="196" width="8" height="128" fill="#ef5f7c" opacity="0.6"/>
+    <rect x="387" y="176" width="26" height="148" rx="10" fill="#fdf6ec" stroke="#e2d6c2" stroke-width="5"/>
+    <rect x="393" y="176" width="8" height="148" fill="#23a89f" opacity="0.6"/>
+    <rect x="488" y="196" width="26" height="128" rx="10" fill="#fdf6ec" stroke="#e2d6c2" stroke-width="5"/>
+    <rect x="494" y="196" width="8" height="128" fill="#6a4fb6" opacity="0.6"/>
+  </g>
+  <!-- اللهب -->
+  <g>
+    <path d="M299 190 C 279 166 292 140 299 128 C 306 140 319 166 299 190 Z" fill="#f6a92c"/>
+    <path d="M299 182 C 289 168 295 152 299 146 C 303 152 309 168 299 182 Z" fill="#ffd75e"/>
+    <path d="M400 170 C 380 146 393 120 400 108 C 407 120 420 146 400 170 Z" fill="#f6a92c"/>
+    <path d="M400 162 C 390 148 396 132 400 126 C 404 132 410 148 400 162 Z" fill="#ffd75e"/>
+    <path d="M501 190 C 481 166 494 140 501 128 C 508 140 521 166 501 190 Z" fill="#f6a92c"/>
+    <path d="M501 182 C 491 168 497 152 501 146 C 505 152 511 168 501 182 Z" fill="#ffd75e"/>
+  </g>
+</svg>

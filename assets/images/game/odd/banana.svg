@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="موزة">
+  <title>موزة</title>
+  <defs>
+    <linearGradient id="bn" x1="0" y1="0" x2="0.2" y2="1">
+      <stop offset="0%" stop-color="#ffe066"/><stop offset="55%" stop-color="#f6c60c"/>
+      <stop offset="100%" stop-color="#d99a08"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="#fdf6ec"/>
+  <!-- موزة ورا -->
+  <path d="M196 226 C 172 400 250 578 448 636 C 560 668 646 636 676 588
+           C 620 604 540 596 462 560 C 300 486 244 358 262 224 Z"
+        fill="#e0aa0c" stroke="#a97a06" stroke-width="9" stroke-linejoin="round"
+        transform="translate(46 -46) rotate(-12 420 430)"/>
+  <!-- الموزة الأساسية -->
+  <path d="M186 216 C 160 400 244 588 452 650 C 570 684 660 650 692 598
+           C 632 616 546 608 464 570 C 294 492 234 356 254 214 Z"
+        fill="url(#bn)" stroke="#a97a06" stroke-width="10" stroke-linejoin="round"/>
+  <!-- القرن -->
+  <path d="M186 216 L 254 214 L 250 168 C 248 148 200 146 196 168 Z" fill="#8d6b1e"/>
+  <!-- الطرف البني -->
+  <path d="M692 598 C 660 650 570 684 452 650 C 520 664 604 656 660 620 Z" fill="#7a5a12" opacity="0.5"/>
+  <!-- لمعة -->
+  <path d="M268 258 C 262 386 320 494 428 550" fill="none" stroke="#fff3b0" stroke-width="16"
+        stroke-linecap="round" opacity="0.75"/>
+</svg>

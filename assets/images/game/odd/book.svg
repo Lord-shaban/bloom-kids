@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="كتاب">
+  <title>كتاب</title>
+  <rect width="800" height="800" fill="#fdf6ec"/>
+  <!-- ظل -->
+  <rect x="176" y="640" width="470" height="34" rx="17" fill="#332d6e" opacity="0.12"/>
+  <!-- الورق -->
+  <rect x="196" y="140" width="452" height="512" rx="16" fill="#f2ecdd" stroke="#cbbfa4" stroke-width="8"/>
+  <g stroke="#cbbfa4" stroke-width="5">
+    <path d="M212 168 v456"/><path d="M228 160 v472"/>
+  </g>
+  <!-- الغلاف -->
+  <path d="M152 128 h414 a30 30 0 0 1 30 30 v484 a30 30 0 0 1 -30 30 h-414 Z"
+        fill="#ef5f7c" stroke="#c93f5c" stroke-width="10" stroke-linejoin="round"/>
+  <!-- الكعب -->
+  <rect x="152" y="128" width="66" height="544" fill="#c93f5c"/>
+  <rect x="152" y="128" width="66" height="544" fill="none" stroke="#a82f49" stroke-width="8"/>
+  <!-- عنوان مجرّد -->
+  <g stroke="#ffffff" stroke-width="20" stroke-linecap="round" opacity="0.92">
+    <path d="M296 292 h214"/><path d="M296 356 h150"/>
+  </g>
+  <rect x="296" y="428" width="214" height="140" rx="14" fill="#ffffff" opacity="0.28"/>
+  <!-- فاصل الصفحات -->
+  <path d="M470 128 v210 l-38 -36 l-38 36 v-210 Z" fill="#ffd75e" stroke="#d99a10" stroke-width="7" stroke-linejoin="round"/>
+</svg>
