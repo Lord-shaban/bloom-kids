@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="شجرة">
+  <title>شجرة</title>
+  <defs>
+    <linearGradient id="tr-l" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8fd45a"/><stop offset="100%" stop-color="#2f7a26"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="#fdf6ec"/>
+  <!-- الجذع -->
+  <path d="M356 440 L 444 440 L 462 720 L 338 720 Z" fill="#a06a34"
+        stroke="#6a4218" stroke-width="11" stroke-linejoin="round"/>
+  <path d="M400 470 L 400 700 M368 560 L 340 610 M432 540 L 466 590"
+        stroke="#6a4218" stroke-width="8" stroke-linecap="round" fill="none" opacity="0.6"/>
+  <!-- الورق -->
+  <circle cx="400" cy="250" r="150" fill="url(#tr-l)" stroke="#256119" stroke-width="12"/>
+  <circle cx="264" cy="330" r="110" fill="url(#tr-l)" stroke="#256119" stroke-width="12"/>
+  <circle cx="536" cy="330" r="110" fill="url(#tr-l)" stroke="#256119" stroke-width="12"/>
+  <circle cx="400" cy="250" r="150" fill="url(#tr-l)"/>
+  <ellipse cx="352" cy="196" rx="52" ry="32" fill="#ffffff" opacity="0.22"
+           transform="rotate(-24 352 196)"/>
+  <!-- تفاحات -->
+  <circle cx="316" cy="316" r="24" fill="#ef3f4e" stroke="#a8172c" stroke-width="7"/>
+  <circle cx="482" cy="272" r="24" fill="#ef3f4e" stroke="#a8172c" stroke-width="7"/>
+  <circle cx="404" cy="378" r="24" fill="#ef3f4e" stroke="#a8172c" stroke-width="7"/>
+  <!-- الأرض -->
+  <path d="M180 720 C 260 700 540 700 620 720 C 540 748 260 748 180 720 Z" fill="#c9a675"/>
+</svg>

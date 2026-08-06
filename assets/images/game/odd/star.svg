@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="نجمة">
+  <title>نجمة</title>
+  <defs>
+    <radialGradient id="st-g" cx="0.38" cy="0.32" r="0.8">
+      <stop offset="0%" stop-color="#fff3a8"/><stop offset="60%" stop-color="#ffd23f"/>
+      <stop offset="100%" stop-color="#e0a410"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="800" fill="#2b3b6e"/>
+  <!-- نجوم صغيرة في الخلفية -->
+  <g fill="#ffffff" opacity="0.7">
+    <circle cx="130" cy="150" r="9"/><circle cx="660" cy="180" r="7"/>
+    <circle cx="200" cy="640" r="8"/><circle cx="620" cy="620" r="9"/>
+    <circle cx="110" cy="420" r="6"/><circle cx="700" cy="440" r="6"/>
+    <circle cx="380" cy="90" r="6"/><circle cx="420" cy="720" r="7"/>
+  </g>
+  <!-- النجمة -->
+  <path d="M400 108 L 478 322 L 706 330 L 526 470 L 590 690 L 400 558
+           L 210 690 L 274 470 L 94 330 L 322 322 Z"
+        fill="url(#st-g)" stroke="#c98a06" stroke-width="13" stroke-linejoin="round"/>
+  <!-- وش لطيف -->
+  <circle cx="356" cy="376" r="15" fill="#7a5208"/>
+  <circle cx="444" cy="376" r="15" fill="#7a5208"/>
+  <path d="M358 432 C 380 456 420 456 442 432" fill="none" stroke="#7a5208"
+        stroke-width="12" stroke-linecap="round"/>
+  <circle cx="318" cy="418" r="19" fill="#ef8fa0" opacity="0.6"/>
+  <circle cx="482" cy="418" r="19" fill="#ef8fa0" opacity="0.6"/>
+</svg>

@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="تفاحة">
+  <title>تفاحة</title>
+  <defs>
+    <radialGradient id="ap-body" cx="0.36" cy="0.32" r="0.82">
+      <stop offset="0%" stop-color="#ff8f7a"/>
+      <stop offset="45%" stop-color="#ef3f4e"/>
+      <stop offset="100%" stop-color="#b81f34"/>
+    </radialGradient>
+    <linearGradient id="ap-leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8fd45a"/><stop offset="100%" stop-color="#3f8f2e"/>
+    </linearGradient>
+    <clipPath id="ap-clip">
+      <path d="M400 240 C 300 200 176 250 168 402 C 160 552 268 700 356 700
+               C 386 700 396 686 400 686 C 404 686 414 700 444 700
+               C 532 700 640 552 632 402 C 624 250 500 200 400 240 Z"/>
+    </clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- جسم التفاحة -->
+  <path d="M400 240 C 300 200 176 250 168 402 C 160 552 268 700 356 700
+           C 386 700 396 686 400 686 C 404 686 414 700 444 700
+           C 532 700 640 552 632 402 C 624 250 500 200 400 240 Z"
+        fill="url(#ap-body)" stroke="#8c1528" stroke-width="11" stroke-linejoin="round"/>
+
+  <!-- نُقَط القشرة الصغيرة — دي اللي بتبان وقت الزوم العالي -->
+  <g clip-path="url(#ap-clip)" fill="#ffd9c8" opacity="0.55">
+    <circle cx="286" cy="330" r="6"/><circle cx="330" cy="392" r="5"/>
+    <circle cx="252" cy="446" r="6"/><circle cx="316" cy="512" r="5"/>
+    <circle cx="392" cy="356" r="5"/><circle cx="438" cy="430" r="6"/>
+    <circle cx="374" cy="470" r="5"/><circle cx="486" cy="352" r="6"/>
+    <circle cx="530" cy="440" r="5"/><circle cx="470" cy="540" r="6"/>
+    <circle cx="556" cy="330" r="5"/><circle cx="240" cy="560" r="5"/>
+    <circle cx="392" cy="606" r="6"/><circle cx="530" cy="586" r="5"/>
+  </g>
+
+  <!-- لمعة -->
+  <ellipse cx="290" cy="342" rx="70" ry="106" fill="#ffffff" opacity="0.3"
+           transform="rotate(-22 290 342)"/>
+
+  <!-- الزَّق (العود) — نقطة بداية الزوم -->
+  <path d="M392 254 C 388 200 392 160 404 128" fill="none" stroke="#7a4a1e"
+        stroke-width="26" stroke-linecap="round"/>
+  <path d="M398 232 C 396 198 398 172 404 150" fill="none" stroke="#a06a34"
+        stroke-width="9" stroke-linecap="round"/>
+
+  <!-- الورقة -->
+  <path d="M410 186 C 470 118 566 116 610 146 C 586 234 496 260 418 218 Z"
+        fill="url(#ap-leaf)" stroke="#2f6f22" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M432 200 C 490 172 550 160 596 152" fill="none" stroke="#2f6f22"
+        stroke-width="7" stroke-linecap="round" opacity="0.8"/>
+</svg>

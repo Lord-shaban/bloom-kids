@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="بوق">
+  <title>بوق</title>
+  <defs>
+    <linearGradient id="tp-g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffe066"/><stop offset="55%" stop-color="#f2b60c"/>
+      <stop offset="100%" stop-color="#b8790a"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="#fdf6ec"/>
+  <!-- الماسورة -->
+  <rect x="200" y="352" width="380" height="86" rx="20" fill="url(#tp-g)"
+        stroke="#8a5804" stroke-width="12"/>
+  <!-- البوق (البوز الواسع) -->
+  <path d="M560 300 C 660 300 720 344 720 396 C 720 448 660 492 560 492 Z"
+        fill="url(#tp-g)" stroke="#8a5804" stroke-width="13" stroke-linejoin="round"/>
+  <ellipse cx="716" cy="396" rx="26" ry="96" fill="#ffd84a" stroke="#8a5804" stroke-width="12"/>
+  <!-- الفم -->
+  <path d="M200 366 L 132 336 C 108 326 100 380 100 396 C 100 412 108 466 132 456
+           L 200 426 Z" fill="#e0c9a0" stroke="#8a5804" stroke-width="12"
+        stroke-linejoin="round"/>
+  <!-- الأزرار -->
+  <g fill="#f7f0e2" stroke="#8a5804" stroke-width="10">
+    <rect x="286" y="266" width="52" height="96" rx="20"/>
+    <rect x="366" y="266" width="52" height="96" rx="20"/>
+    <rect x="446" y="266" width="52" height="96" rx="20"/>
+  </g>
+  <g fill="#ef5f7c">
+    <circle cx="312" cy="286" r="16"/><circle cx="392" cy="286" r="16"/>
+    <circle cx="472" cy="286" r="16"/>
+  </g>
+  <!-- نوتة موسيقية -->
+  <g fill="#6a4fb6">
+    <circle cx="230" cy="620" r="34"/>
+    <rect x="252" y="500" width="14" height="126" rx="6"/>
+    <path d="M252 500 C 300 512 318 536 316 570 C 300 540 280 530 252 528 Z"/>
+  </g>
+  <!-- لمعة -->
+  <path d="M230 372 L 540 372" stroke="#fff3b0" stroke-width="12"
+        stroke-linecap="round" opacity="0.7"/>
+</svg>

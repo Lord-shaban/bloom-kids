@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="آيس كريم">
+  <title>آيس كريم</title>
+  <defs>
+    <linearGradient id="ic-cone" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f0c179"/><stop offset="100%" stop-color="#c98c33"/>
+    </linearGradient>
+    <radialGradient id="ic-pink" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0%" stop-color="#ffc0d2"/><stop offset="100%" stop-color="#ef5f7c"/>
+    </radialGradient>
+    <radialGradient id="ic-mint" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0%" stop-color="#c4f2e8"/><stop offset="100%" stop-color="#23a89f"/>
+    </radialGradient>
+    <clipPath id="ic-clip"><path d="M262 452 L 538 452 L 424 748 C 418 764 382 764 376 748 Z"/></clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- الكورة التحت -->
+  <circle cx="400" cy="380" r="146" fill="url(#ic-mint)" stroke="#137a73" stroke-width="11"/>
+  <!-- الكورة الفوق -->
+  <circle cx="400" cy="228" r="122" fill="url(#ic-pink)" stroke="#c33a58" stroke-width="11"/>
+
+  <!-- حبيبات ملوّنة -->
+  <g stroke-linecap="round" stroke-width="12">
+    <path d="M336 186 l26 -14" stroke="#f6a92c"/>
+    <path d="M420 160 l24 16" stroke="#7dc242"/>
+    <path d="M462 232 l-8 28" stroke="#6a4fb6"/>
+    <path d="M356 262 l28 8" stroke="#ffffff"/>
+    <path d="M300 344 l26 -12" stroke="#ffffff"/>
+    <path d="M470 350 l-10 26" stroke="#f6a92c"/>
+    <path d="M382 452 l26 6" stroke="#ef5f7c"/>
+  </g>
+  <!-- كرزة -->
+  <circle cx="400" cy="112" r="30" fill="#e03149" stroke="#9c1a2c" stroke-width="8"/>
+  <path d="M406 88 C 420 56 444 42 470 40" fill="none" stroke="#3f8f2e" stroke-width="9"
+        stroke-linecap="round"/>
+
+  <!-- المخروط -->
+  <path d="M262 452 L 538 452 L 424 748 C 418 764 382 764 376 748 Z"
+        fill="url(#ic-cone)" stroke="#96601c" stroke-width="12" stroke-linejoin="round"/>
+
+  <!-- نقش الوافل — دي التفصيلة اللي الزوم بيبدأ عندها -->
+  <g clip-path="url(#ic-clip)" stroke="#96601c" stroke-width="7" opacity="0.85">
+    <path d="M180 440 L 560 820 M240 440 L 620 820 M300 440 L 680 820
+             M120 440 L 500 820 M60 440 L 440 820"/>
+    <path d="M620 440 L 240 820 M560 440 L 180 820 M500 440 L 120 820
+             M680 440 L 300 820 M740 440 L 360 820"/>
+  </g>
+  <path d="M262 452 L 538 452 L 424 748 C 418 764 382 764 376 748 Z"
+        fill="none" stroke="#96601c" stroke-width="12" stroke-linejoin="round"/>
+  <!-- حافة المخروط -->
+  <rect x="252" y="430" width="296" height="44" rx="22" fill="#e0b06a"
+        stroke="#96601c" stroke-width="11"/>
+</svg>

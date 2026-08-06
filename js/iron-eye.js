@@ -53,6 +53,7 @@
     nextRoundBtn: document.getElementById("nextRoundBtn"),
     retryRoundBtn: document.getElementById("retryRoundBtn"),
     roundLevelsBtn: document.getElementById("roundLevelsBtn"),
+    endLevelsBtn: document.getElementById("endLevelsBtn"),
 
     endOverlay: document.getElementById("endOverlay"),
     endTitle: document.getElementById("endTitle"),
@@ -60,11 +61,45 @@
     endMax: document.getElementById("endMax"),
     endStars: document.getElementById("endStars"),
     endBest: document.getElementById("endBest"),
+    nextStageBtn: document.getElementById("nextStageBtn"),
     playAgainBtn: document.getElementById("playAgainBtn"),
   };
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const LAST_STEP = EYE_STEPS.length - 1;
+
+  /* ============================================================
+     المراحل
+
+     الـ٣٠ صورة متقسّمة على مراحل، والمرحلة هي وحدة اللعب — يعني
+     الجولة بتخلص وتديله نتيجة بعد ٦ صور مش بعد ٣٠. جرّبنا الأول
+     نخليها ٣٠ ورا بعض، الطفل كان بيسيبها في النص وميشوفش ولا
+     نتيجة.
+
+     بنبني هنا لكل مرحلة أرقام صورها من EYE_SCENES نفسه — عشان
+     مفيش مصدرين للبيانات يتعارضوا مع بعض. */
+  const STAGES = EYE_STAGES.map((meta) => ({ ...meta, rounds: [] }));
+  const STAGE_BY_ID = {};
+  STAGES.forEach((s) => { STAGE_BY_ID[s.id] = s; });
+  EYE_SCENES.forEach((scene, i) => {
+    if (STAGE_BY_ID[scene.stage]) STAGE_BY_ID[scene.stage].rounds.push(i);
+  });
+
+  function stageOf(roundIndex) {
+    const id = EYE_SCENES[roundIndex].stage;
+    return STAGE_BY_ID[id] || STAGES[0];
+  }
+  function stageNumber(stage) {
+    return STAGES.indexOf(stage) + 1;
+  }
+  /* رقم الصورة جوّه مرحلتها — مش رقمها في الـ٣٠ */
+  function posInStage(roundIndex) {
+    return stageOf(roundIndex).rounds.indexOf(roundIndex);
+  }
+  function isStageEnd(roundIndex) {
+    const stage = stageOf(roundIndex);
+    return posInStage(roundIndex) === stage.rounds.length - 1;
+  }
 
   /* ---------- حالة اللعبة ---------- */
   const state = {
@@ -89,9 +124,11 @@
   function loadSave() {
     try {
       const raw = JSON.parse(localStorage.getItem(SAVE_KEY) || "{}");
-      return { rounds: raw.rounds || {}, best: raw.best || 0 };
+      /* stages اتضافت بعد ما اللعبة اتقسّمت مراحل — الحفظ القديم
+         مفيهوش المفتاح ده، فبنعوّضه فاضي بدل ما يقع */
+      return { rounds: raw.rounds || {}, stages: raw.stages || {}, best: raw.best || 0 };
     } catch (_) {
-      return { rounds: {}, best: 0 };
+      return { rounds: {}, stages: {}, best: 0 };
     }
   }
   function writeSave(data) {
@@ -311,10 +348,15 @@
     el.img.style.setProperty("--fy", `${scene.focus.y}%`);
     applyZoom(false);
 
-    el.roundName.textContent = `👁️ صورة ${toArabic(index + 1)}`;
-    el.roundPips.innerHTML = EYE_SCENES.map(
-      (_, i) => `<span class="pip ${i === index ? "is-active" : ""} ${i < index ? "is-done" : ""}"></span>`
-    ).join("");
+    /* الاسم والنقط بتاعة المرحلة الحالية بس — ٣٠ نقطة على الشاشة
+       كانت بتلف سطرين وتاكل مساحة الصورة على الموبايل */
+    const stage = stageOf(index);
+    const pos = posInStage(index);
+    el.roundName.textContent =
+      `${stage.emoji} ${stage.name} · صورة ${toArabic(pos + 1)}/${toArabic(stage.rounds.length)}`;
+    el.roundPips.innerHTML = stage.rounds
+      .map((_, i) => `<span class="pip ${i === pos ? "is-active" : ""} ${i < pos ? "is-done" : ""}"></span>`)
+      .join("");
 
     el.ask.textContent = "إيه ده؟ 🤔";
     /* الاختيارات بتتخلط كل مرة، عشان الطفل ميحفظش مكان الإجابة */
@@ -344,6 +386,7 @@
     state.runScore = 0;
     state.runMax = 0;
     state.hints = 3;
+    warmStage(stageOf(index));
     startRound(index);
   }
 
@@ -431,7 +474,7 @@
 
   function finishRound(won, gained, reason) {
     const scene = EYE_SCENES[state.round];
-    const isLast = state.round === EYE_SCENES.length - 1;
+    const isLast = isStageEnd(state.round);
 
     el.revealImg.src = scene.src;
     el.revealImg.alt = scene.answer;
@@ -450,8 +493,8 @@
       <span class="stat-chip"><b>${toArabic(state.wrongTries)}</b> محاولة غلط</span>`;
     el.roundFact.textContent = `💡 ${scene.fact}`;
 
-    /* آخر صورة: نفس الزرار بيودّي لشاشة النتيجة بدل "الصورة الجاية" */
-    el.nextRoundBtn.textContent = isLast ? "🏆 شوف نتيجتك" : "الصورة الجاية ▶";
+    /* آخر صورة في المرحلة: نفس الزرار بيودّي لشاشة النتيجة */
+    el.nextRoundBtn.textContent = isLast ? "🏆 شوف نتيجة المرحلة" : "الصورة الجاية ▶";
     showOverlay(el.roundOverlay);
   }
 
@@ -488,30 +531,72 @@
   /* ============================================================
      اختيار الصورة
      ============================================================ */
+  /* عدد الصور اللي الطفل عرفها في المرحلة دي */
+  function stageDoneCount(stage, save) {
+    return stage.rounds.filter((i) => (save.rounds[EYE_SCENES[i].id] || 0) > 0).length;
+  }
+
   function renderRoundGrid() {
     const save = loadSave();
+    /* المرحلة المفتوحة: اللي بيلعبها دلوقتي، وإلا أول مرحلة مخلصهاش.
+       لو فتحنا الخمسة مع بعض الشاشة بتبقى ٣٠ كارت ولازم يسكرول كتير */
+    const openId = state.started ? stageOf(state.round).id : nextUnfinishedStage().id;
 
-    el.roundGrid.innerHTML = EYE_SCENES.map((scene, i) => {
-      const best = save.rounds[scene.id] || 0;
-      const done = best > 0;
-      const isCurrent = state.started && i === state.round;
+    el.roundGrid.innerHTML = STAGES.map((stage, sIdx) => {
+      const done = stageDoneCount(stage, save);
+      const total = stage.rounds.length;
+      const finished = done === total;
+      const best = save.stages[stage.id] || 0;
+      const maxScore = total * EYE_STEPS[0].points;
 
-      /* مهم: مانكشفش اسم الصورة لو الطفل لسه معرفهاش — ده هيحرق اللعبة */
-      const face = done ? scene.emoji : "❓";
-      const title = done ? `${toArabic(i + 1)}. ${scene.answer}` : `صورة رقم ${toArabic(i + 1)}`;
-      const meta = done ? `أحسن نتيجة <b dir="ltr">${toArabic(best)}/٥</b>` : "لسه متجرّبتش";
+      const cards = stage.rounds.map((i) => {
+        const scene = EYE_SCENES[i];
+        const sBest = save.rounds[scene.id] || 0;
+        const seen = sBest > 0;
+        const isCurrent = state.started && i === state.round;
+
+        /* مهم: مانكشفش اسم الصورة لو الطفل لسه معرفهاش — ده هيحرق اللعبة */
+        const face = seen ? scene.emoji : "❓";
+        const title = seen
+          ? `${toArabic(posInStage(i) + 1)}. ${scene.answer}`
+          : `صورة رقم ${toArabic(posInStage(i) + 1)}`;
+        const meta = seen ? `أحسن نتيجة <b dir="ltr">${toArabic(sBest)}/٥</b>` : "لسه متجرّبتش";
+
+        return `
+          <button type="button" class="level-card ${isCurrent ? "is-current" : ""}"
+                  data-round="${i}">
+            <span class="level-card-emoji" aria-hidden="true">${face}</span>
+            <span class="level-card-body">
+              <span class="level-card-title">${title}</span>
+              <span class="level-card-meta">${meta}</span>
+            </span>
+            ${seen ? `<span class="level-card-done" title="عرفتها">✓</span>` : ""}
+          </button>`;
+      }).join("");
 
       return `
-        <button type="button" class="level-card ${isCurrent ? "is-current" : ""}"
-                data-round="${i}">
-          <span class="level-card-emoji" aria-hidden="true">${face}</span>
-          <span class="level-card-body">
-            <span class="level-card-title">${title}</span>
-            <span class="level-card-meta">${meta}</span>
-          </span>
-          ${done ? `<span class="level-card-done" title="عرفتها">✓</span>` : ""}
-        </button>`;
+        <details class="stage-block ${finished ? "is-done" : ""}"
+                 ${stage.id === openId ? "open" : ""}>
+          <summary class="stage-head">
+            <span class="stage-emoji" aria-hidden="true">${stage.emoji}</span>
+            <span class="stage-info">
+              <b>المرحلة ${toArabic(sIdx + 1)} · ${stage.name}</b>
+              <small>${best ? `أحسن نتيجة <span dir="ltr">${toArabic(best)}/${toArabic(maxScore)}</span>` : stage.tip}</small>
+            </span>
+            <span class="stage-progress" dir="ltr">${toArabic(done)}/${toArabic(total)}</span>
+            <button type="button" class="btn btn-teal btn-sm stage-play"
+                    data-stage="${sIdx}">▶ العب</button>
+          </summary>
+          <div class="level-grid">${cards}</div>
+        </details>`;
     }).join("");
+  }
+
+  /* أول مرحلة لسه مخلصتش — عشان زرار "كمّل" يوديه على المكان الصح */
+  function nextUnfinishedStage() {
+    const save = loadSave();
+    const stage = STAGES.find((s) => stageDoneCount(s, save) < s.rounds.length);
+    return stage || STAGES[0];
   }
 
   function openRounds() {
@@ -520,8 +605,8 @@
     renderRoundGrid();
 
     el.howList.hidden = state.started;
-    el.roundsTitle.textContent = state.started ? "اختار صورة تانية 👇" : "اختار الصورة 👇";
-    el.playAllBtn.textContent = state.started ? "▶ ابدأ من الأول" : "▶ العب الأربعة ورا بعض";
+    el.roundsTitle.textContent = state.started ? "اختار مرحلة تانية 👇" : "اختار المرحلة 👇";
+    el.playAllBtn.textContent = state.started ? "▶ كمّل من حيث وقفت" : "▶ ابدأ من أول مرحلة";
     el.closeRoundsBtn.hidden = !state.started;
 
     hideOverlay(el.roundOverlay);
@@ -530,14 +615,24 @@
   }
 
   el.roundGrid.addEventListener("click", (evt) => {
+    const play = evt.target.closest(".stage-play");
+    if (play) {
+      /* الزرار جوّه summary، فالضغطة كانت هتفتح/تقفل المرحلة كمان */
+      evt.preventDefault();
+      startRun(STAGES[Number(play.dataset.stage)].rounds[0]);
+      return;
+    }
     const card = evt.target.closest(".level-card");
     if (!card) return;
     startRun(Number(card.dataset.round));
   });
 
-  el.playAllBtn.addEventListener("click", () => startRun(0));
+  el.playAllBtn.addEventListener("click", () => {
+    startRun(state.started ? nextUnfinishedStage().rounds[0] : STAGES[0].rounds[0]);
+  });
   el.roundsBtn.addEventListener("click", openRounds);
   el.roundLevelsBtn.addEventListener("click", openRounds);
+  el.endLevelsBtn.addEventListener("click", openRounds);
 
   /* رجوع للصورة اللي كان بيلعبها — الوقت بيكمّل من مكانه */
   el.closeRoundsBtn.addEventListener("click", () => {
@@ -554,13 +649,13 @@
      التنقّل بين الجولات
      ============================================================ */
   el.nextRoundBtn.addEventListener("click", () => {
-    const next = state.round + 1;
-    if (next >= EYE_SCENES.length) {
+    if (isStageEnd(state.round)) {
       endGame();
       return;
     }
     hideOverlay(el.roundOverlay);
-    startRound(next);
+    /* صور المرحلة متجاورة في الأراي، فاللي بعدها = +١ */
+    startRound(state.round + 1);
   });
 
   el.retryRoundBtn.addEventListener("click", () => {
@@ -573,34 +668,51 @@
     startRound(state.round);
   });
 
-  el.playAgainBtn.addEventListener("click", () => startRun(0));
+  /* "العب تاني" = إعادة نفس المرحلة، مش الرجوع لأول اللعبة */
+  el.playAgainBtn.addEventListener("click", () => startRun(stageOf(state.round).rounds[0]));
+
+  el.nextStageBtn.addEventListener("click", () => {
+    const next = STAGES[stageNumber(stageOf(state.round))];
+    if (next) startRun(next.rounds[0]);
+  });
 
   /* ============================================================
-     نهاية اللعبة
+     نهاية المرحلة
      ============================================================ */
   function endGame() {
     hideOverlay(el.roundOverlay);
     sfx.win();
 
-    const max = state.runMax || EYE_SCENES.length * EYE_STEPS[0].points;
+    const stage = stageOf(state.round);
+    const num = stageNumber(stage);
+    const next = STAGES[num];
+    const max = state.runMax || stage.rounds.length * EYE_STEPS[0].points;
     const pct = max ? state.runScore / max : 0;
     const stars = pct >= 0.85 ? 3 : pct >= 0.55 ? 2 : pct > 0 ? 1 : 0;
 
     el.endTitle.textContent =
-      stars === 3 ? "🏆 عين حديدية أصلية!" : stars === 2 ? "🎉 شغل حلو!" : "👏 خلّصت اللعبة!";
+      stars === 3 ? `🏆 خلّصت "${stage.name}" بعين حديدية!` :
+      stars === 2 ? `🎉 شغل حلو في "${stage.name}"!` : `👏 خلّصت مرحلة "${stage.name}"`;
     el.endScore.textContent = toArabic(state.runScore);
     el.endMax.textContent = toArabic(max);
     el.endStars.textContent = "⭐".repeat(stars) + "☆".repeat(3 - stars);
 
+    /* النتيجة بتتحفظ لكل مرحلة لوحدها — المقارنة بين مرحلتين
+       مختلفتين مالهاش معنى */
     const save = loadSave();
-    const isRecord = state.runScore > save.best;
+    const prev = save.stages[stage.id] || 0;
+    const isRecord = state.runScore > prev;
     if (isRecord) {
-      save.best = state.runScore;
+      save.stages[stage.id] = state.runScore;
+      if (state.runScore > save.best) save.best = state.runScore;
       writeSave(save);
     }
     el.endBest.textContent = isRecord
-      ? "🏆 رقم قياسي جديد!"
-      : `أحسن نتيجة ليك: ${toArabic(save.best)}`;
+      ? "🏆 رقم قياسي جديد في المرحلة دي!"
+      : `أحسن نتيجة ليك في المرحلة دي: ${toArabic(prev)}`;
+
+    el.nextStageBtn.hidden = !next;
+    if (next) el.nextStageBtn.textContent = `${next.emoji} المرحلة الجاية: ${next.name} ▶`;
 
     showOverlay(el.endOverlay);
     if (!reduceMotion) fireConfetti(46);
@@ -655,12 +767,21 @@
     else if (state.running && !state.answered) startClock();
   });
 
-  /* تحميل الصور في الخلفية بعد ما الصفحة تخلص */
-  function warmAssets() {
-    EYE_SCENES.forEach((scene) => {
+  /* تحميل صور المرحلة في الخلفية.
+     بنحمّل المرحلة اللي هيلعبها بس مش الـ٣٠ صورة — لأن الطفل غالباً
+     مش هيلعب أكتر من مرحلة أو اتنين في الجلسة، ومحصلتش إننا نستنى
+     تحميل صور مرحلة لسه بعيدة. */
+  const warmed = {};
+  function warmStage(stage) {
+    if (!stage || warmed[stage.id]) return;
+    warmed[stage.id] = true;
+    stage.rounds.forEach((i) => {
       const img = new Image();
-      img.src = scene.src;
+      img.src = EYE_SCENES[i].src;
     });
+  }
+  function warmAssets() {
+    warmStage(nextUnfinishedStage());
   }
   if (document.readyState === "complete") warmAssets();
   else window.addEventListener("load", warmAssets);

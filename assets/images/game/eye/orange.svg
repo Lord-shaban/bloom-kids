@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="برتقانة">
+  <title>برتقانة</title>
+  <defs>
+    <radialGradient id="or-body" cx="0.35" cy="0.3" r="0.85">
+      <stop offset="0%" stop-color="#ffbf5e"/>
+      <stop offset="50%" stop-color="#f9871f"/>
+      <stop offset="100%" stop-color="#d1590a"/>
+    </radialGradient>
+    <linearGradient id="or-leaf" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3f8f2e"/><stop offset="100%" stop-color="#8fd45a"/>
+    </linearGradient>
+    <clipPath id="or-clip"><circle cx="400" cy="452" r="250"/></clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <circle cx="400" cy="452" r="250" fill="url(#or-body)" stroke="#a8470a" stroke-width="12"/>
+
+  <!-- نُقَر القشرة — النقش ده هو اللي بيتشاف أول ما الزوم يبدأ -->
+  <g clip-path="url(#or-clip)" fill="#c9620c" opacity="0.55">
+    <circle cx="286" cy="330" r="9"/><circle cx="342" cy="300" r="7"/>
+    <circle cx="404" cy="288" r="9"/><circle cx="466" cy="304" r="7"/>
+    <circle cx="524" cy="336" r="9"/><circle cx="262" cy="392" r="7"/>
+    <circle cx="322" cy="366" r="9"/><circle cx="386" cy="352" r="7"/>
+    <circle cx="450" cy="362" r="9"/><circle cx="512" cy="392" r="7"/>
+    <circle cx="562" cy="430" r="9"/><circle cx="246" cy="452" r="9"/>
+    <circle cx="306" cy="430" r="7"/><circle cx="368" cy="416" r="9"/>
+    <circle cx="432" cy="424" r="7"/><circle cx="496" cy="450" r="9"/>
+    <circle cx="548" cy="492" r="7"/><circle cx="262" cy="514" r="9"/>
+    <circle cx="322" cy="492" r="7"/><circle cx="386" cy="482" r="9"/>
+    <circle cx="450" cy="494" r="7"/><circle cx="512" cy="530" r="9"/>
+    <circle cx="300" cy="574" r="7"/><circle cx="364" cy="552" r="9"/>
+    <circle cx="428" cy="558" r="7"/><circle cx="482" cy="592" r="9"/>
+    <circle cx="344" cy="622" r="7"/><circle cx="412" cy="626" r="9"/>
+  </g>
+
+  <!-- لمعة -->
+  <ellipse cx="300" cy="336" rx="82" ry="52" fill="#ffffff" opacity="0.32"
+           transform="rotate(-30 300 336)"/>
+
+  <!-- النقرة العليا والورقة -->
+  <circle cx="400" cy="212" r="26" fill="#8a5a1a"/>
+  <path d="M416 196 C 476 128 578 126 626 156 C 600 248 502 274 424 230 Z"
+        fill="url(#or-leaf)" stroke="#2f6f22" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M440 212 C 500 182 562 170 610 162" fill="none" stroke="#2f6f22"
+        stroke-width="7" stroke-linecap="round" opacity="0.8"/>
+</svg>

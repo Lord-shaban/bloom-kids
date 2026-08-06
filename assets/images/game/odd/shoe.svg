@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="جزمة">
+  <title>جزمة</title>
+  <defs>
+    <linearGradient id="so-g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ef5f7c"/><stop offset="100%" stop-color="#b81f44"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="#fdf6ec"/>
+  <!-- جسم الجزمة -->
+  <path d="M150 560 C 150 420 190 280 250 268 C 306 258 330 320 336 384
+           C 344 452 400 470 480 486 C 590 508 664 536 664 588
+           L 664 612 L 150 612 Z"
+        fill="url(#so-g)" stroke="#8c1030" stroke-width="13" stroke-linejoin="round"/>
+  <!-- النعل -->
+  <rect x="140" y="606" width="534" height="56" rx="26" fill="#f7f2e8"
+        stroke="#8c1030" stroke-width="12"/>
+  <g stroke="#c9c0ae" stroke-width="7" stroke-linecap="round">
+    <path d="M200 634 L 240 634"/><path d="M290 634 L 330 634"/>
+    <path d="M380 634 L 420 634"/><path d="M470 634 L 510 634"/>
+    <path d="M560 634 L 600 634"/>
+  </g>
+  <!-- الرباط -->
+  <g stroke="#ffffff" stroke-width="12" stroke-linecap="round" fill="none">
+    <path d="M268 330 L 348 384"/><path d="M276 386 L 356 432"/>
+    <path d="M296 440 L 380 478"/>
+  </g>
+  <g fill="#ffffff">
+    <circle cx="266" cy="330" r="11"/><circle cx="352" cy="384" r="11"/>
+    <circle cx="274" cy="386" r="11"/><circle cx="360" cy="432" r="11"/>
+    <circle cx="294" cy="440" r="11"/><circle cx="384" cy="478" r="11"/>
+  </g>
+  <!-- لسان الجزمة -->
+  <path d="M250 268 C 290 262 316 292 322 336 C 300 322 272 316 252 322 Z"
+        fill="#f7a9b8" stroke="#8c1030" stroke-width="9" stroke-linejoin="round"/>
+</svg>

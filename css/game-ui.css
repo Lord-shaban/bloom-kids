@@ -205,8 +205,68 @@
   box-shadow: 0 2px 6px rgba(125, 194, 66, 0.45);
 }
 
+/* ============ المراحل ============
+   ٣٠ صورة في شاشة واحدة كانت بتبقى قايمة طويلة، فالمراحل بقت
+   <details> — واحدة بس مفتوحة (اللي بيلعبها أو أول واحدة مخلصهاش)
+   والباقي مقفول. القايمة نفسها بتسكرول جوّه نفسها عشان زرار
+   "ابدأ" يفضل باين تحت من غير ما يجري ورا السكرول. */
+.stage-list {
+  display: grid; gap: 0.7rem; margin-bottom: 1.1rem;
+  max-height: min(54vh, 470px); overflow-y: auto;
+  padding-inline-end: 0.3rem;
+  scrollbar-width: thin;
+}
+
+.stage-block {
+  background: var(--cream); border: 2px solid rgba(51, 45, 110, 0.08);
+  border-radius: var(--radius-sm); overflow: hidden;
+}
+.stage-block[open] { border-color: var(--teal); background: var(--white); }
+.stage-block.is-done .stage-progress { background: var(--green); color: var(--white); }
+
+.stage-head {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.65rem 0.8rem; cursor: pointer; list-style: none;
+  text-align: start;
+}
+.stage-head::-webkit-details-marker { display: none; }
+.stage-head:hover { background: rgba(35, 168, 159, 0.07); }
+.stage-block[open] .stage-head { border-bottom: 2px dashed rgba(51, 45, 110, 0.1); }
+
+.stage-emoji {
+  flex-shrink: 0; width: 42px; height: 42px; border-radius: 13px;
+  background: var(--white); display: grid; place-items: center; font-size: 1.35rem;
+  box-shadow: 0 3px 8px rgba(51, 45, 110, 0.12);
+}
+.stage-block[open] .stage-emoji { background: var(--cream); }
+
+.stage-info { display: grid; gap: 0.1rem; min-width: 0; flex: 1; }
+.stage-info b {
+  font-family: var(--font-head); font-weight: 800; color: var(--navy);
+  font-size: 0.95rem; line-height: 1.3;
+}
+.stage-info small {
+  font-weight: 700; font-size: 0.76rem; color: var(--ink-soft);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.stage-progress {
+  flex-shrink: 0; font-weight: 800; font-size: 0.8rem;
+  background: rgba(51, 45, 110, 0.08); color: var(--navy);
+  border-radius: 99px; padding: 0.2rem 0.55rem;
+}
+
+.stage-play { flex-shrink: 0; }
+
+.stage-block .level-grid { margin: 0; padding: 0.7rem 0.8rem 0.85rem; }
+
 @media (max-width: 520px) {
   .level-grid { grid-template-columns: 1fr; }
+  /* على الموبايل السطر بيضيق، فالتلميح بينزل تحت والزرار يفضل مكانه */
+  .stage-head { flex-wrap: wrap; }
+  .stage-info { flex-basis: 100%; order: 2; }
+  .stage-info small { white-space: normal; }
+  .stage-progress { margin-inline-start: auto; }
 }
 
 .win-stats {

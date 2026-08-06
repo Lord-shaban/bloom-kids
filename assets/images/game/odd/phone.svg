@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="تليفون">
+  <title>تليفون</title>
+  <defs>
+    <linearGradient id="ph-g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7fd8f2"/><stop offset="100%" stop-color="#2f8fd4"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="#fdf6ec"/>
+  <rect x="232" y="80" width="336" height="640" rx="56" fill="#2b2f3c"
+        stroke="#12141c" stroke-width="13"/>
+  <rect x="266" y="140" width="268" height="500" rx="20" fill="url(#ph-g)"/>
+  <!-- سماعة -->
+  <rect x="356" y="106" width="88" height="16" rx="8" fill="#5f6772"/>
+  <!-- زرار -->
+  <circle cx="400" cy="676" r="30" fill="#5f6772" stroke="#12141c" stroke-width="7"/>
+  <!-- أيقونات على الشاشة -->
+  <g fill="#ffffff" opacity="0.9">
+    <rect x="300" y="180" width="70" height="70" rx="18"/>
+    <rect x="396" y="180" width="70" height="70" rx="18"/>
+    <rect x="300" y="278" width="70" height="70" rx="18"/>
+    <rect x="396" y="278" width="70" height="70" rx="18"/>
+  </g>
+  <g fill="#f7d445">
+    <rect x="300" y="376" width="70" height="70" rx="18"/>
+    <rect x="396" y="376" width="70" height="70" rx="18"/>
+  </g>
+  <g fill="#ef5f7c">
+    <rect x="300" y="474" width="70" height="70" rx="18"/>
+    <rect x="396" y="474" width="70" height="70" rx="18"/>
+  </g>
+  <!-- لمعة -->
+  <path d="M290 160 L 360 160 L 290 400 Z" fill="#ffffff" opacity="0.2"/>
+</svg>

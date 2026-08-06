@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="حمار وحشي">
+  <title>حمار وحشي</title>
+  <defs>
+    <clipPath id="zb-head">
+      <path d="M400 128 C 300 128 244 200 236 300 C 228 396 262 470 286 522
+               C 312 578 344 640 400 640 C 456 640 488 578 514 522
+               C 538 470 572 396 564 300 C 556 200 500 128 400 128 Z"/>
+    </clipPath>
+    <clipPath id="zb-neck"><path d="M280 560 h240 v220 h-240 Z"/></clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- الودان -->
+  <ellipse cx="252" cy="176" rx="60" ry="86" fill="#f7f2e8" stroke="#2b2318"
+           stroke-width="11" transform="rotate(-22 252 176)"/>
+  <ellipse cx="252" cy="182" rx="30" ry="50" fill="#e6a9a9" transform="rotate(-22 252 182)"/>
+  <ellipse cx="548" cy="176" rx="60" ry="86" fill="#f7f2e8" stroke="#2b2318"
+           stroke-width="11" transform="rotate(22 548 176)"/>
+  <ellipse cx="548" cy="182" rx="30" ry="50" fill="#e6a9a9" transform="rotate(22 548 182)"/>
+
+  <!-- الرقبة -->
+  <path d="M300 560 L 500 560 L 520 800 L 280 800 Z" fill="#f7f2e8"
+        stroke="#2b2318" stroke-width="11"/>
+  <g clip-path="url(#zb-neck)" fill="#2b2318">
+    <path d="M300 588 q60 26 120 0 q60 -26 100 6 l0 40 q-40 -30 -100 -4 q-60 26 -120 0 Z"/>
+    <path d="M292 672 q64 28 128 0 q56 -24 104 4 l0 42 q-48 -28 -104 -4 q-64 28 -128 0 Z"/>
+    <path d="M286 756 q66 28 132 0 q54 -22 106 2 l0 42 h-238 Z"/>
+  </g>
+
+  <!-- الوش -->
+  <path d="M400 128 C 300 128 244 200 236 300 C 228 396 262 470 286 522
+           C 312 578 344 640 400 640 C 456 640 488 578 514 522
+           C 538 470 572 396 564 300 C 556 200 500 128 400 128 Z"
+        fill="#f7f2e8" stroke="#2b2318" stroke-width="12"/>
+
+  <!-- الخطوط السودا — دي التفصيلة اللي الزوم بيبدأ عندها -->
+  <g clip-path="url(#zb-head)" fill="#2b2318">
+    <path d="M400 110 l34 0 l16 150 l-50 40 l-50 -40 l16 -150 Z"/>
+    <path d="M232 232 q70 -8 118 34 l-14 46 q-52 -44 -110 -34 Z"/>
+    <path d="M568 232 q-70 -8 -118 34 l14 46 q52 -44 110 -34 Z"/>
+    <path d="M226 330 q76 -14 130 30 l-16 44 q-56 -46 -118 -32 Z"/>
+    <path d="M574 330 q-76 -14 -130 30 l16 44 q56 -46 118 -32 Z"/>
+    <path d="M250 442 q66 -10 108 26 l-14 40 q-46 -38 -102 -26 Z"/>
+    <path d="M550 442 q-66 -10 -108 26 l14 40 q46 -38 102 -26 Z"/>
+  </g>
+
+  <!-- العنين -->
+  <circle cx="318" cy="392" r="34" fill="#ffffff" stroke="#2b2318" stroke-width="8"/>
+  <circle cx="322" cy="398" r="17" fill="#2b2318"/>
+  <circle cx="482" cy="392" r="34" fill="#ffffff" stroke="#2b2318" stroke-width="8"/>
+  <circle cx="478" cy="398" r="17" fill="#2b2318"/>
+
+  <!-- البوز -->
+  <ellipse cx="400" cy="566" rx="92" ry="70" fill="#4a3f34" stroke="#2b2318" stroke-width="10"/>
+  <ellipse cx="368" cy="548" rx="16" ry="21" fill="#221a14"/>
+  <ellipse cx="432" cy="548" rx="16" ry="21" fill="#221a14"/>
+  <path d="M362 600 C 384 616 416 616 438 600" stroke="#221a14" stroke-width="9"
+        fill="none" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="قطر">
+  <title>قطر</title>
+  <defs>
+    <linearGradient id="tn-g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5fc7e8"/><stop offset="100%" stop-color="#1f7fb8"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="#fdf6ec"/>
+  <!-- الدخان -->
+  <g fill="#d7e8f2" stroke="#a9c6d6" stroke-width="7">
+    <circle cx="250" cy="180" r="46"/><circle cx="180" cy="120" r="34"/>
+    <circle cx="326" cy="126" r="30"/>
+  </g>
+  <!-- المدخنة -->
+  <path d="M212 260 L 288 260 L 276 336 L 224 336 Z" fill="#ef5f7c"
+        stroke="#a8172c" stroke-width="11" stroke-linejoin="round"/>
+  <!-- جسم القاطرة -->
+  <rect x="150" y="336" width="330" height="240" rx="30" fill="url(#tn-g)"
+        stroke="#12547d" stroke-width="13"/>
+  <!-- الكابينة -->
+  <rect x="440" y="256" width="230" height="320" rx="30" fill="url(#tn-g)"
+        stroke="#12547d" stroke-width="13"/>
+  <rect x="486" y="306" width="142" height="118" rx="18" fill="#dff1fb"
+        stroke="#12547d" stroke-width="11"/>
+  <!-- شباك القاطرة -->
+  <circle cx="290" cy="450" r="60" fill="#f7d445" stroke="#a8760a" stroke-width="11"/>
+  <circle cx="290" cy="450" r="26" fill="#ffffff" opacity="0.7"/>
+  <!-- الشاسيه -->
+  <rect x="130" y="576" width="560" height="46" rx="16" fill="#3a3f4e"/>
+  <!-- العجل -->
+  <g fill="#2b2318">
+    <circle cx="220" cy="646" r="58"/><circle cx="400" cy="646" r="58"/>
+    <circle cx="590" cy="646" r="58"/>
+  </g>
+  <g fill="#9aa2ae">
+    <circle cx="220" cy="646" r="24"/><circle cx="400" cy="646" r="24"/>
+    <circle cx="590" cy="646" r="24"/>
+  </g>
+  <!-- القضبان -->
+  <rect x="60" y="716" width="680" height="20" rx="10" fill="#8a5a2a"/>
+  <g fill="#a06a34">
+    <rect x="120" y="700" width="34" height="52" rx="8"/>
+    <rect x="300" y="700" width="34" height="52" rx="8"/>
+    <rect x="480" y="700" width="34" height="52" rx="8"/>
+    <rect x="640" y="700" width="34" height="52" rx="8"/>
+  </g>
+</svg>

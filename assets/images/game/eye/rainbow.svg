@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="قوس قزح">
+  <title>قوس قزح</title>
+  <rect width="800" height="800" fill="#dff1fb"/>
+
+  <!-- الأقواس — الحد بين لونين هو التفصيلة اللي الزوم بيبدأ عندها -->
+  <g fill="none" stroke-linecap="butt">
+    <path d="M60 620 A 340 340 0 0 1 740 620" stroke="#e0353f" stroke-width="66"/>
+    <path d="M126 620 A 274 274 0 0 1 674 620" stroke="#f6902c" stroke-width="66"/>
+    <path d="M192 620 A 208 208 0 0 1 608 620" stroke="#f7d445" stroke-width="66"/>
+    <path d="M258 620 A 142 142 0 0 1 542 620" stroke="#5fb83f" stroke-width="66"/>
+    <path d="M324 620 A 76 76 0 0 1 476 620" stroke="#2f7fd4" stroke-width="66"/>
+    <path d="M390 620 A 10 10 0 0 1 410 620" stroke="#7d4bc4" stroke-width="66"/>
+  </g>
+  <!-- خطوط رفيعة بين الألوان عشان الزوم العالي يلاقي حدود واضحة -->
+  <g fill="none" stroke="#ffffff" stroke-width="5" opacity="0.55">
+    <path d="M93 620 A 307 307 0 0 1 707 620"/>
+    <path d="M159 620 A 241 241 0 0 1 641 620"/>
+    <path d="M225 620 A 175 175 0 0 1 575 620"/>
+    <path d="M291 620 A 109 109 0 0 1 509 620"/>
+    <path d="M357 620 A 43 43 0 0 1 443 620"/>
+  </g>
+
+  <!-- سحابتين على الطرفين -->
+  <g fill="#ffffff" stroke="#b9d3e2" stroke-width="9">
+    <path d="M120 620 C 60 620 30 660 30 690 C 30 720 58 740 96 740
+             L 214 740 C 252 740 280 720 280 690 C 280 656 248 636 214 640
+             C 208 606 168 592 144 610 Z"/>
+    <path d="M586 620 C 526 620 496 660 496 690 C 496 720 524 740 562 740
+             L 680 740 C 718 740 746 720 746 690 C 746 656 714 636 680 640
+             C 674 606 634 592 610 610 Z"/>
+  </g>
+
+  <!-- شمس صغيرة في الركن -->
+  <circle cx="700" cy="130" r="58" fill="#ffd23f" stroke="#e0a410" stroke-width="8"/>
+  <g stroke="#ffd23f" stroke-width="12" stroke-linecap="round">
+    <path d="M700 42 L 700 12"/><path d="M700 218 L 700 248"/>
+    <path d="M612 130 L 582 130"/><path d="M788 130 L 818 130"/>
+    <path d="M638 68 L 616 46"/><path d="M762 192 L 784 214"/>
+    <path d="M762 68 L 784 46"/><path d="M638 192 L 616 214"/>
+  </g>
+</svg>

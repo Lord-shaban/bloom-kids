@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="طبلة">
+  <title>طبلة</title>
+  <defs>
+    <linearGradient id="dr-g" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ef5f7c"/><stop offset="50%" stop-color="#d8324f"/>
+      <stop offset="100%" stop-color="#a01230"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="#fdf6ec"/>
+  <!-- الشكاكيش -->
+  <g stroke="#a06a34" stroke-width="20" stroke-linecap="round">
+    <path d="M120 250 L 300 400"/><path d="M680 250 L 500 400"/>
+  </g>
+  <circle cx="112" cy="242" r="34" fill="#f0c179" stroke="#8a5a2a" stroke-width="9"/>
+  <circle cx="688" cy="242" r="34" fill="#f0c179" stroke="#8a5a2a" stroke-width="9"/>
+  <!-- جسم الطبلة -->
+  <path d="M180 440 L 620 440 L 620 620 C 620 660 522 690 400 690
+           C 278 690 180 660 180 620 Z" fill="url(#dr-g)"
+        stroke="#7d0d22" stroke-width="12" stroke-linejoin="round"/>
+  <!-- الوجه -->
+  <ellipse cx="400" cy="440" rx="220" ry="86" fill="#f7f0e2"
+           stroke="#7d0d22" stroke-width="12"/>
+  <ellipse cx="400" cy="440" rx="176" ry="62" fill="#fdf6ec" opacity="0.8"/>
+  <!-- الحبال -->
+  <g stroke="#f7d445" stroke-width="12" stroke-linecap="round" fill="none">
+    <path d="M212 500 L 286 630"/><path d="M286 500 L 212 630"/>
+    <path d="M362 512 L 436 646"/><path d="M436 512 L 362 646"/>
+    <path d="M514 500 L 588 630"/><path d="M588 500 L 514 630"/>
+  </g>
+  <g fill="#c99a08">
+    <circle cx="212" cy="500" r="13"/><circle cx="286" cy="500" r="13"/>
+    <circle cx="362" cy="512" r="13"/><circle cx="436" cy="512" r="13"/>
+    <circle cx="514" cy="500" r="13"/><circle cx="588" cy="500" r="13"/>
+  </g>
+</svg>

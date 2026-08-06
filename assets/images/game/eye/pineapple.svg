@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="أناناس">
+  <title>أناناس</title>
+  <defs>
+    <linearGradient id="pn-body" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffd45e"/><stop offset="60%" stop-color="#efa41c"/>
+      <stop offset="100%" stop-color="#c47a08"/>
+    </linearGradient>
+    <linearGradient id="pn-leaf" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#2f7a26"/><stop offset="100%" stop-color="#7fc94a"/>
+    </linearGradient>
+    <clipPath id="pn-clip"><ellipse cx="400" cy="500" rx="196" ry="238"/></clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- التاج -->
+  <g fill="url(#pn-leaf)" stroke="#26621e" stroke-width="8" stroke-linejoin="round">
+    <path d="M400 290 C 360 210 344 150 352 96 C 396 138 418 208 414 288 Z"/>
+    <path d="M400 292 C 440 212 460 152 452 98 C 408 140 386 210 390 290 Z"/>
+    <path d="M386 296 C 306 244 256 200 236 152 C 300 168 356 220 396 284 Z"/>
+    <path d="M414 296 C 494 244 544 200 564 152 C 500 168 444 220 404 284 Z"/>
+    <path d="M382 302 C 302 300 250 288 214 262 C 276 250 340 264 396 292 Z"/>
+    <path d="M418 302 C 498 300 550 288 586 262 C 524 250 460 264 404 292 Z"/>
+  </g>
+
+  <!-- الجسم -->
+  <ellipse cx="400" cy="500" rx="196" ry="238" fill="url(#pn-body)"
+           stroke="#a05e06" stroke-width="12"/>
+
+  <!-- شبكة المعيّنات — دي التفصيلة اللي اللعبة بتبدأ عندها -->
+  <g clip-path="url(#pn-clip)">
+    <g stroke="#8a4f06" stroke-width="8" opacity="0.85">
+      <path d="M120 300 L 700 700 M120 380 L 700 780 M120 460 L 700 860
+               M120 220 L 700 620 M120 140 L 700 540 M120 540 L 640 900"/>
+      <path d="M700 300 L 120 700 M700 380 L 120 780 M700 460 L 120 860
+               M700 220 L 120 620 M700 140 L 120 540 M700 540 L 160 900"/>
+    </g>
+    <!-- قلب كل معيّن -->
+    <g fill="#b8720a" opacity="0.55">
+      <circle cx="320" cy="380" r="12"/><circle cx="400" cy="420" r="12"/>
+      <circle cx="480" cy="380" r="12"/><circle cx="240" cy="420" r="12"/>
+      <circle cx="560" cy="420" r="12"/><circle cx="320" cy="460" r="12"/>
+      <circle cx="400" cy="500" r="12"/><circle cx="480" cy="460" r="12"/>
+      <circle cx="240" cy="500" r="12"/><circle cx="560" cy="500" r="12"/>
+      <circle cx="320" cy="540" r="12"/><circle cx="400" cy="580" r="12"/>
+      <circle cx="480" cy="540" r="12"/><circle cx="320" cy="620" r="12"/>
+      <circle cx="480" cy="620" r="12"/><circle cx="400" cy="660" r="12"/>
+    </g>
+  </g>
+
+  <ellipse cx="400" cy="500" rx="196" ry="238" fill="none" stroke="#a05e06" stroke-width="12"/>
+  <ellipse cx="306" cy="392" rx="44" ry="86" fill="#ffffff" opacity="0.2"
+           transform="rotate(-18 306 392)"/>
+</svg>

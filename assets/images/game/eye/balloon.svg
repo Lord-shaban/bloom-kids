@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="بالونة">
+  <title>بالونة</title>
+  <defs>
+    <radialGradient id="bl-a" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ff9fb0"/><stop offset="55%" stop-color="#ef3f5e"/>
+      <stop offset="100%" stop-color="#b01230"/>
+    </radialGradient>
+    <radialGradient id="bl-b" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#9fd8f2"/><stop offset="55%" stop-color="#2f8fd4"/>
+      <stop offset="100%" stop-color="#14568c"/>
+    </radialGradient>
+    <radialGradient id="bl-c" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffe58f"/><stop offset="55%" stop-color="#f6a92c"/>
+      <stop offset="100%" stop-color="#c07206"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="800" fill="#e8f4fb"/>
+
+  <!-- الخيوط -->
+  <g fill="none" stroke="#8a7a5a" stroke-width="6" stroke-linecap="round">
+    <path d="M196 440 C 214 560 190 660 220 770"/>
+    <path d="M604 420 C 586 540 610 640 580 770"/>
+    <path d="M400 606 C 416 660 386 700 400 770"/>
+  </g>
+
+  <!-- بالونتين ورا -->
+  <ellipse cx="196" cy="290" rx="112" ry="136" fill="url(#bl-b)"
+           stroke="#0e416b" stroke-width="10"/>
+  <path d="M196 426 l-24 26 l48 0 Z" fill="#0e416b"/>
+  <ellipse cx="168" cy="242" rx="30" ry="46" fill="#ffffff" opacity="0.35"
+           transform="rotate(-22 168 242)"/>
+
+  <ellipse cx="604" cy="270" rx="112" ry="136" fill="url(#bl-c)"
+           stroke="#8f5404" stroke-width="10"/>
+  <path d="M604 406 l-24 26 l48 0 Z" fill="#8f5404"/>
+  <ellipse cx="576" cy="222" rx="30" ry="46" fill="#ffffff" opacity="0.35"
+           transform="rotate(-22 576 222)"/>
+
+  <!-- البالونة الكبيرة -->
+  <path d="M400 120 C 268 120 216 232 216 336 C 216 452 320 566 400 592
+           C 480 566 584 452 584 336 C 584 232 532 120 400 120 Z"
+        fill="url(#bl-a)" stroke="#8c0e26" stroke-width="12"/>
+  <ellipse cx="336" cy="250" rx="46" ry="72" fill="#ffffff" opacity="0.35"
+           transform="rotate(-22 336 250)"/>
+  <path d="M300 470 C 340 512 380 540 400 552" fill="none" stroke="#ffffff"
+        stroke-width="12" stroke-linecap="round" opacity="0.22"/>
+
+  <!-- العقدة — دي التفصيلة اللي الزوم بيبدأ عندها -->
+  <path d="M400 592 L 366 634 C 384 646 416 646 434 634 Z"
+        fill="#8c0e26" stroke="#6a0a1c" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M382 606 C 392 618 408 618 418 606" fill="none" stroke="#ef8fa0"
+        stroke-width="6" stroke-linecap="round"/>
+</svg>

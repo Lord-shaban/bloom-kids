@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="فيل">
+  <title>فيل</title>
+  <defs>
+    <linearGradient id="el-body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#b7c3d1"/><stop offset="100%" stop-color="#7d8ea3"/>
+    </linearGradient>
+    <clipPath id="el-trunk">
+      <path d="M354 470 C 336 570 340 660 388 706 C 436 752 512 736 536 686
+               C 552 652 540 620 512 610 C 486 600 462 616 458 644
+               C 424 640 414 566 430 476 Z"/>
+    </clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- الودان -->
+  <ellipse cx="196" cy="330" rx="146" ry="176" fill="#96a5b8" stroke="#5d6d80"
+           stroke-width="11" transform="rotate(-12 196 330)"/>
+  <ellipse cx="206" cy="336" rx="96" ry="120" fill="#c9a0a8" opacity="0.5"
+           transform="rotate(-12 206 336)"/>
+  <ellipse cx="604" cy="330" rx="146" ry="176" fill="#96a5b8" stroke="#5d6d80"
+           stroke-width="11" transform="rotate(12 604 330)"/>
+  <ellipse cx="594" cy="336" rx="96" ry="120" fill="#c9a0a8" opacity="0.5"
+           transform="rotate(12 594 336)"/>
+
+  <!-- الراس -->
+  <ellipse cx="400" cy="330" rx="212" ry="200" fill="url(#el-body)"
+           stroke="#5d6d80" stroke-width="12"/>
+
+  <!-- الخرطوم -->
+  <path d="M354 470 C 336 570 340 660 388 706 C 436 752 512 736 536 686
+           C 552 652 540 620 512 610 C 486 600 462 616 458 644
+           C 424 640 414 566 430 476 Z"
+        fill="url(#el-body)" stroke="#5d6d80" stroke-width="12" stroke-linejoin="round"/>
+
+  <!-- تجاعيد الخرطوم — دي التفصيلة اللي الزوم بيبدأ عندها -->
+  <g clip-path="url(#el-trunk)" stroke="#5d6d80" stroke-width="9" fill="none"
+     stroke-linecap="round" opacity="0.9">
+    <path d="M330 500 q56 22 116 0"/>
+    <path d="M328 546 q58 24 120 0"/>
+    <path d="M330 592 q58 24 122 0"/>
+    <path d="M338 638 q58 24 122 0"/>
+    <path d="M356 682 q60 26 124 -2"/>
+    <path d="M400 722 q60 22 116 -12"/>
+  </g>
+
+  <!-- الأنياب -->
+  <path d="M300 480 C 276 540 280 592 306 616 C 322 578 320 520 316 486 Z"
+        fill="#f7f0e2" stroke="#c7bda6" stroke-width="7"/>
+  <path d="M500 480 C 524 540 520 592 494 616 C 478 578 480 520 484 486 Z"
+        fill="#f7f0e2" stroke="#c7bda6" stroke-width="7"/>
+
+  <!-- العنين -->
+  <circle cx="306" cy="320" r="36" fill="#ffffff" stroke="#5d6d80" stroke-width="8"/>
+  <circle cx="312" cy="326" r="18" fill="#2b2318"/>
+  <circle cx="494" cy="320" r="36" fill="#ffffff" stroke="#5d6d80" stroke-width="8"/>
+  <circle cx="488" cy="326" r="18" fill="#2b2318"/>
+  <circle cx="252" cy="392" r="24" fill="#e08a9a" opacity="0.45"/>
+  <circle cx="548" cy="392" r="24" fill="#e08a9a" opacity="0.45"/>
+</svg>

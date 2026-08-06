@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="سلحفاة">
+  <title>سلحفاة</title>
+  <defs>
+    <radialGradient id="tu-shell" cx="0.35" cy="0.28" r="0.85">
+      <stop offset="0%" stop-color="#8fc94a"/><stop offset="55%" stop-color="#4f9a2a"/>
+      <stop offset="100%" stop-color="#2c6318"/>
+    </radialGradient>
+    <clipPath id="tu-clip"><ellipse cx="400" cy="424" rx="266" ry="212"/></clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- الرجلين -->
+  <g fill="#7fc44a" stroke="#2c6318" stroke-width="10">
+    <ellipse cx="192" cy="560" rx="76" ry="52" transform="rotate(26 192 560)"/>
+    <ellipse cx="608" cy="560" rx="76" ry="52" transform="rotate(-26 608 560)"/>
+    <ellipse cx="236" cy="286" rx="66" ry="46" transform="rotate(-28 236 286)"/>
+    <ellipse cx="564" cy="286" rx="66" ry="46" transform="rotate(28 564 286)"/>
+  </g>
+  <!-- الديل -->
+  <path d="M400 634 L 372 700 L 400 686 L 428 700 Z" fill="#7fc44a"
+        stroke="#2c6318" stroke-width="9" stroke-linejoin="round"/>
+
+  <!-- الراس -->
+  <ellipse cx="400" cy="196" rx="92" ry="80" fill="#7fc44a" stroke="#2c6318" stroke-width="11"/>
+  <circle cx="366" cy="176" r="20" fill="#ffffff"/>
+  <circle cx="364" cy="180" r="10" fill="#2b2318"/>
+  <circle cx="434" cy="176" r="20" fill="#ffffff"/>
+  <circle cx="432" cy="180" r="10" fill="#2b2318"/>
+  <path d="M372 228 C 388 242 412 242 428 228" stroke="#2c6318" stroke-width="8"
+        fill="none" stroke-linecap="round"/>
+
+  <!-- الترس -->
+  <ellipse cx="400" cy="424" rx="266" ry="212" fill="url(#tu-shell)"
+           stroke="#22500f" stroke-width="13"/>
+
+  <!-- خلايا الترس السداسية — دي التفصيلة اللي الزوم بيبدأ عندها -->
+  <g clip-path="url(#tu-clip)" fill="none" stroke="#22500f" stroke-width="10"
+     stroke-linejoin="round">
+    <path d="M400 330 l72 42 l0 84 l-72 42 l-72 -42 l0 -84 Z"/>
+    <path d="M544 330 l72 42 l0 84 l-72 42 l-72 -42 l0 -84 Z"/>
+    <path d="M256 330 l72 42 l0 84 l-72 42 l-72 -42 l0 -84 Z"/>
+    <path d="M472 204 l72 42 l0 84 l-72 42 l-72 -42 l0 -84 Z"/>
+    <path d="M328 204 l72 42 l0 84 l-72 42 l-72 -42 l0 -84 Z"/>
+    <path d="M616 204 l72 42 l0 84 l-72 42 l-72 -42 l0 -84 Z"/>
+    <path d="M184 204 l72 42 l0 84 l-72 42 l-72 -42 l0 -84 Z"/>
+    <path d="M472 456 l72 42 l0 84 l-72 42 l-72 -42 l0 -84 Z"/>
+    <path d="M328 456 l72 42 l0 84 l-72 42 l-72 -42 l0 -84 Z"/>
+    <path d="M616 456 l72 42 l0 84 l-72 42 l-72 -42 l0 -84 Z"/>
+    <path d="M184 456 l72 42 l0 84 l-72 42 l-72 -42 l0 -84 Z"/>
+    <path d="M400 582 l72 42 l0 84 l-72 42 l-72 -42 l0 -84 Z"/>
+    <path d="M544 582 l72 42 l0 84 l-72 42 l-72 -42 l0 -84 Z"/>
+    <path d="M256 582 l72 42 l0 84 l-72 42 l-72 -42 l0 -84 Z"/>
+  </g>
+  <!-- لمعة على الترس -->
+  <ellipse cx="290" cy="316" rx="96" ry="52" fill="#ffffff" opacity="0.18"
+           transform="rotate(-22 290 316)"/>
+  <ellipse cx="400" cy="424" rx="266" ry="212" fill="none" stroke="#22500f" stroke-width="13"/>
+</svg>

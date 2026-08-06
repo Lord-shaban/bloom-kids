@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="عجلة">
+  <title>عجلة</title>
+  <rect width="800" height="800" fill="#fdf6ec"/>
+  <!-- العجلتين -->
+  <g fill="none" stroke="#2b2318" stroke-width="22">
+    <circle cx="200" cy="530" r="152"/>
+    <circle cx="600" cy="530" r="152"/>
+  </g>
+  <g stroke="#9aa2ae" stroke-width="8">
+    <path d="M200 388 L 200 672 M58 530 L 342 530 M100 430 L 300 630 M300 430 L 100 630"/>
+    <path d="M600 388 L 600 672 M458 530 L 742 530 M500 430 L 700 630 M700 430 L 500 630"/>
+  </g>
+  <circle cx="200" cy="530" r="24" fill="#9aa2ae" stroke="#5f6772" stroke-width="8"/>
+  <circle cx="600" cy="530" r="24" fill="#9aa2ae" stroke="#5f6772" stroke-width="8"/>
+  <!-- الشاسيه -->
+  <g fill="none" stroke="#ef5f7c" stroke-width="24" stroke-linecap="round"
+     stroke-linejoin="round">
+    <path d="M200 530 L 340 530 L 420 330 L 300 330"/>
+    <path d="M340 530 L 480 330 L 600 530"/>
+    <path d="M480 330 L 600 530"/>
+  </g>
+  <!-- الكرسي -->
+  <path d="M300 330 C 264 322 246 306 250 292 L 356 292 C 358 312 336 330 300 330 Z"
+        fill="#2b2318"/>
+  <!-- الدركسيون -->
+  <path d="M480 330 L 500 250" stroke="#2b2318" stroke-width="18" stroke-linecap="round"/>
+  <path d="M430 246 L 570 246" stroke="#2b2318" stroke-width="20" stroke-linecap="round"/>
+  <!-- الدواسة -->
+  <circle cx="340" cy="530" r="34" fill="#f6a92c" stroke="#a8760a" stroke-width="9"/>
+  <path d="M340 530 L 386 566" stroke="#2b2318" stroke-width="14" stroke-linecap="round"/>
+</svg>

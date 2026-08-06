@@ -50,6 +50,7 @@
     nextRoundBtn: document.getElementById("nextRoundBtn"),
     retryRoundBtn: document.getElementById("retryRoundBtn"),
     roundLevelsBtn: document.getElementById("roundLevelsBtn"),
+    endLevelsBtn: document.getElementById("endLevelsBtn"),
 
     endOverlay: document.getElementById("endOverlay"),
     endTitle: document.getElementById("endTitle"),
@@ -57,10 +58,40 @@
     endMax: document.getElementById("endMax"),
     endStars: document.getElementById("endStars"),
     endBest: document.getElementById("endBest"),
+    nextStageBtn: document.getElementById("nextStageBtn"),
     playAgainBtn: document.getElementById("playAgainBtn"),
   };
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ============================================================
+     المراحل
+
+     الـ٣٠ جولة متقسّمة على ٥ مراحل × ٦ جولات. المرحلة هي وحدة
+     اللعب: بعد ٦ جولات بيشوف نتيجة وبيقرّر يكمّل ولا لأ — بدل ما
+     يفضل ماشي ٣٠ جولة من غير ما يحس بإنجاز.
+
+     بنبني أرقام جولات كل مرحلة من ODD_ROUNDS نفسه عشان مفيش
+     مصدرين للبيانات يتعارضوا. */
+  const STAGES = ODD_STAGES.map((meta) => ({ ...meta, rounds: [] }));
+  const STAGE_BY_ID = {};
+  STAGES.forEach((s) => { STAGE_BY_ID[s.id] = s; });
+  ODD_ROUNDS.forEach((round, i) => {
+    if (STAGE_BY_ID[round.stage]) STAGE_BY_ID[round.stage].rounds.push(i);
+  });
+
+  function stageOf(roundIndex) {
+    return STAGE_BY_ID[ODD_ROUNDS[roundIndex].stage] || STAGES[0];
+  }
+  function stageNumber(stage) {
+    return STAGES.indexOf(stage) + 1;
+  }
+  function posInStage(roundIndex) {
+    return stageOf(roundIndex).rounds.indexOf(roundIndex);
+  }
+  function isStageEnd(roundIndex) {
+    return posInStage(roundIndex) === stageOf(roundIndex).rounds.length - 1;
+  }
 
   /* ---------- حالة اللعبة ---------- */
   const state = {
@@ -82,9 +113,11 @@
   function loadSave() {
     try {
       const raw = JSON.parse(localStorage.getItem(SAVE_KEY) || "{}");
-      return { rounds: raw.rounds || {}, best: raw.best || 0 };
+      /* stages اتضافت بعد ما اللعبة اتقسّمت مراحل — الحفظ القديم
+         مفيهوش المفتاح ده، فبنعوّضه فاضي بدل ما يقع */
+      return { rounds: raw.rounds || {}, stages: raw.stages || {}, best: raw.best || 0 };
     } catch (_) {
-      return { rounds: {}, best: 0 };
+      return { rounds: {}, stages: {}, best: 0 };
     }
   }
   function writeSave(data) {
@@ -205,10 +238,14 @@
       })
       .join("");
 
-    el.roundName.textContent = `🧠 جولة ${toArabic(index + 1)}`;
-    el.roundPips.innerHTML = ODD_ROUNDS.map(
-      (_, i) => `<span class="pip ${i === index ? "is-active" : ""} ${i < index ? "is-done" : ""}"></span>`
-    ).join("");
+    /* اسم المرحلة ونقطها بس — ٣٠ نقطة على الشاشة كانت بتلف سطرين */
+    const stage = stageOf(index);
+    const pos = posInStage(index);
+    el.roundName.textContent =
+      `${stage.emoji} ${stage.name} · جولة ${toArabic(pos + 1)}/${toArabic(stage.rounds.length)}`;
+    el.roundPips.innerHTML = stage.rounds
+      .map((_, i) => `<span class="pip ${i === pos ? "is-active" : ""} ${i < pos ? "is-done" : ""}"></span>`)
+      .join("");
 
     updateHud();
   }
@@ -225,6 +262,7 @@
     state.runScore = 0;
     state.runMax = 0;
     state.hints = 3;
+    warmStage(stageOf(index));
     startRound(index);
   }
 
@@ -327,7 +365,7 @@
       writeSave(save);
     }
 
-    const isLast = state.round === ODD_ROUNDS.length - 1;
+    const isLast = isStageEnd(state.round);
     el.ruleTitle.textContent =
       gained === ROUND_MAX ? "🤩 ممتاز! عرفتها وعرفت ليه" :
       reasonOk ? "🎉 برافو!" : "👏 عرفت المختلفة — والسبب أهو";
@@ -337,7 +375,7 @@
       <span class="stat-chip"><b>${toArabic(state.runScore)}</b> المجموع</span>
       <span class="stat-chip"><b>${toArabic(state.wrongTries)}</b> محاولة غلط</span>`;
 
-    el.nextRoundBtn.textContent = isLast ? "🏆 شوف نتيجتك" : "الجولة الجاية ▶";
+    el.nextRoundBtn.textContent = isLast ? "🏆 شوف نتيجة المرحلة" : "الجولة الجاية ▶";
 
     el.whyStep.hidden = true;
     el.ruleStep.hidden = false;
@@ -371,37 +409,76 @@
   /* ============================================================
      اختيار الجولة
      ============================================================ */
+  function stageDoneCount(stage, save) {
+    return stage.rounds.filter((i) => (save.rounds[ODD_ROUNDS[i].id] || 0) > 0).length;
+  }
+
   function renderRoundGrid() {
     const save = loadSave();
+    /* المرحلة المفتوحة: اللي بيلعبها دلوقتي، وإلا أول مرحلة مخلصهاش.
+       لو فتحنا الخمسة مع بعض الشاشة بتبقى ٣٠ كارت ولازم يسكرول كتير */
+    const openId = state.started ? stageOf(state.round).id : nextUnfinishedStage().id;
 
-    el.roundGrid.innerHTML = ODD_ROUNDS.map((round, i) => {
-      const best = save.rounds[round.id] || 0;
-      const done = best > 0;
-      const isCurrent = state.started && i === state.round;
+    el.roundGrid.innerHTML = STAGES.map((stage, sIdx) => {
+      const done = stageDoneCount(stage, save);
+      const total = stage.rounds.length;
+      const finished = done === total;
+      const best = save.stages[stage.id] || 0;
+      const maxScore = total * ROUND_MAX;
 
-      /* مهم: مانكشفش القاعدة ولا الصور هنا — ده هيحرق الجولة */
-      const meta = done
-        ? `أحسن نتيجة <b dir="ltr">${toArabic(best)}/${toArabic(ROUND_MAX)}</b>`
-        : "لسه متجرّبتش";
+      const cards = stage.rounds.map((i) => {
+        const round = ODD_ROUNDS[i];
+        const rBest = save.rounds[round.id] || 0;
+        const played = rBest > 0;
+        const isCurrent = state.started && i === state.round;
+
+        /* مهم: مانكشفش القاعدة ولا الصور هنا — ده هيحرق الجولة */
+        const meta = played
+          ? `أحسن نتيجة <b dir="ltr">${toArabic(rBest)}/${toArabic(ROUND_MAX)}</b>`
+          : "لسه متجرّبتش";
+
+        return `
+          <button type="button" class="level-card ${isCurrent ? "is-current" : ""}"
+                  data-round="${i}">
+            <span class="level-card-emoji" aria-hidden="true">${played ? "🧠" : "❓"}</span>
+            <span class="level-card-body">
+              <span class="level-card-title">جولة رقم ${toArabic(posInStage(i) + 1)}</span>
+              <span class="level-card-meta">${meta}</span>
+            </span>
+            ${played ? `<span class="level-card-done" title="خلّصتها">✓</span>` : ""}
+          </button>`;
+      }).join("");
 
       return `
-        <button type="button" class="level-card ${isCurrent ? "is-current" : ""}"
-                data-round="${i}">
-          <span class="level-card-emoji" aria-hidden="true">${done ? "🧠" : "❓"}</span>
-          <span class="level-card-body">
-            <span class="level-card-title">جولة رقم ${toArabic(i + 1)}</span>
-            <span class="level-card-meta">${meta}</span>
-          </span>
-          ${done ? `<span class="level-card-done" title="خلّصتها">✓</span>` : ""}
-        </button>`;
+        <details class="stage-block ${finished ? "is-done" : ""}"
+                 ${stage.id === openId ? "open" : ""}>
+          <summary class="stage-head">
+            <span class="stage-emoji" aria-hidden="true">${stage.emoji}</span>
+            <span class="stage-info">
+              <b>المرحلة ${toArabic(sIdx + 1)} · ${stage.name}</b>
+              <small>${best ? `أحسن نتيجة <span dir="ltr">${toArabic(best)}/${toArabic(maxScore)}</span>` : stage.tip}</small>
+            </span>
+            <span class="stage-progress" dir="ltr">${toArabic(done)}/${toArabic(total)}</span>
+            <button type="button" class="btn btn-teal btn-sm stage-play"
+                    data-stage="${sIdx}">▶ العب</button>
+          </summary>
+          <div class="level-grid">${cards}</div>
+        </details>`;
     }).join("");
+  }
+
+  /* أول مرحلة لسه مخلصتش — عشان زرار "كمّل" يوديه على المكان الصح */
+  function nextUnfinishedStage() {
+    const save = loadSave();
+    return STAGES.find((s) => stageDoneCount(s, save) < s.rounds.length) || STAGES[0];
   }
 
   function openRounds() {
     renderRoundGrid();
 
     el.howList.hidden = state.started;
-    el.roundsTitle.textContent = state.started ? "اختار جولة تانية 👇" : "اختار الجولة 👇";
+    el.roundsTitle.textContent = state.started ? "اختار مرحلة تانية 👇" : "اختار المرحلة 👇";
+    el.playAllBtn.textContent = state.started ? "▶ كمّل من حيث وقفت" : "▶ ابدأ من أول مرحلة";
     el.closeRoundsBtn.hidden = !state.started;
 
     hideOverlay(el.whyOverlay);
@@ -410,14 +487,24 @@
   }
 
   el.roundGrid.addEventListener("click", (evt) => {
+    const play = evt.target.closest(".stage-play");
+    if (play) {
+      /* الزرار جوّه summary، فالضغطة كانت هتفتح/تقفل المرحلة كمان */
+      evt.preventDefault();
+      startRun(STAGES[Number(play.dataset.stage)].rounds[0]);
+      return;
+    }
     const card = evt.target.closest(".level-card");
     if (!card) return;
     startRun(Number(card.dataset.round));
   });
 
-  el.playAllBtn.addEventListener("click", () => startRun(0));
+  el.playAllBtn.addEventListener("click", () => {
+    startRun(state.started ? nextUnfinishedStage().rounds[0] : STAGES[0].rounds[0]);
+  });
   el.roundsBtn.addEventListener("click", openRounds);
   el.roundLevelsBtn.addEventListener("click", openRounds);
+  el.endLevelsBtn.addEventListener("click", openRounds);
 
   /* رجوع للجولة اللي كان بيلعبها */
   el.closeRoundsBtn.addEventListener("click", () => {
@@ -430,13 +517,13 @@
      التنقّل بين الجولات
      ============================================================ */
   el.nextRoundBtn.addEventListener("click", () => {
-    const next = state.round + 1;
-    if (next >= ODD_ROUNDS.length) {
+    if (isStageEnd(state.round)) {
       endGame();
       return;
     }
     hideOverlay(el.whyOverlay);
-    startRound(next);
+    /* جولات المرحلة متجاورة في الأراي، فاللي بعدها = +١ */
+    startRound(state.round + 1);
   });
 
   el.retryRoundBtn.addEventListener("click", () => {
@@ -449,34 +536,50 @@
     startRound(state.round);
   });
 
-  el.playAgainBtn.addEventListener("click", () => startRun(0));
+  /* "العب تاني" = إعادة نفس المرحلة، مش الرجوع لأول اللعبة */
+  el.playAgainBtn.addEventListener("click", () => startRun(stageOf(state.round).rounds[0]));
+
+  el.nextStageBtn.addEventListener("click", () => {
+    const next = STAGES[stageNumber(stageOf(state.round))];
+    if (next) startRun(next.rounds[0]);
+  });
 
   /* ============================================================
-     نهاية اللعبة
+     نهاية المرحلة
      ============================================================ */
   function endGame() {
     hideOverlay(el.whyOverlay);
     sfx.win();
 
-    const max = state.runMax || ODD_ROUNDS.length * ROUND_MAX;
+    const stage = stageOf(state.round);
+    const next = STAGES[stageNumber(stage)];
+    const max = state.runMax || stage.rounds.length * ROUND_MAX;
     const pct = max ? state.runScore / max : 0;
     const stars = pct >= 0.85 ? 3 : pct >= 0.55 ? 2 : pct > 0 ? 1 : 0;
 
     el.endTitle.textContent =
-      stars === 3 ? "🏆 عقل مرتّب فعلاً!" : stars === 2 ? "🎉 شغل حلو!" : "👏 خلّصت اللعبة!";
+      stars === 3 ? `🏆 عقل مرتّب! خلّصت "${stage.name}"` :
+      stars === 2 ? `🎉 شغل حلو في "${stage.name}"!` : `👏 خلّصت مرحلة "${stage.name}"`;
     el.endScore.textContent = toArabic(state.runScore);
     el.endMax.textContent = toArabic(max);
     el.endStars.textContent = "⭐".repeat(stars) + "☆".repeat(3 - stars);
 
+    /* النتيجة بتتحفظ لكل مرحلة لوحدها — المقارنة بين مرحلتين
+       مختلفتين مالهاش معنى */
     const save = loadSave();
-    const isRecord = state.runScore > save.best;
+    const prev = save.stages[stage.id] || 0;
+    const isRecord = state.runScore > prev;
     if (isRecord) {
-      save.best = state.runScore;
+      save.stages[stage.id] = state.runScore;
+      if (state.runScore > save.best) save.best = state.runScore;
       writeSave(save);
     }
     el.endBest.textContent = isRecord
-      ? "🏆 رقم قياسي جديد!"
-      : `أحسن نتيجة ليك: ${toArabic(save.best)}`;
+      ? "🏆 رقم قياسي جديد في المرحلة دي!"
+      : `أحسن نتيجة ليك في المرحلة دي: ${toArabic(prev)}`;
+
+    el.nextStageBtn.hidden = !next;
+    if (next) el.nextStageBtn.textContent = `${next.emoji} المرحلة الجاية: ${next.name} ▶`;
 
     showOverlay(el.endOverlay);
     if (!reduceMotion) fireConfetti(46);
@@ -509,12 +612,22 @@
     el.soundBtn.title = state.soundOn ? "اقفل الصوت" : "شغّل الصوت";
   });
 
-  /* تحميل صور الجولات في الخلفية بعد ما الصفحة تخلص */
-  function warmAssets() {
-    Object.values(ODD_ITEMS).forEach((item) => {
-      const img = new Image();
-      img.src = item.src;
+  /* تحميل صور المرحلة في الخلفية.
+     الكتالوج فيه أكتر من ٥٠ صورة — تحميلهم كلهم على الموبايل
+     بيتعب الشبكة من غير داعي، فبنحمّل صور المرحلة اللي هيلعبها بس. */
+  const warmed = {};
+  function warmStage(stage) {
+    if (!stage || warmed[stage.id]) return;
+    warmed[stage.id] = true;
+    stage.rounds.forEach((i) => {
+      ODD_ROUNDS[i].items.forEach((id) => {
+        const img = new Image();
+        img.src = ODD_ITEMS[id].src;
+      });
     });
+  }
+  function warmAssets() {
+    warmStage(nextUnfinishedStage());
   }
   if (document.readyState === "complete") warmAssets();
   else window.addEventListener("load", warmAssets);

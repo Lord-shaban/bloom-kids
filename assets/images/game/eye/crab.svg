@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="كابوريا">
+  <title>كابوريا</title>
+  <defs>
+    <radialGradient id="cb-body" cx="0.36" cy="0.28" r="0.85">
+      <stop offset="0%" stop-color="#ff8f74"/><stop offset="55%" stop-color="#e8452f"/>
+      <stop offset="100%" stop-color="#a51c14"/>
+    </radialGradient>
+    <clipPath id="cb-clip"><ellipse cx="400" cy="470" rx="230" ry="168"/></clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- الرجلين -->
+  <g stroke="#a51c14" stroke-width="26" stroke-linecap="round" fill="none">
+    <path d="M198 486 C 130 508 96 552 82 604"/>
+    <path d="M212 542 C 146 584 116 634 108 690"/>
+    <path d="M240 592 C 190 646 172 700 172 748"/>
+    <path d="M602 486 C 670 508 704 552 718 604"/>
+    <path d="M588 542 C 654 584 684 634 692 690"/>
+    <path d="M560 592 C 610 646 628 700 628 748"/>
+  </g>
+
+  <!-- الزنانير (الكماشة) — نقطة بداية الزوم -->
+  <g stroke="#8c1810" stroke-width="10" stroke-linejoin="round">
+    <path d="M186 452 C 120 440 76 396 62 340" fill="none" stroke-width="24"
+          stroke-linecap="round"/>
+    <path d="M614 452 C 680 440 724 396 738 340" fill="none" stroke-width="24"
+          stroke-linecap="round"/>
+    <!-- الكماشة الشمال -->
+    <path d="M62 340 C 22 300 20 236 62 206 C 106 176 156 200 162 244
+             C 166 276 142 296 116 292 C 132 316 120 350 90 356 Z"
+          fill="url(#cb-body)"/>
+    <path d="M116 292 C 88 288 66 264 70 236" fill="none" stroke-width="9"/>
+    <!-- الكماشة اليمين -->
+    <path d="M738 340 C 778 300 780 236 738 206 C 694 176 644 200 638 244
+             C 634 276 658 296 684 292 C 668 316 680 350 710 356 Z"
+          fill="url(#cb-body)"/>
+    <path d="M684 292 C 712 288 734 264 730 236" fill="none" stroke-width="9"/>
+  </g>
+
+  <!-- الجسم -->
+  <ellipse cx="400" cy="470" rx="230" ry="168" fill="url(#cb-body)"
+           stroke="#8c1810" stroke-width="12"/>
+
+  <!-- حبيبات الترس — تفاصيل تستحمّل الزوم العالي -->
+  <g clip-path="url(#cb-clip)" fill="#b52418" opacity="0.55">
+    <circle cx="300" cy="420" r="10"/><circle cx="360" cy="404" r="8"/>
+    <circle cx="420" cy="404" r="10"/><circle cx="480" cy="420" r="8"/>
+    <circle cx="270" cy="474" r="8"/><circle cx="330" cy="464" r="10"/>
+    <circle cx="400" cy="458" r="8"/><circle cx="470" cy="464" r="10"/>
+    <circle cx="530" cy="474" r="8"/><circle cx="300" cy="524" r="10"/>
+    <circle cx="368" cy="516" r="8"/><circle cx="436" cy="516" r="10"/>
+    <circle cx="502" cy="524" r="8"/><circle cx="340" cy="574" r="8"/>
+    <circle cx="400" cy="568" r="10"/><circle cx="462" cy="574" r="8"/>
+  </g>
+  <ellipse cx="400" cy="470" rx="230" ry="168" fill="none" stroke="#8c1810" stroke-width="12"/>
+  <ellipse cx="308" cy="404" rx="86" ry="42" fill="#ffffff" opacity="0.2"
+           transform="rotate(-16 308 404)"/>
+
+  <!-- العنين على أعواد -->
+  <g stroke="#8c1810" stroke-width="14" stroke-linecap="round">
+    <path d="M330 336 L 322 250"/><path d="M470 336 L 478 250"/>
+  </g>
+  <circle cx="320" cy="228" r="42" fill="#ffffff" stroke="#8c1810" stroke-width="9"/>
+  <circle cx="326" cy="234" r="20" fill="#2b2318"/>
+  <circle cx="480" cy="228" r="42" fill="#ffffff" stroke="#8c1810" stroke-width="9"/>
+  <circle cx="474" cy="234" r="20" fill="#2b2318"/>
+
+  <!-- البق -->
+  <path d="M350 520 C 378 546 422 546 450 520" fill="none" stroke="#8c1810"
+        stroke-width="11" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="ذرة">
+  <title>ذرة</title>
+  <defs>
+    <radialGradient id="co-k" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0%" stop-color="#ffef9a"/><stop offset="60%" stop-color="#fbc72a"/>
+      <stop offset="100%" stop-color="#d99a08"/>
+    </radialGradient>
+    <linearGradient id="co-leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8fd45a"/><stop offset="100%" stop-color="#2f7a26"/>
+    </linearGradient>
+    <clipPath id="co-clip"><ellipse cx="400" cy="418" rx="150" ry="272"/></clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- ورق الكوز -->
+  <path d="M258 402 C 156 470 116 596 150 706 C 254 668 316 566 322 452 Z"
+        fill="url(#co-leaf)" stroke="#26621e" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M542 402 C 644 470 684 596 650 706 C 546 668 484 566 478 452 Z"
+        fill="url(#co-leaf)" stroke="#26621e" stroke-width="10" stroke-linejoin="round"/>
+  <g stroke="#26621e" stroke-width="6" fill="none" opacity="0.75">
+    <path d="M300 452 C 250 528 216 610 200 682"/>
+    <path d="M500 452 C 550 528 584 610 600 682"/>
+  </g>
+
+  <!-- الجسم -->
+  <ellipse cx="400" cy="418" rx="150" ry="272" fill="#f6c60c"
+           stroke="#a8760a" stroke-width="12"/>
+
+  <!-- حبّات الذرة — الشبكة دي هي التفصيلة اللي الزوم بيبدأ عندها -->
+  <g clip-path="url(#co-clip)">
+    <g fill="url(#co-k)" stroke="#c48f06" stroke-width="4">
+      <g id="co-row">
+        <ellipse cx="268" cy="180" rx="26" ry="21"/><ellipse cx="334" cy="180" rx="26" ry="21"/>
+        <ellipse cx="400" cy="180" rx="26" ry="21"/><ellipse cx="466" cy="180" rx="26" ry="21"/>
+        <ellipse cx="532" cy="180" rx="26" ry="21"/>
+      </g>
+      <use href="#co-row" transform="translate(-33 46)"/>
+      <use href="#co-row" transform="translate(0 92)"/>
+      <use href="#co-row" transform="translate(-33 138)"/>
+      <use href="#co-row" transform="translate(0 184)"/>
+      <use href="#co-row" transform="translate(-33 230)"/>
+      <use href="#co-row" transform="translate(0 276)"/>
+      <use href="#co-row" transform="translate(-33 322)"/>
+      <use href="#co-row" transform="translate(0 368)"/>
+      <use href="#co-row" transform="translate(-33 414)"/>
+      <use href="#co-row" transform="translate(0 460)"/>
+      <use href="#co-row" transform="translate(-33 506)"/>
+    </g>
+  </g>
+
+  <ellipse cx="400" cy="418" rx="150" ry="272" fill="none" stroke="#a8760a" stroke-width="12"/>
+  <ellipse cx="330" cy="300" rx="36" ry="98" fill="#ffffff" opacity="0.22"
+           transform="rotate(-10 330 300)"/>
+
+  <!-- الشعر بتاع الكوز -->
+  <g fill="none" stroke="#c99a2c" stroke-width="10" stroke-linecap="round">
+    <path d="M382 156 C 356 108 330 78 296 58"/>
+    <path d="M400 152 C 398 104 400 74 408 46"/>
+    <path d="M420 156 C 448 110 476 82 512 62"/>
+  </g>
+</svg>

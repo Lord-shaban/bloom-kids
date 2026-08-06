@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="كوباية">
+  <title>كوباية</title>
+  <defs>
+    <linearGradient id="cp-g" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ffffff"/><stop offset="55%" stop-color="#e8eef4"/>
+      <stop offset="100%" stop-color="#c2cfdb"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="#fdf6ec"/>
+  <!-- البخار -->
+  <g fill="none" stroke="#b9d3e2" stroke-width="16" stroke-linecap="round">
+    <path d="M330 220 C 306 186 354 160 330 122"/>
+    <path d="M400 200 C 376 166 424 140 400 102"/>
+    <path d="M470 220 C 446 186 494 160 470 122"/>
+  </g>
+  <!-- الودن -->
+  <path d="M580 380 C 664 380 700 420 700 470 C 700 522 660 560 580 560"
+        fill="none" stroke="#8a97a6" stroke-width="34" stroke-linecap="round"/>
+  <!-- الكوباية -->
+  <path d="M180 300 L 596 300 L 566 640 C 562 682 530 706 480 706
+           L 296 706 C 246 706 214 682 210 640 Z"
+        fill="url(#cp-g)" stroke="#7a869a" stroke-width="12" stroke-linejoin="round"/>
+  <ellipse cx="388" cy="300" rx="208" ry="46" fill="#f2f6fa" stroke="#7a869a" stroke-width="12"/>
+  <ellipse cx="388" cy="302" rx="170" ry="30" fill="#8a5a2a"/>
+  <ellipse cx="330" cy="296" rx="52" ry="12" fill="#c99a68" opacity="0.7"/>
+  <!-- قلب على الكوباية -->
+  <path d="M388 460 C 360 424 306 440 306 484 C 306 526 360 552 388 584
+           C 416 552 470 526 470 484 C 470 440 416 424 388 460 Z"
+        fill="#ef5f7c" opacity="0.85"/>
+</svg>

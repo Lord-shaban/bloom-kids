@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="سحابة">
+  <title>سحابة</title>
+  <defs>
+    <linearGradient id="cl-g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#d7e8f2"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="#dff1fb"/>
+  <path d="M242 546 C 150 546 100 486 100 424 C 100 358 158 314 220 322
+           C 236 226 320 168 404 186 C 476 200 522 254 532 316
+           C 622 306 700 362 700 440 C 700 502 646 546 570 546 Z"
+        fill="url(#cl-g)" stroke="#8fb9c9" stroke-width="13" stroke-linejoin="round"/>
+  <!-- وش -->
+  <circle cx="330" cy="390" r="18" fill="#4a6b7d"/>
+  <circle cx="470" cy="390" r="18" fill="#4a6b7d"/>
+  <path d="M336 448 C 362 476 438 476 464 448" fill="none" stroke="#4a6b7d"
+        stroke-width="13" stroke-linecap="round"/>
+  <circle cx="286" cy="436" r="22" fill="#a9d0e2" opacity="0.8"/>
+  <circle cx="514" cy="436" r="22" fill="#a9d0e2" opacity="0.8"/>
+  <!-- قطرات -->
+  <g fill="#7fc6ea">
+    <path d="M280 600 C 280 578 306 552 306 552 C 306 552 332 578 332 600
+             C 332 618 320 628 306 628 C 292 628 280 618 280 600 Z"/>
+    <path d="M384 646 C 384 624 410 598 410 598 C 410 598 436 624 436 646
+             C 436 664 424 674 410 674 C 396 674 384 664 384 646 Z"/>
+    <path d="M488 600 C 488 578 514 552 514 552 C 514 552 540 578 540 600
+             C 540 618 528 628 514 628 C 500 628 488 618 488 600 Z"/>
+  </g>
+</svg>

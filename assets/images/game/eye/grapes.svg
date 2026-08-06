@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="عنب">
+  <title>عنب</title>
+  <defs>
+    <radialGradient id="gr-ball" cx="0.34" cy="0.3" r="0.8">
+      <stop offset="0%" stop-color="#b98ede"/>
+      <stop offset="55%" stop-color="#7d45b5"/>
+      <stop offset="100%" stop-color="#4d2478"/>
+    </radialGradient>
+    <linearGradient id="gr-leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8fd45a"/><stop offset="100%" stop-color="#3f8f2e"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- العود -->
+  <path d="M398 268 C 396 210 402 176 418 146" fill="none" stroke="#7a4a1e"
+        stroke-width="22" stroke-linecap="round"/>
+
+  <!-- الورقة -->
+  <path d="M416 176 C 470 104 570 96 622 128 C 600 224 500 254 424 212 Z"
+        fill="url(#gr-leaf)" stroke="#2f6f22" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M440 194 C 498 164 560 148 608 138" fill="none" stroke="#2f6f22"
+        stroke-width="7" stroke-linecap="round" opacity="0.8"/>
+
+  <!-- حبّات العنب — الحد بين كل حبتين هو التفصيلة اللي الزوم بيبدأ عندها -->
+  <g fill="url(#gr-ball)" stroke="#3d1b63" stroke-width="8">
+    <circle cx="400" cy="322" r="70"/>
+    <circle cx="288" cy="380" r="70"/><circle cx="512" cy="380" r="70"/>
+    <circle cx="400" cy="436" r="70"/>
+    <circle cx="212" cy="486" r="70"/><circle cx="588" cy="486" r="70"/>
+    <circle cx="326" cy="524" r="70"/><circle cx="474" cy="524" r="70"/>
+    <circle cx="252" cy="616" r="70"/><circle cx="548" cy="616" r="70"/>
+    <circle cx="400" cy="614" r="70"/>
+    <circle cx="400" cy="702" r="66"/>
+  </g>
+
+  <!-- لمعة على كل حبة -->
+  <g fill="#ffffff" opacity="0.4">
+    <ellipse cx="378" cy="298" rx="20" ry="13" transform="rotate(-30 378 298)"/>
+    <ellipse cx="266" cy="356" rx="20" ry="13" transform="rotate(-30 266 356)"/>
+    <ellipse cx="490" cy="356" rx="20" ry="13" transform="rotate(-30 490 356)"/>
+    <ellipse cx="378" cy="412" rx="20" ry="13" transform="rotate(-30 378 412)"/>
+    <ellipse cx="190" cy="462" rx="20" ry="13" transform="rotate(-30 190 462)"/>
+    <ellipse cx="566" cy="462" rx="20" ry="13" transform="rotate(-30 566 462)"/>
+    <ellipse cx="304" cy="500" rx="20" ry="13" transform="rotate(-30 304 500)"/>
+    <ellipse cx="452" cy="500" rx="20" ry="13" transform="rotate(-30 452 500)"/>
+    <ellipse cx="230" cy="592" rx="20" ry="13" transform="rotate(-30 230 592)"/>
+    <ellipse cx="526" cy="592" rx="20" ry="13" transform="rotate(-30 526 592)"/>
+    <ellipse cx="378" cy="590" rx="20" ry="13" transform="rotate(-30 378 590)"/>
+    <ellipse cx="378" cy="678" rx="20" ry="13" transform="rotate(-30 378 678)"/>
+  </g>
+</svg>

@@ -22,7 +22,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css?v=11">
-  <link rel="stylesheet" href="css/game-ui.css?v=2">
+  <link rel="stylesheet" href="css/game-ui.css?v=3">
   <link rel="stylesheet" href="css/odd-one-out.css?v=1">
 </head>
 <body class="play-page odd-page">
@@ -65,7 +65,7 @@
             💡 <span class="btn-label">تلميح</span> (<span id="hintCount">٣</span>)
           </button>
           <button class="btn btn-ghost btn-sm" id="roundsBtn" type="button">
-            🗂️ <span class="btn-label">الجولات</span>
+            🗂️ <span class="btn-label">المراحل</span>
           </button>
           <button class="btn-icon" id="soundBtn" type="button" aria-pressed="true" title="اقفل الصوت">🔊</button>
         </div>
@@ -92,13 +92,14 @@
         <li><span class="bg-pink">👆</span> اضغط على الصورة المختلفة</li>
         <li><span class="bg-purple">💬</span> وبعدين قول <b>ليه</b> هي المختلفة</li>
         <li><span class="bg-yellow">⭐</span> ٢ نقطة للصورة + ١ للسبب</li>
+        <li><span class="bg-purple">🗂️</span> ٣٠ جولة في ٥ مراحل — كل مرحلة ٦ جولات</li>
       </ul>
 
-      <h3 class="levels-title" id="roundsTitle">اختار الجولة 👇</h3>
-      <div class="level-grid" id="roundGrid"></div>
+      <h3 class="levels-title" id="roundsTitle">اختار المرحلة 👇</h3>
+      <div class="stage-list" id="roundGrid"></div>
 
       <div class="overlay-actions">
-        <button class="btn btn-primary" id="playAllBtn" type="button">▶ ابدأ من الأول</button>
+        <button class="btn btn-primary" id="playAllBtn" type="button">▶ ابدأ من أول مرحلة</button>
         <button class="btn btn-ghost" id="closeRoundsBtn" type="button" hidden>↩ رجوع للجولة الحالية</button>
       </div>
     </div>
@@ -124,7 +125,7 @@
         <div class="overlay-actions">
           <button class="btn btn-primary" id="nextRoundBtn" type="button">الجولة الجاية ▶</button>
           <button class="btn btn-ghost" id="retryRoundBtn" type="button">إعادة الجولة</button>
-          <button class="btn btn-ghost" id="roundLevelsBtn" type="button">🗂️ الجولات</button>
+          <button class="btn btn-ghost" id="roundLevelsBtn" type="button">🗂️ المراحل</button>
         </div>
       </div>
     </div>
@@ -134,12 +135,13 @@
   <div class="overlay" id="endOverlay" hidden>
     <div class="overlay-card">
       <h2 id="endTitle">🏆 خلّصت اللعبة!</h2>
-      <div class="end-score"><b id="endScore">٠</b> <span>من <span id="endMax">٢٤</span> نقطة</span></div>
+      <div class="end-score"><b id="endScore">٠</b> <span>من <span id="endMax">١٨</span> نقطة</span></div>
       <p class="end-stars" id="endStars"></p>
       <p class="win-best" id="endBest"></p>
       <div class="overlay-actions">
-        <button class="btn btn-primary" id="playAgainBtn" type="button">🔄 العب تاني</button>
-        <a class="btn btn-teal" href="iron-eye.html">👁️ جرّب العين الحديدية</a>
+        <button class="btn btn-primary" id="nextStageBtn" type="button" hidden>المرحلة الجاية ▶</button>
+        <button class="btn btn-yellow" id="playAgainBtn" type="button">🔄 إعادة المرحلة</button>
+        <button class="btn btn-teal" id="endLevelsBtn" type="button">🗂️ كل المراحل</button>
         <a class="btn btn-ghost" href="games.html">🎮 كل الألعاب</a>
       </div>
     </div>
@@ -148,7 +150,7 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="confetti" id="confetti" aria-hidden="true"></div>
 
-  <script src="js/odd-one-out-rounds.js?v=1"></script>
-  <script src="js/odd-one-out.js?v=1"></script>
+  <script src="js/odd-one-out-rounds.js?v=2"></script>
+  <script src="js/odd-one-out.js?v=2"></script>
 </body>
 </html>

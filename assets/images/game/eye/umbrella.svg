@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="شمسية">
+  <title>شمسية</title>
+  <defs>
+    <clipPath id="um-dome">
+      <path d="M80 470 C 80 250 240 118 400 118 C 560 118 720 250 720 470 Z"/>
+    </clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- العصاية -->
+  <path d="M400 150 L 400 640 C 400 700 348 722 310 700 C 288 686 286 656 302 642"
+        fill="none" stroke="#8a5a2a" stroke-width="24" stroke-linecap="round"/>
+
+  <!-- القبّة -->
+  <g clip-path="url(#um-dome)">
+    <rect x="0" y="80" width="800" height="420" fill="#ef5f7c"/>
+    <path d="M400 118 C 340 118 300 260 296 470 L 400 470 Z" fill="#f6a92c"/>
+    <path d="M400 118 C 460 118 500 260 504 470 L 400 470 Z" fill="#23a89f"/>
+    <path d="M296 470 C 292 268 250 140 196 156 C 130 194 92 320 88 470 Z" fill="#6a4fb6"/>
+    <path d="M504 470 C 508 268 550 140 604 156 C 670 194 708 320 712 470 Z" fill="#7dc242"/>
+  </g>
+
+  <!-- درزة كل قطعة — الحد بين لونين هو التفصيلة اللي الزوم بيبدأ عندها -->
+  <g fill="none" stroke="#3a2f6e" stroke-width="9" stroke-linecap="round">
+    <path d="M400 128 L 400 470"/>
+    <path d="M400 128 C 340 150 300 280 296 470"/>
+    <path d="M400 128 C 460 150 500 280 504 470"/>
+    <path d="M296 470 C 292 268 250 140 196 156"/>
+    <path d="M504 470 C 508 268 550 140 604 156"/>
+  </g>
+
+  <!-- الحرف المموّج -->
+  <path d="M80 470 C 130 530 178 530 226 470 C 274 530 322 530 370 470
+           C 418 530 466 530 514 470 C 562 530 610 530 658 470
+           C 690 508 712 500 720 470"
+        fill="none" stroke="#3a2f6e" stroke-width="14" stroke-linejoin="round"/>
+  <path d="M80 470 C 80 250 240 118 400 118 C 560 118 720 250 720 470"
+        fill="none" stroke="#3a2f6e" stroke-width="14"/>
+
+  <!-- السنّ الفوقاني -->
+  <path d="M400 118 L 400 58" stroke="#3a2f6e" stroke-width="18" stroke-linecap="round"/>
+  <circle cx="400" cy="48" r="20" fill="#f6a92c" stroke="#3a2f6e" stroke-width="9"/>
+
+  <!-- قطرات مطر -->
+  <g fill="#7fc6ea" opacity="0.85">
+    <path d="M180 600 C 180 580 200 560 200 560 C 200 560 220 580 220 600
+             C 220 614 208 622 200 622 C 192 622 180 614 180 600 Z"/>
+    <path d="M600 640 C 600 620 620 600 620 600 C 620 600 640 620 640 640
+             C 640 654 628 662 620 662 C 612 662 600 654 600 640 Z"/>
+    <path d="M540 560 C 540 546 554 532 554 532 C 554 532 568 546 568 560
+             C 568 570 560 576 554 576 C 548 576 540 570 540 560 Z"/>
+  </g>
+</svg>

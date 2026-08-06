@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="مقص">
+  <title>مقص</title>
+  <rect width="800" height="800" fill="#fdf6ec"/>
+  <!-- النصلتين -->
+  <path d="M300 130 L 356 118 L 470 452 L 412 470 Z" fill="#d8dde4"
+        stroke="#7a828e" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M500 130 L 444 118 L 330 452 L 388 470 Z" fill="#eef1f5"
+        stroke="#7a828e" stroke-width="10" stroke-linejoin="round"/>
+  <!-- المسمار -->
+  <circle cx="400" cy="470" r="30" fill="#9aa2ae" stroke="#5f6772" stroke-width="9"/>
+  <circle cx="400" cy="470" r="9" fill="#5f6772"/>
+  <!-- اليدين -->
+  <path d="M382 494 C 320 540 268 560 240 610 C 210 664 244 720 302 712
+           C 356 704 372 640 388 566" fill="none" stroke="#ef5f7c" stroke-width="34"
+        stroke-linecap="round"/>
+  <path d="M418 494 C 480 540 532 560 560 610 C 590 664 556 720 498 712
+           C 444 704 428 640 412 566" fill="none" stroke="#ef5f7c" stroke-width="34"
+        stroke-linecap="round"/>
+</svg>

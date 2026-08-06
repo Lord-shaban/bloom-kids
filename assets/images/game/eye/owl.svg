@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="بومة">
+  <title>بومة</title>
+  <defs>
+    <linearGradient id="ow-body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c99a63"/><stop offset="100%" stop-color="#8a5f30"/>
+    </linearGradient>
+    <clipPath id="ow-belly"><ellipse cx="400" cy="540" rx="176" ry="210"/></clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- الرجلين -->
+  <g stroke="#e09a2a" stroke-width="18" stroke-linecap="round" fill="none">
+    <path d="M330 720 L 330 762"/><path d="M470 720 L 470 762"/>
+    <path d="M300 764 L 360 764"/><path d="M440 764 L 500 764"/>
+  </g>
+
+  <!-- الجناحين -->
+  <path d="M232 420 C 150 470 140 610 214 690 C 250 640 254 520 250 452 Z"
+        fill="#7a5228" stroke="#4f3418" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M568 420 C 650 470 660 610 586 690 C 550 640 546 520 550 452 Z"
+        fill="#7a5228" stroke="#4f3418" stroke-width="10" stroke-linejoin="round"/>
+
+  <!-- الجسم -->
+  <path d="M400 130 C 250 130 196 254 196 400 C 196 596 280 736 400 736
+           C 520 736 604 596 604 400 C 604 254 550 130 400 130 Z"
+        fill="url(#ow-body)" stroke="#4f3418" stroke-width="12"/>
+
+  <!-- ريش البطن — النقش ده هو التفصيلة اللي الزوم بيبدأ عندها -->
+  <ellipse cx="400" cy="540" rx="176" ry="210" fill="#f0dcbe"/>
+  <g clip-path="url(#ow-belly)" fill="none" stroke="#c9a675" stroke-width="9"
+     stroke-linecap="round">
+    <path d="M240 386 q40 46 80 0 q40 -46 80 0 q40 46 80 0 q40 -46 80 0"/>
+    <path d="M210 452 q40 46 80 0 q40 -46 80 0 q40 46 80 0 q40 -46 80 0 q40 46 80 0"/>
+    <path d="M240 518 q40 46 80 0 q40 -46 80 0 q40 46 80 0 q40 -46 80 0"/>
+    <path d="M210 584 q40 46 80 0 q40 -46 80 0 q40 46 80 0 q40 -46 80 0 q40 46 80 0"/>
+    <path d="M240 650 q40 46 80 0 q40 -46 80 0 q40 46 80 0 q40 -46 80 0"/>
+    <path d="M270 712 q40 46 80 0 q40 -46 80 0 q40 46 80 0"/>
+  </g>
+  <ellipse cx="400" cy="540" rx="176" ry="210" fill="none" stroke="#4f3418"
+           stroke-width="8" opacity="0.35"/>
+
+  <!-- ودان البومة -->
+  <path d="M226 214 C 200 140 208 96 232 66 C 276 106 302 158 312 210 Z"
+        fill="#8a5f30" stroke="#4f3418" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M574 214 C 600 140 592 96 568 66 C 524 106 498 158 488 210 Z"
+        fill="#8a5f30" stroke="#4f3418" stroke-width="10" stroke-linejoin="round"/>
+
+  <!-- العنين -->
+  <circle cx="308" cy="330" r="106" fill="#f7ecd8" stroke="#4f3418" stroke-width="11"/>
+  <circle cx="492" cy="330" r="106" fill="#f7ecd8" stroke="#4f3418" stroke-width="11"/>
+  <circle cx="308" cy="330" r="62" fill="#f0a81c"/>
+  <circle cx="492" cy="330" r="62" fill="#f0a81c"/>
+  <circle cx="308" cy="330" r="36" fill="#2b2318"/>
+  <circle cx="492" cy="330" r="36" fill="#2b2318"/>
+  <circle cx="292" cy="312" r="14" fill="#ffffff"/>
+  <circle cx="476" cy="312" r="14" fill="#ffffff"/>
+
+  <!-- المنقار -->
+  <path d="M400 348 L 446 400 L 400 462 L 354 400 Z" fill="#e09a2a"
+        stroke="#a86a10" stroke-width="8" stroke-linejoin="round"/>
+</svg>

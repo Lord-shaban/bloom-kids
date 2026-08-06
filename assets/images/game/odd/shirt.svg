@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="تيشيرت">
+  <title>تيشيرت</title>
+  <defs>
+    <linearGradient id="sh-g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5fc7e8"/><stop offset="100%" stop-color="#1f7fb8"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="#fdf6ec"/>
+  <path d="M300 140 L 240 168 L 96 250 L 176 388 L 246 348 L 246 686
+           C 246 700 258 710 272 710 L 528 710 C 542 710 554 700 554 686
+           L 554 348 L 624 388 L 704 250 L 560 168 L 500 140
+           C 480 210 320 210 300 140 Z"
+        fill="url(#sh-g)" stroke="#12547d" stroke-width="13" stroke-linejoin="round"/>
+  <!-- فتحة الرقبة -->
+  <path d="M300 140 C 320 210 480 210 500 140 C 470 122 330 122 300 140 Z"
+        fill="#ffffff" stroke="#12547d" stroke-width="11" stroke-linejoin="round"/>
+  <!-- نجمة على الصدر -->
+  <path d="M400 350 L 428 424 L 506 428 L 444 476 L 466 552 L 400 508
+           L 334 552 L 356 476 L 294 428 L 372 424 Z"
+        fill="#f7d445" stroke="#c99a08" stroke-width="9" stroke-linejoin="round"/>
+  <!-- درزة الكم -->
+  <g fill="none" stroke="#12547d" stroke-width="9" opacity="0.7">
+    <path d="M246 348 L 176 388"/><path d="M554 348 L 624 388"/>
+  </g>
+</svg>

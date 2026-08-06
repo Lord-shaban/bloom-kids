@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="كورة سلة">
+  <title>كورة سلة</title>
+  <defs>
+    <radialGradient id="bb-body" cx="0.34" cy="0.28" r="0.85">
+      <stop offset="0%" stop-color="#ffab52"/><stop offset="55%" stop-color="#e8781a"/>
+      <stop offset="100%" stop-color="#a84a06"/>
+    </radialGradient>
+    <clipPath id="bb-clip"><circle cx="400" cy="400" r="304"/></clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <circle cx="400" cy="400" r="304" fill="url(#bb-body)" stroke="#8c3c04" stroke-width="13"/>
+
+  <!-- حبيبات جلد الكورة — تفاصيل صغيرة عشان الزوم العالي -->
+  <g clip-path="url(#bb-clip)" fill="#c25f0c" opacity="0.4">
+    <circle cx="240" cy="220" r="7"/><circle cx="300" cy="190" r="6"/>
+    <circle cx="360" cy="230" r="7"/><circle cx="430" cy="196" r="6"/>
+    <circle cx="500" cy="236" r="7"/><circle cx="560" cy="200" r="6"/>
+    <circle cx="200" cy="300" r="6"/><circle cx="270" cy="330" r="7"/>
+    <circle cx="340" cy="296" r="6"/><circle cx="410" cy="336" r="7"/>
+    <circle cx="480" cy="300" r="6"/><circle cx="550" cy="340" r="7"/>
+    <circle cx="610" cy="300" r="6"/><circle cx="180" cy="420" r="7"/>
+    <circle cx="250" cy="450" r="6"/><circle cx="320" cy="410" r="7"/>
+    <circle cx="390" cy="450" r="6"/><circle cx="460" cy="416" r="7"/>
+    <circle cx="530" cy="452" r="6"/><circle cx="600" cy="420" r="7"/>
+    <circle cx="220" cy="540" r="6"/><circle cx="290" cy="570" r="7"/>
+    <circle cx="360" cy="530" r="6"/><circle cx="430" cy="570" r="7"/>
+    <circle cx="500" cy="536" r="6"/><circle cx="570" cy="566" r="7"/>
+    <circle cx="330" cy="640" r="6"/><circle cx="400" cy="620" r="7"/>
+    <circle cx="470" cy="644" r="6"/>
+  </g>
+
+  <!-- خطوط الكورة السودا — الخط ده هو التفصيلة اللي الزوم بيبدأ عندها -->
+  <g clip-path="url(#bb-clip)" fill="none" stroke="#2b1a0c" stroke-width="17"
+     stroke-linecap="round">
+    <path d="M400 92 L 400 708"/>
+    <path d="M96 400 L 704 400"/>
+    <path d="M160 148 C 300 300 300 500 160 652"/>
+    <path d="M640 148 C 500 300 500 500 640 652"/>
+  </g>
+
+  <!-- لمعة -->
+  <ellipse cx="292" cy="264" rx="94" ry="60" fill="#ffffff" opacity="0.22"
+           transform="rotate(-30 292 264)"/>
+  <circle cx="400" cy="400" r="304" fill="none" stroke="#8c3c04" stroke-width="13"/>
+</svg>

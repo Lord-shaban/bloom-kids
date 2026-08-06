@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="بطريق">
+  <title>بطريق</title>
+  <defs>
+    <linearGradient id="pg-back" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3b3f4e"/><stop offset="100%" stop-color="#1c1f2a"/>
+    </linearGradient>
+    <linearGradient id="pg-beak" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffc247"/><stop offset="100%" stop-color="#e07a12"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- الرجلين -->
+  <path d="M320 726 C 274 726 246 748 246 764 L 386 764 C 386 742 360 726 320 726 Z"
+        fill="url(#pg-beak)" stroke="#b85e08" stroke-width="9" stroke-linejoin="round"/>
+  <path d="M480 726 C 526 726 554 748 554 764 L 414 764 C 414 742 440 726 480 726 Z"
+        fill="url(#pg-beak)" stroke="#b85e08" stroke-width="9" stroke-linejoin="round"/>
+
+  <!-- الجسم الأسود -->
+  <path d="M400 92 C 250 92 174 236 174 424 C 174 618 268 736 400 736
+           C 532 736 626 618 626 424 C 626 236 550 92 400 92 Z"
+        fill="url(#pg-back)" stroke="#12141c" stroke-width="12"/>
+
+  <!-- الجناحين -->
+  <path d="M182 366 C 132 452 136 596 190 666 C 218 606 216 462 216 396 Z"
+        fill="#2b2f3c" stroke="#12141c" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M618 366 C 668 452 664 596 610 666 C 582 606 584 462 584 396 Z"
+        fill="#2b2f3c" stroke="#12141c" stroke-width="10" stroke-linejoin="round"/>
+
+  <!-- البطن الأبيض -->
+  <path d="M400 244 C 300 244 254 356 254 470 C 254 618 320 706 400 706
+           C 480 706 546 618 546 470 C 546 356 500 244 400 244 Z"
+        fill="#f7f2e8"/>
+
+  <!-- الوش -->
+  <path d="M400 168 C 322 168 286 232 286 296 C 286 362 340 400 400 400
+           C 460 400 514 362 514 296 C 514 232 478 168 400 168 Z"
+        fill="#f7f2e8"/>
+  <circle cx="338" cy="278" r="34" fill="#ffffff" stroke="#12141c" stroke-width="7"/>
+  <circle cx="342" cy="284" r="17" fill="#12141c"/>
+  <circle cx="334" cy="276" r="7" fill="#ffffff"/>
+  <circle cx="462" cy="278" r="34" fill="#ffffff" stroke="#12141c" stroke-width="7"/>
+  <circle cx="458" cy="284" r="17" fill="#12141c"/>
+  <circle cx="450" cy="276" r="7" fill="#ffffff"/>
+  <circle cx="288" cy="334" r="26" fill="#f2a9b8" opacity="0.6"/>
+  <circle cx="512" cy="334" r="26" fill="#f2a9b8" opacity="0.6"/>
+
+  <!-- المنقار — دي التفصيلة اللي الزوم بيبدأ عندها -->
+  <path d="M400 320 L 470 356 L 400 400 L 330 356 Z" fill="url(#pg-beak)"
+        stroke="#b85e08" stroke-width="9" stroke-linejoin="round"/>
+  <path d="M330 356 L 470 356" stroke="#b85e08" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="376" cy="340" r="6" fill="#b85e08"/>
+  <circle cx="424" cy="340" r="6" fill="#b85e08"/>
+</svg>

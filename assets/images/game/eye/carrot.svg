@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="جزرة">
+  <title>جزرة</title>
+  <defs>
+    <linearGradient id="ca-body" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ffb35e"/><stop offset="45%" stop-color="#f47b16"/>
+      <stop offset="100%" stop-color="#c65205"/>
+    </linearGradient>
+    <linearGradient id="ca-leaf" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#2f7a26"/><stop offset="100%" stop-color="#84cf4c"/>
+    </linearGradient>
+    <clipPath id="ca-clip">
+      <path d="M318 226 L 482 226 L 424 700 C 420 726 380 726 376 700 Z"/>
+    </clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="#fdf6ec"/>
+
+  <!-- الورق -->
+  <g fill="url(#ca-leaf)" stroke="#26621e" stroke-width="8" stroke-linejoin="round">
+    <path d="M400 240 C 356 168 300 118 236 92 C 240 176 296 236 384 264 Z"/>
+    <path d="M400 240 C 444 168 500 118 564 92 C 560 176 504 236 416 264 Z"/>
+    <path d="M400 236 C 382 156 380 108 396 60 C 428 108 430 168 412 238 Z"/>
+  </g>
+
+  <!-- جسم الجزرة -->
+  <path d="M318 226 L 482 226 L 424 700 C 420 726 380 726 376 700 Z"
+        fill="url(#ca-body)" stroke="#9a3f04" stroke-width="12" stroke-linejoin="round"/>
+
+  <!-- الخطوط العرضية — دي التفصيلة اللي الزوم بيبدأ عندها -->
+  <g clip-path="url(#ca-clip)" stroke="#a8460a" stroke-width="9" stroke-linecap="round"
+     fill="none" opacity="0.85">
+    <path d="M300 288 C 348 306 452 306 500 288"/>
+    <path d="M306 352 C 350 370 450 370 494 352"/>
+    <path d="M312 416 C 352 434 448 434 488 416"/>
+    <path d="M320 480 C 356 496 444 496 480 480"/>
+    <path d="M328 544 C 360 558 440 558 472 544"/>
+    <path d="M338 608 C 366 620 434 620 462 608"/>
+    <path d="M348 664 C 372 674 428 674 452 664"/>
+  </g>
+  <!-- خطوط قصيرة بين الكبار عشان الزوم العالي يلاقي تفاصيل -->
+  <g clip-path="url(#ca-clip)" stroke="#ffd9a8" stroke-width="6" stroke-linecap="round"
+     fill="none" opacity="0.7">
+    <path d="M348 320 C 372 328 428 328 452 320"/>
+    <path d="M352 384 C 374 392 426 392 448 384"/>
+    <path d="M358 448 C 378 456 422 456 442 448"/>
+    <path d="M364 512 C 382 520 418 520 436 512"/>
+    <path d="M372 576 C 388 582 412 582 428 576"/>
+  </g>
+
+  <path d="M348 254 C 344 400 366 560 392 690" fill="none" stroke="#ffe0b8"
+        stroke-width="14" stroke-linecap="round" opacity="0.4"/>
+</svg>
